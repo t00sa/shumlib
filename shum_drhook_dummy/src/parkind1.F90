@@ -1,4 +1,3 @@
-#if ! defined(DRHOOK)
 ! *********************************COPYRIGHT************************************
 ! (C) Crown copyright Met Office. All rights reserved.                       
 ! For further details please refer to the file LICENCE.txt                   
@@ -41,4 +40,4 @@ INTEGER, PARAMETER :: jpim = SELECTED_INT_KIND(9)
 INTEGER, PARAMETER :: jprb = SELECTED_REAL_KIND(13,300)
 
 END MODULE parkind1
-#endif
+

@@ -23,7 +23,7 @@
 !
 MODULE f_shum_byteswap_mod
 
-! DEPENDS ON: c_shum_data_conv.o
+! DEPENDS ON: c_shum_byteswap.o
 
 USE, INTRINSIC :: ISO_C_BINDING, ONLY: C_LOC, C_PTR, C_INT64_T
 

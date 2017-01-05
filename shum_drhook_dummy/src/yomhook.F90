@@ -1,4 +1,3 @@
-#if ! defined(DRHOOK)
 ! *********************************COPYRIGHT************************************
 ! (C) Crown copyright Met Office. All rights reserved.                       
 ! For further details please refer to the file LICENCE.txt                   
@@ -74,4 +73,4 @@ RETURN
 END SUBROUTINE dr_hook_comm
 
 END MODULE yomhook
-#endif
+
