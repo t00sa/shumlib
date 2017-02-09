@@ -132,8 +132,8 @@ clean-temp:
 
 clean-build: 
 	rm -rf ${OUTDIRS} ${OUTDIR_TESTS}
-	rmdir ${LIBDIR_OUT} || :
-	rmdir ${LIBDIR_ROOT} || :
+	rm -rf ${LIBDIR_OUT}
+	rm -rf ${LIBDIR_ROOT}
 
 clean: clean-temp clean-build 
 
