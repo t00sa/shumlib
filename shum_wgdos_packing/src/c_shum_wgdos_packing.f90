@@ -107,11 +107,13 @@ CHARACTER(KIND=C_CHAR, LEN=1), INTENT(OUT)        :: cmessage(message_len + 1)
 CHARACTER(LEN=message_len) :: message
 
 REAL(KIND=real64), POINTER :: field2d(:,:)
+TYPE(C_PTR)                :: field_cptr
 
 ! Need to associate the fortan pointer to the field ("field2d") with the
 ! target of the C pointer ("field") which was passed in, since cmps_all is
 ! going to need to be able to read from that address
-CALL C_F_POINTER (C_LOC(field(1)), field2d, [cols,rows])
+field_cptr = C_LOC(field)
+CALL C_F_POINTER (field_cptr, field2d, [cols,rows])
 
 status = f_shum_wgdos_pack(field2d, acc, rmdi, comp_field,                     &
                            num_words, message)
@@ -147,11 +149,13 @@ INTEGER(KIND=C_INT64_T) :: status
 CHARACTER(LEN=message_len) :: message
 
 REAL(KIND=real64), POINTER :: field2d(:,:)
+TYPE(C_PTR)                :: field_cptr
 
 ! Need to associate the fortan pointer to the field ("field2d") with the
 ! target of the C pointer ("field") which was passed in, since wgdos_unpack
 ! is going to need to be able to write to that address
-CALL C_F_POINTER (C_LOC(field(1)), field2d, [cols,rows])
+field_cptr = C_LOC(field)
+CALL C_F_POINTER (field_cptr, field2d, [cols,rows])
 
 status = f_shum_wgdos_unpack(comp_field, rmdi, field2d, message)
 NULLIFY(field2d)

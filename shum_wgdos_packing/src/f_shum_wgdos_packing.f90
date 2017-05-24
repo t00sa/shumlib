@@ -893,7 +893,9 @@ IF (rows>0) icomp(iword(rows),rows) = 0
 ! Compress to 64 bit words
 IF (n_packed_words > len_packed_field) THEN
   status = 2
-  message='Array for returning packed data is not large enough'
+  WRITE(message, "(A,I0,A,I0,A)")                                              &
+    "Provided array for returning packed data is too small; found ",           &
+    len_packed_field, " words, but requires ", n_packed_words, " words"        
   IF (lhook) CALL dr_hook(RoutineName,zhook_out,zhook_handle)
   RETURN
 END IF
@@ -1149,7 +1151,7 @@ END IF
 ! so we can confirm the field we have been passed is the right length
 num = SIZE(packed_field, KIND=int64)
 
-IF (num /= packed_field(1)) THEN
+IF (num < packed_field(1)) THEN
   status = 2
   WRITE(message, "(A,I0,A,I0,A)") &
       'Packed field header reports ', packed_field(1), ' words, but '        //&

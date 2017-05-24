@@ -9,13 +9,11 @@ def generate_assertation(t, dim, has_range, equals = "1")
     "int64"   => "integer(kind=int64)",
     "real32"  => "real(kind=real32)",
     "real64"  => "real(kind=real64)",
-    "complex" => "complex(kind=kind(1.0D0))",
   }
 
   del_def = {
     "real32"  => "real(kind=real32)",
     "real64"  => "real(kind=real64)",
-    "complex" => "double precision"
   }
 
   t_eq = { "logical" => ".eqv.", }
@@ -82,11 +80,6 @@ def generate_assertation(t, dim, has_range, equals = "1")
     elsif t == "real32" or t == "real64"
       condition = "(var1#{ij} < var2#{ij}) .or. " +
                   "(var1#{ij} > var2#{ij})"
-    elsif t == "complex"
-      condition =  "(real (var1#{ij}) < real (var2#{ij})) .or. &\n" +
-                  "&(real (var1#{ij}) > real (var2#{ij})) .or. &\n" +
-                  "&(aimag(var1#{ij}) < aimag(var2#{ij})) .or. &\n" +
-                  "&(aimag(var1#{ij}) > aimag(var2#{ij}))"
     else
       condition = "var1#{ij} #{t_ne[t]} var2#{ij}"
     end
@@ -164,7 +157,7 @@ def generate_assertation(t, dim, has_range, equals = "1")
 end
 
 def many_assert()
-  types = %w/ logical string int32 int64 real32 real64 complex /
+  types = %w/ logical string int32 int64 real32 real64 /
   dims = %w/ 0d 1d 2d /
   
   interface_eq = ""
@@ -175,7 +168,7 @@ def many_assert()
     types.each {|t|
       dims.each {|dim|
         range_loop = [0]
-        if (t == "real32" or t == "real64" or t == "complex")
+        if (t == "real32" or t == "real64")
           range_loop = [0, 1]
         end
 

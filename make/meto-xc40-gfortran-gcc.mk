@@ -4,7 +4,7 @@
 # Fortran
 #--------
 # Compiler command
-FC=gfortran
+FC=ftn
 # Precision flags (passed to all compilation commands)
 FCFLAGS_PREC=-std=f2003 -pedantic -pedantic-errors -fno-range-check -fopenmp
 # Flag used to set PIC (Position-independent-code; required by dynamic lib 
@@ -16,17 +16,17 @@ FCFLAGS_SHARED=-shared
 # control of this is argument order dependent - for these cases the first 
 # variable will be inserted before the link commands and the second will be
 # inserted afterwards
-FCFLAGS_DYNAMIC=
+FCFLAGS_DYNAMIC=-dynamic
 FCFLAGS_DYNAMIC_TRAIL=
 # Flags used for compiling a statically linked test executable (following the
 # same rules as the dynamic equivalents - see above comment)
-FCFLAGS_STATIC=-Wl,-Bstatic
-FCFLAGS_STATIC_TRAIL=-Wl,-Bdynamic
+FCFLAGS_STATIC=
+FCFLAGS_STATIC_TRAIL=
 
 # C
 #--
 # Compiler command
-CC=gcc
+CC=cc
 # Precision flags (passed to all compilation commands)
 CCFLAGS_PREC=-fopenmp
 # Flag used to set PIC (Position-independent-code; required by dynamic lib 
@@ -40,7 +40,7 @@ AR=ar -rc
 
 # Set the name of this platform; this will be included as the name of the 
 # top-level directory in the build
-PLATFORM=meto-x86-gfortran-gcc
+PLATFORM=meto-xc40-gfortran-gcc
 
 # Proceed to include the rest of the common makefile
 include Makefile

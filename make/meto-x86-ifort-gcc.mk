@@ -28,7 +28,7 @@ FCFLAGS_STATIC_TRAIL=
 # Compiler command
 CC=gcc
 # Precision flags (passed to all compilation commands)
-CCFLAGS_PREC=
+CCFLAGS_PREC=-fopenmp
 # Flag used to set PIC (Position-independent-code; required by dynamic lib 
 # and so will only be passed to compile objects destined for the dynamic lib)
 CCFLAGS_PIC=-fPIC

@@ -51,8 +51,6 @@ module fruit_util
      module procedure to_s_real32_
      module procedure to_s_real64_
      module procedure to_s_logical_
-     module procedure to_s_complex_
-     module procedure to_s_double_complex_
      module procedure to_s_string_
   end interface
 
@@ -97,24 +95,6 @@ contains
     write (result, *) value
     to_s_real64_ = adjustl(trim(result))
   end function to_s_real64_
-
-  function to_s_complex_ (value)
-    implicit none
-    character(len=500):: to_s_complex_
-    complex, intent(in) :: value
-    character(len=500) :: result
-    write (result, *) value
-    to_s_complex_ = adjustl(trim(result))
-  end function to_s_complex_
-
-  function to_s_double_complex_ (value)
-    implicit none
-    character(len=500):: to_s_double_complex_
-    complex(kind=kind(1.0D0)), intent(in) :: value
-    character(len=500) :: result
-    write (result, *) value
-    to_s_double_complex_ = adjustl(trim(result))
-  end function to_s_double_complex_
 
   function to_s_logical_ (value)
     implicit none
