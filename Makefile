@@ -40,35 +40,35 @@ PBOMB_DIR=${PWD}/pbomb
 #-------------
 HOOK=shum_drhook_dummy
 ${HOOK}: ${OUTDIRS}
-	make -C ${HOOK}/src
+	${MAKE} -C ${HOOK}/src
 
 # String conv
 #------------
 STR_CONV=shum_string_conv
 ${STR_CONV}: ${OUTDIRS}
-	make -C ${STR_CONV}/src
+	${MAKE} -C ${STR_CONV}/src
 
 # Byte-swapping
 #--------------
 BSWAP=shum_byteswap
 ${BSWAP}: ${STR_CONV} ${OUTDIRS} 
-	make -C ${BSWAP}/src
+	${MAKE} -C ${BSWAP}/src
 ${BSWAP}_tests: fruit ${BSWAP}
-	make -C ${BSWAP}/test
+	${MAKE} -C ${BSWAP}/test
 
 # Data conv
 #----------
 DATA_CONV=shum_data_conv
 ${DATA_CONV}: ${STR_CONV} ${OUTDIRS}
-	make -C ${DATA_CONV}/src
+	${MAKE} -C ${DATA_CONV}/src
 
 # WGDOS packing
 #--------------
 PACK=shum_wgdos_packing
 ${PACK}: ${STR_CONV} ${HOOK} ${OUTDIRS}
-	make -C ${PACK}/src
+	${MAKE} -C ${PACK}/src
 ${PACK}_tests: fruit ${PACK}
-	make -C ${PACK}/test
+	${MAKE} -C ${PACK}/test
 
 ALL_LIBS=${BSWAP} ${HOOK} ${STR_CONV} ${DATA_CONV} ${PACK}
 .PHONY: libs ${ALL_LIBS} $(addsuffix, _test, ${ALL_LIBS})
@@ -109,7 +109,7 @@ ${OUTDIR_TESTS}:
 	mkdir -p ${LIBDIR_OUT}/tests
 
 test: ${OUTDIR_TESTS} $(addsuffix _tests, ${FRUITTESTS})
-	make -f ${FRUIT}/Makefile-driver
+	${MAKE} -f ${FRUIT}/Makefile-driver
 	${LIBDIR_OUT}/tests/fruit_tests_static.exe
 	${LIBDIR_OUT}/tests/fruit_tests_dynamic.exe
 endif
@@ -120,21 +120,21 @@ endif
 FRUIT=fruit
 .PHONY: fruit
 fruit: ${OUTDIRS}
-	make -C ${FRUIT}
+	${MAKE} -C ${FRUIT}
 
 # Cleanup targets
 #--------------------------------------------------------------------------------
 .PHONY: clean clean-temp clean-build 
 clean-temp:
-	make -C ${BSWAP}/src clean
-	make -C ${BSWAP}/test clean
-	make -C ${HOOK}/src clean
-	make -C ${STR_CONV}/src clean
-	make -C ${DATA_CONV}/src clean
-	make -C ${PACK}/src clean
-	make -C ${PACK}/test clean
-	make -C ${FRUIT} clean
-	make -f ${FRUIT}/Makefile-driver clean
+	${MAKE} -C ${BSWAP}/src clean
+	${MAKE} -C ${BSWAP}/test clean
+	${MAKE} -C ${HOOK}/src clean
+	${MAKE} -C ${STR_CONV}/src clean
+	${MAKE} -C ${DATA_CONV}/src clean
+	${MAKE} -C ${PACK}/src clean
+	${MAKE} -C ${PACK}/test clean
+	${MAKE} -C ${FRUIT} clean
+	${MAKE} -f ${FRUIT}/Makefile-driver clean
 
 clean-build: 
 	rm -rf ${OUTDIRS} ${OUTDIR_TESTS}

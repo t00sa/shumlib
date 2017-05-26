@@ -1,6 +1,11 @@
 # Platform specific settings
 #-------------------------------------------------------------------------------
 
+# Make
+#-----
+# Make command
+MAKE=make
+
 # Fortran
 #--------
 # Compiler command

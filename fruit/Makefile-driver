@@ -64,11 +64,11 @@ $(STATIC_EXEC): $(DRIVER)
 # Dynamic executable
 #-------------------
 $(DYNAMIC_EXEC): $(DRIVER)
-	${FC} ${FCFLAGS_PREC} ${FCFLAGS_DYNAMIC} ${FCFLAGS_PIC} \
+	${FC} ${FCFLAGS_PREC} ${FCFLAGS_DYNAMIC} \
 	$< $(TEST_DYNAMIC) ${TEST_FLAGS_INCL} \
 	-I${LIBDIR_OUT}/include -L${LIBDIR_OUT}/lib \
 	${TEST_FLAGS_LINK} ${TEST_FLAGS_LINK} \
-	-Wl,-rpath=${LIBDIR_OUT}/lib -o $@ ${FCFLAGS_DYNAMIC_TRAIL}
+	-o $@ ${FCFLAGS_DYNAMIC_TRAIL}
 
 # Cleanup
 #--------

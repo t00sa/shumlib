@@ -9,9 +9,9 @@ MAKE=make
 # Fortran
 #--------
 # Compiler command
-FC=ftn
+FC=gfortran
 # Precision flags (passed to all compilation commands)
-FCFLAGS_PREC=-standard-semantics -assume nostd_mod_proc_name -std03 -openmp
+FCFLAGS_PREC=-std=f2003 -pedantic -pedantic-errors -fno-range-check -fopenmp
 # Flag used to set PIC (Position-independent-code; required by dynamic lib 
 # and so will only be passed to compile objects destined for the dynamic lib)
 FCFLAGS_PIC=-fPIC
@@ -21,19 +21,19 @@ FCFLAGS_SHARED=-shared
 # control of this is argument order dependent - for these cases the first 
 # variable will be inserted before the link commands and the second will be
 # inserted afterwards
-FCFLAGS_DYNAMIC=-dynamic
+FCFLAGS_DYNAMIC=
 FCFLAGS_DYNAMIC_TRAIL=-Wl,-rpath=${LIBDIR_OUT}/lib
 # Flags used for compiling a statically linked test executable (following the
 # same rules as the dynamic equivalents - see above comment)
-FCFLAGS_STATIC=
-FCFLAGS_STATIC_TRAIL=
+FCFLAGS_STATIC=-Wl,-Bstatic
+FCFLAGS_STATIC_TRAIL=-Wl,-Bdynamic
 
 # C
 #--
 # Compiler command
-CC=cc
+CC=gcc
 # Precision flags (passed to all compilation commands)
-CCFLAGS_PREC=-qopenmp
+CCFLAGS_PREC=-fopenmp
 # Flag used to set PIC (Position-independent-code; required by dynamic lib 
 # and so will only be passed to compile objects destined for the dynamic lib)
 CCFLAGS_PIC=-fPIC
@@ -45,7 +45,7 @@ AR=ar -rc
 
 # Set the name of this platform; this will be included as the name of the 
 # top-level directory in the build
-PLATFORM=meto-xc40-ifort-icc
+PLATFORM=niwa-x86-gfortran-gcc
 
 # Proceed to include the rest of the common makefile
 include Makefile

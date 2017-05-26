@@ -4,25 +4,25 @@
 # Make
 #-----
 # Make command
-MAKE=make
+MAKE=gmake
 
 # Fortran
 #--------
 # Compiler command
-FC=ftn
+FC=xlf2003_r
 # Precision flags (passed to all compilation commands)
-FCFLAGS_PREC=-standard-semantics -assume nostd_mod_proc_name -std03 -openmp
+FCFLAGS_PREC=-qsmp=omp
 # Flag used to set PIC (Position-independent-code; required by dynamic lib 
 # and so will only be passed to compile objects destined for the dynamic lib)
-FCFLAGS_PIC=-fPIC
+FCFLAGS_PIC=-qmkshrobj
 # Flags used to toggle the building of a dynamic (shared) library
-FCFLAGS_SHARED=-shared
+FCFLAGS_SHARED=-G
 # Flags used for compiling a dynamically linked test executable; in some cases
 # control of this is argument order dependent - for these cases the first 
 # variable will be inserted before the link commands and the second will be
 # inserted afterwards
-FCFLAGS_DYNAMIC=-dynamic
-FCFLAGS_DYNAMIC_TRAIL=-Wl,-rpath=${LIBDIR_OUT}/lib
+FCFLAGS_DYNAMIC=-brtl
+FCFLAGS_DYNAMIC_TRAIL=
 # Flags used for compiling a statically linked test executable (following the
 # same rules as the dynamic equivalents - see above comment)
 FCFLAGS_STATIC=
@@ -31,12 +31,12 @@ FCFLAGS_STATIC_TRAIL=
 # C
 #--
 # Compiler command
-CC=cc
+CC=xlc_r
 # Precision flags (passed to all compilation commands)
-CCFLAGS_PREC=-qopenmp
+CCFLAGS_PREC=-qsmp=omp
 # Flag used to set PIC (Position-independent-code; required by dynamic lib 
 # and so will only be passed to compile objects destined for the dynamic lib)
-CCFLAGS_PIC=-fPIC
+CCFLAGS_PIC=-qmkshrobj
 
 # Archiver
 #---------
@@ -45,7 +45,7 @@ AR=ar -rc
 
 # Set the name of this platform; this will be included as the name of the 
 # top-level directory in the build
-PLATFORM=meto-xc40-ifort-icc
+PLATFORM=niwa-pwr6-xlf-xlc
 
 # Proceed to include the rest of the common makefile
 include Makefile

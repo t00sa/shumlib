@@ -1,6 +1,11 @@
 # Platform specific settings
 #-------------------------------------------------------------------------------
 
+# Make
+#-----
+# Make command
+MAKE=make
+
 # Fortran
 #--------
 # Compiler command
@@ -17,7 +22,7 @@ FCFLAGS_SHARED=-shared -L${CRAYLIBS_X86_64} -lomp -lpgas-dmapp
 # variable will be inserted before the link commands and the second will be
 # inserted afterwards
 FCFLAGS_DYNAMIC=-dynamic
-FCFLAGS_DYNAMIC_TRAIL=
+FCFLAGS_DYNAMIC_TRAIL=-Wl,-rpath=${LIBDIR_OUT}/lib
 # Flags used for compiling a statically linked test executable (following the
 # same rules as the dynamic equivalents - see above comment)
 FCFLAGS_STATIC=
