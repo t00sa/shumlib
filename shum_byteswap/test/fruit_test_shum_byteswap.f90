@@ -44,7 +44,22 @@ CONTAINS
 
 SUBROUTINE fruit_test_shum_byteswap
 
+USE, INTRINSIC :: ISO_FORTRAN_ENV, ONLY: OUTPUT_UNIT
+USE f_shum_byteswap_version_mod, ONLY: get_shum_byteswap_version
+
 IMPLICIT NONE 
+
+INTEGER(KIND=int64) :: version
+
+! Note: we don't have a test case for the version checking because we don't
+! want the testing to include further hardcoded version numbers to test
+! against.  Since the version module is simple and hardcoded anyway it's 
+! sufficient to make sure it is callable; but let's print the version for info.
+version = get_shum_byteswap_version()
+
+WRITE(OUTPUT_UNIT, "()")
+WRITE(OUTPUT_UNIT, "(A,I0)")                                                   &
+    "Testing shum_byteswap at Shumlib version: ", version
 
 CALL run_test_case(test_returns_valid_endian, "returns_valid_endian")
 CALL run_test_case(test_64bit_data_8_word_size, "64bit_data_8_word_size")

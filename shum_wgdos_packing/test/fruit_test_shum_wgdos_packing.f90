@@ -56,7 +56,22 @@ CONTAINS
 
 SUBROUTINE fruit_test_shum_wgdos_packing
 
+USE, INTRINSIC :: ISO_FORTRAN_ENV, ONLY: OUTPUT_UNIT
+USE f_shum_wgdos_packing_version_mod, ONLY: get_shum_wgdos_packing_version
+
 IMPLICIT NONE 
+
+INTEGER(KIND=int64) :: version
+
+! Note: we don't have a test case for the version checking because we don't
+! want the testing to include further hardcoded version numbers to test
+! against.  Since the version module is simple and hardcoded anyway it's 
+! sufficient to make sure it is callable; but let's print the version for info.
+version = get_shum_wgdos_packing_version()
+
+WRITE(OUTPUT_UNIT, "()")
+WRITE(OUTPUT_UNIT, "(A,I0)")                                                   &
+    "Testing shum_wgdos_packing at Shumlib version: ", version
 
 CALL run_test_case(                                                            &
     test_pack_simple_field_1d_arg64, "pack_simple_field_1d_arg64")

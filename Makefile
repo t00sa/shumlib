@@ -42,11 +42,12 @@ ${OUTDIRS}:
 	mkdir -p ${LIBDIR_OUT}/lib
 	mkdir -p ${LIBDIR_OUT}/include
 
-# Precision Bomb (a C-header which will protect against compilation on
-# platforms where the assumptions about precision made in the libraries is
-# invalid)
+# Setup path to directory containing common/shared components; these include
+# functions that provide Shumlib version information and the C Precision Bomb
+# (which will protect against compilation on platforms where the assumptions 
+# about precision made in the libraries is invalid)
 #--------------------------------------------------------------------------------
-PBOMB_DIR=${PWD}/pbomb
+COMMON_DIR=${PWD}/common
 
 # Libraries
 #--------------------------------------------------------------------------------

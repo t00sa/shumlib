@@ -9,6 +9,11 @@ ${LIBTARGETS}: libshum_wgdos_packing.so libshum_wgdos_packing.a
 	cp $^ ${LIBDIR_OUT}/lib
 	cp *.h *.mod ${LIBDIR_OUT}/include
 
+# Include precision bomb and version reporting information
+#-------------------------------------------------------------------------------
+VERSION_LIBNAME=shum_wgdos_packing
+include ${COMMON_DIR}/Makefile-version
+
 # Static library - uses archiver to create library
 #-------------------------------------------------------------------------------
 f_shum_wgdos_packing.o: f_shum_wgdos_packing.f90
@@ -19,7 +24,8 @@ c_shum_wgdos_packing.o: c_shum_wgdos_packing.f90 f_shum_wgdos_packing.o
 
 libshum_wgdos_packing.a: \
 	f_shum_wgdos_packing.o \
-	c_shum_wgdos_packing.o 
+	c_shum_wgdos_packing.o \
+	${VERSION_OBJECTS}
 	${AR} $@ $^
 
 # Dynamic library - uses compiler to create shared library - the object files
@@ -34,11 +40,12 @@ c_shum_wgdos_packing_PIC.o: c_shum_wgdos_packing.f90 f_shum_wgdos_packing_PIC.o
 
 libshum_wgdos_packing.so: \
 	f_shum_wgdos_packing_PIC.o \
-	c_shum_wgdos_packing_PIC.o
+	c_shum_wgdos_packing_PIC.o \
+	${VERSION_OBJECTS_PIC}
 	${FC} ${FCFLAGS_SHARED} ${FCFLAGS} ${FCFLAGS_PIC} $^ -o $@
 
 # Cleanup
 #-------------------------------------------------------------------------------
 .PHONY: clean
 clean: 
-	rm -f *.o *.mod *.so *.a
+	rm -f *.o *.mod *.so *.a ${VERSION_CLEAN}
