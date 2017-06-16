@@ -8,6 +8,7 @@ LIBTARGETS= \
 ${LIBTARGETS}: libshum_string_conv.so libshum_string_conv.a
 	cp $^ ${LIBDIR_OUT}/lib
 	cp *.mod ${LIBDIR_OUT}/include
+	cp ${COMMON_DIR}/shumlib_version.h ${LIBDIR_OUT}/include
 
 # Include precision bomb and version reporting information
 #-------------------------------------------------------------------------------

@@ -8,6 +8,7 @@ LIBTARGETS= \
 ${LIBTARGETS}: libshum_wgdos_packing.so libshum_wgdos_packing.a
 	cp $^ ${LIBDIR_OUT}/lib
 	cp *.h *.mod ${LIBDIR_OUT}/include
+	cp ${COMMON_DIR}/shumlib_version.h ${LIBDIR_OUT}/include
 
 # Include precision bomb and version reporting information
 #-------------------------------------------------------------------------------

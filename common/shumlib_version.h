@@ -27,6 +27,8 @@
 #if !defined(SHUMLIB_VERSION_H)
 #define SHUMLIB_VERSION_H
 
+#include <inttypes.h>
+
 // Master definition of version number (uses YYYYMMX format) 
 //                              where "X" is the release number in month MM
 #if !defined(SHUMLIB_VERSION)
@@ -47,4 +49,4 @@
 
 #endif
 
-
+extern int64_t GET_SHUMLIB_VERSION(SHUMLIB_LIBNAME);
