@@ -14,6 +14,8 @@ FC=xlf2003_r
 FCFLAGS_PREC=
 # Flag used to set OpenMP (passed to all compilation commands)
 FCFLAGS_OPENMP=-qsmp=omp
+# Flag used to unset OpenMP (passed to all compilation commands)
+FCFLAGS_NOOPENMP=
 # Any other flags (to be passed to all compliation commands)
 FCFLAGS_EXTRA=
 # Flag used to set PIC (Position-independent-code; required by dynamic lib 
@@ -40,6 +42,8 @@ CC=xlc_r
 CCFLAGS_PREC=
 # Flag used to set OpenMP (passed to all compilation commands)
 CCFLAGS_OPENMP=-qsmp=omp
+# Flag used to unset OpenMP (passed to all compilation commands)
+CCFLAGS_NOOPENMP=
 # Any other flags (to be passed to all compilation commands)
 CCFLAGS_EXTRA=
 # Flag used to set PIC (Position-independent-code; required by dynamic lib 

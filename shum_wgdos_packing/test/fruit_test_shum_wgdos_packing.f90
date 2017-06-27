@@ -1244,7 +1244,6 @@ INTEGER(KIND=int64), PARAMETER :: len_packed = 21
 
 INTEGER(KIND=int32) :: packed_data(len_packed)
 REAL(KIND=real64)   :: unpacked_data(len1_unpacked*len2_unpacked)
-REAL(KIND=real64)   :: expected_data(len1_unpacked*len2_unpacked)
 
 INTEGER(KIND=int32) :: status
 REAL(KIND=real64)   :: mdi
@@ -1279,7 +1278,6 @@ INTEGER(KIND=int32), PARAMETER :: len_packed = 21
 
 INTEGER(KIND=int32) :: packed_data(len_packed)
 REAL(KIND=real64)   :: unpacked_data(len1_unpacked*len2_unpacked)
-REAL(KIND=real64)   :: expected_data(len1_unpacked*len2_unpacked)
 
 INTEGER(KIND=int32) :: status
 REAL(KIND=real32)   :: mdi
@@ -1314,7 +1312,6 @@ INTEGER(KIND=int64), PARAMETER :: len_packed = 21
 
 INTEGER(KIND=int32) :: packed_data(len_packed)
 REAL(KIND=real64)   :: unpacked_data(len1_unpacked, len2_unpacked)
-REAL(KIND=real64)   :: expected_data(len1_unpacked, len2_unpacked)
 
 INTEGER(KIND=int32) :: status
 REAL(KIND=real64)   :: mdi
@@ -1351,7 +1348,6 @@ INTEGER(KIND=int64), PARAMETER :: len_packed = 21
 
 INTEGER(KIND=int32) :: packed_data(len_packed)
 REAL(KIND=real64)   :: unpacked_data(len1_unpacked, len2_unpacked)
-REAL(KIND=real64)   :: expected_data(len1_unpacked, len2_unpacked)
 
 INTEGER(KIND=int32) :: status
 REAL(KIND=real64)   :: mdi

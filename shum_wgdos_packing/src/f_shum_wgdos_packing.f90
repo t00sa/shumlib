@@ -1194,8 +1194,8 @@ DO j=1,rows
     iword = istart(j)
     DO i1=1,nbits_bmap,64
       ival  = IOR(ISHFT(                                                       &
-                  IAND(INT(packed_field(iword),   KIND=int64), mask32), 32),   &
-                  IAND(INT(packed_field(iword+1), KIND=int64), mask32))
+                IAND(INT(packed_field(iword),   KIND=int64), mask32), 32),     &
+                IAND(INT(packed_field(iword+1), KIND=int64), mask32))
       iword = iword+2
       DO i2=0,MIN(nbits_bmap-i1, INT(63, KIND=int64))
         itmp(i1+i2) = MERGE(1,0,IAND(ival,mask_bits(i2))/=0)
@@ -1264,20 +1264,21 @@ DO j=1,rows
 
     ! Decode data
     IF (obtmap(j)) THEN
-      DO i=1,num
+      DO i=1,num-1
 
         ! Bit offset to value:
         ioff  = (i-1)*nbits(j)
 
-        ! Number of word in packed_field which contains first bit:
+        ! Calculate how many whole words have already been written (beyond the 
+        ! start of the data)
         iword = ISHFT(ioff,-5)+istart(j)
 
         ! We load this word and the following into ival,
         ! this way we don't have to care if a word boundary
         ! is crossed. This requires that ival is a 64 bit word!
         ival  = IOR(ISHFT(                                                     &
-                  IAND(INT(packed_field(iword),   KIND=int64), mask32), 32),   &
-                  IAND(INT(packed_field(iword+1), KIND=int64), mask32))
+                    IAND(INT(packed_field(iword),   KIND=int64), mask32), 32), &
+                    IAND(INT(packed_field(iword+1), KIND=int64), mask32))
 
         ! Number of bits we have to shift to the right:
         nshft = 64 - IAND(ioff, INT(31, KIND=int64)) - nbits(j)
@@ -1286,13 +1287,30 @@ DO j=1,rows
         ival = IBITS(ival,nshft,nbits(j))
         field(idx(i),j) = ival*aprec + base(j)
       END DO
+
+      ! Bit offset to value:
+      ioff  = (num-1)*nbits(j)
+
+      ! Number of word in packed_field which contains first bit:
+      iword = ISHFT(ioff,-5)+istart(j)
+
+      ival = INT(packed_field(iword), KIND=int64)
+
+      ! Number of bits we have to shift to the right:
+      nshft = 32 - IAND(ioff, INT(31, KIND=int64)) - nbits(j)
+
+      ! Mask ival and calculate decoded value:
+      ival = IBITS(ival,nshft,nbits(j))
+      field(idx(num),j) = ival*aprec + base(j)
+
     ELSE
-      DO i=1,num
+      DO i=1,num-1
 
         ! Bit offset to value:
         ioff  = (i-1)*nbits(j)
 
-        ! Number of word in packed_field which contains first bit:
+        ! Calculate how many whole words have already been written (beyond the 
+        ! start of the data)
         iword = ISHFT(ioff,-5)+istart(j)
 
         ! We load this word and the following into ival,
@@ -1309,6 +1327,22 @@ DO j=1,rows
         ival = IBITS(ival,nshft,nbits(j))
         field(i,j) = ival*aprec + base(j)
       END DO
+
+      ! Bit offset to value:
+      ioff  = (num-1)*nbits(j)
+
+      ! Number of word in packed_field which contains first bit:
+      iword = ISHFT(ioff,-5)+istart(j)
+
+      ival = INT(packed_field(iword), KIND=int64)
+
+      ! Number of bits we have to shift to the right:
+      nshft = 32 - IAND(ioff, INT(31, KIND=int64)) - nbits(j)
+
+      ! Mask ival and calculate decoded value:
+      ival = IBITS(ival,nshft,nbits(j))
+      field(num,j) = ival*aprec + base(j)
+
     END IF
 
   END IF

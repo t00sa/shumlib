@@ -27,7 +27,7 @@ About this Documentation
 This documentation is split into a few different sections.  An
 installation/build guide which details how to configure and build Shumlib
 (``INSTALL.rst``), a series of API Reference guides which describe the exposed
-interfaces for each library (``API-SUM-\*.rst``), and a Developer's Guide which
+interfaces for each library (``API-SHUM-\*.rst``), and a Developer's Guide which
 contains more in-depth information for developers of Shumlib itself
 (``DEVELOP.rst``).
 

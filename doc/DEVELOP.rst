@@ -2,7 +2,7 @@ Developer's Guide
 -----------------
 
 This part of the documentation is intended for developers of Shumlib itself, and
-goes into more detail than is required to simply *use* the libraries.
+goes into more detail than is required simply to *use* the libraries.
 
 Library Code/Standards
 %%%%%%%%%%%%%%%%%%%%%%
@@ -205,7 +205,7 @@ FRUIT Testing
 
 FRUIT is an externally developed Fortran testing framework which has been
 reproduced and modified to form the basis for testing in Shumlib. It was chosen
-for it's fairly simple nature - the entire framework consists of a single
+for its fairly simple nature - the entire framework consists of a single
 Fortran file (plus one extension file if one wishes to test MPI code). 
 
 Due to the need for a lot of Fortran "boilerplate" code in the many overloaded
@@ -433,8 +433,8 @@ following way:
     is produced (once more in the *library's* directory), this module uses the
     ``ISO_C_BINDING`` module to call the C function above directly.
 
-    5. The above Fortran module is compiled to produce a pair of object (with
-    and without ``PIC``) in the *library's* directory.
+    5. The above Fortran module is compiled to produce a pair of object files
+    (with and without ``PIC``) in the *library's* directory.
 
     6. Finally; a set of 3 variables are defined which hold key filenames which
     the library makefile will require; ``VERSION_OBJECTS`` and

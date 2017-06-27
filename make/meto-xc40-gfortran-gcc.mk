@@ -14,6 +14,8 @@ FC=ftn
 FCFLAGS_PREC=
 # Flag used to set OpenMP (passed to all compilation commands)
 FCFLAGS_OPENMP=-fopenmp
+# Flag used to unset OpenMP (passed to all compilation commands)
+FCFLAGS_NOOPENMP=
 # Any other flags (to be passed to all compliation commands)
 FCFLAGS_EXTRA=-std=f2003 -pedantic -pedantic-errors -fno-range-check
 # Flag used to set PIC (Position-independent-code; required by dynamic lib 
@@ -40,6 +42,8 @@ CC=cc
 CCFLAGS_PREC=
 # Flag used to set OpenMP (passed to all compilation commands)
 CCFLAGS_OPENMP=-fopenmp
+# Flag used to unset OpenMP (passed to all compilation commands)
+CCFLAGS_NOOPENMP=-Wno-unknown-pragmas
 # Any other flags (to be passed to all compilation commands)
 CCFLAGS_EXTRA=
 # Flag used to set PIC (Position-independent-code; required by dynamic lib 

@@ -14,6 +14,8 @@ FC=ifort
 FCFLAGS_PREC=
 # Flag used to set OpenMP (passed to all compilation commands)
 FCFLAGS_OPENMP=-openmp
+# Flag used to unset OpenMP (passed to all compilation commands)
+FCFLAGS_NOOPENMP=
 # Any other flags (to be passed to all compliation commands)
 FCFLAGS_EXTRA=-standard-semantics -assume nostd_mod_proc_name -std03
 # Flag used to set PIC (Position-independent-code; required by dynamic lib 
@@ -40,6 +42,8 @@ CC=gcc
 CCFLAGS_PREC=
 # Flag used to set OpenMP (passed to all compilation commands)
 CCFLAGS_OPENMP=-fopenmp
+# Flag used to unset OpenMP (passed to all compilation commands)
+CCFLAGS_NOOPENMP=-Wno-unknown-pragmas
 # Any other flags (to be passed to all compilation commands)
 CCFLAGS_EXTRA=
 # Flag used to set PIC (Position-independent-code; required by dynamic lib 
