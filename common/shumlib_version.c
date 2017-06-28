@@ -33,4 +33,4 @@
 #include "shumlib_version.h"
 
 int64_t GET_SHUMLIB_VERSION(SHUMLIB_LIBNAME) {
-  return SHUMLIB_VERSION;};
+  return SHUMLIB_VERSION;}

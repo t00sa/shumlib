@@ -240,8 +240,8 @@ else
   /* ERROR - unsupported type */
   errorcode = -2;
   snprintf(message, message_len_t,
-           "IEEE2IEG: Error - unsupported data type = %d. Return code = %"
-           PRId64, *data_type, errorcode);
+           "IEEE2IEG: Error - unsupported data type = %" PRIdMAX ". Return code = %"
+           PRId64, (intmax_t)*data_type, errorcode);
   return errorcode;
 }
 
@@ -435,8 +435,8 @@ else
   /* ERROR - unsupported data type */
   errorcode = -2;
   snprintf(message, message_len_t,
-           "IEG2IEEE: Error - unsupported data type = %d. Return code = %"
-           PRId64, *data_type, errorcode);
+           "IEG2IEEE: Error - unsupported data type = %" PRIdMAX ". Return code = %"
+           PRId64, (intmax_t)*data_type, errorcode);
   return errorcode ;
 }
 
@@ -629,8 +629,8 @@ else
   /* ERROR - unsupported type */
   errorcode = -2;
   snprintf(message, message_len_t,
-           "IEEE2IBM: Error - unsupported data type = %d. Return code = %"
-           PRId64, *data_type, errorcode);
+           "IEEE2IBM: Error - unsupported data type = %" PRIdMAX ". Return code = %"
+           PRId64, (intmax_t)*data_type, errorcode);
   return errorcode;
 }
 
@@ -824,8 +824,8 @@ else
   /* ERROR - unsupported type */
   errorcode = -2;
   snprintf(message, message_len_t,
-           "IBM2IEEE: Error - unsupported data type = %d. Return code = %"
-           PRId64, *data_type, errorcode);
+           "IBM2IEEE: Error - unsupported data type = %" PRIdMAX ". Return code = %"
+           PRId64, (intmax_t)*data_type, errorcode);
   return errorcode;
 }
 

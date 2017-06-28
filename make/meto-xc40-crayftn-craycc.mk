@@ -18,14 +18,18 @@ FCFLAGS_OPENMP=-h omp
 FCFLAGS_NOOPENMP=-h noomp
 # Any other flags (to be passed to all compliation commands)
 FCFLAGS_EXTRA=-G2 -O2 -Ovector1 -hfp0 -hflex_mp=strict
-# Flag used to set PIC (Position-independent-code; required by dynamic lib 
+# Flag used to set PIC (Position-independent-code; required by dynamic lib
 # and so will only be passed to compile objects destined for the dynamic lib)
 FCFLAGS_PIC=-h pic
 # Flags used to toggle the building of a dynamic (shared) library
+FCFLAGS_SHARED=-shared -L${CRAYLIBS_X86_64} -lomp -lpgas-dmapp
+ifdef SHUM_OPENMP
+ifeq (${SHUM_OPENMP}, false)
 FCFLAGS_SHARED=-shared
-
+endif
+endif
 # Flags used for compiling a dynamically linked test executable; in some cases
-# control of this is argument order dependent - for these cases the first 
+# control of this is argument order dependent - for these cases the first
 # variable will be inserted before the link commands and the second will be
 # inserted afterwards
 FCFLAGS_DYNAMIC=-dynamic
@@ -46,7 +50,7 @@ CCFLAGS_OPENMP=-h omp
 # Flag used to unset OpenMP (passed to all compilation commands)
 CCFLAGS_NOOPENMP=-h noomp
 # Any other flags (to be passed to all compilation commands)
-CCFLAGS_EXTRA=-G2 -O3 -h c99
+CCFLAGS_EXTRA=-G2 -O3 -h c99 -hconform -hstdc -hnotolerant -hnognu -herror_on_warning
 # Flag used to set PIC (Position-independent-code; required by dynamic lib 
 # and so will only be passed to compile objects destined for the dynamic lib)
 CCFLAGS_PIC=-h pic

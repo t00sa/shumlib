@@ -45,7 +45,7 @@
    to allow each library to create its own unique version function
 */
 #define SHUMLIB_XSTRING_EXPANSION(str) get_##str##_version
-#define GET_SHUMLIB_VERSION(libname) SHUMLIB_XSTRING_EXPANSION(libname)()
+#define GET_SHUMLIB_VERSION(libname) SHUMLIB_XSTRING_EXPANSION(libname)(void)
 
 #endif
 

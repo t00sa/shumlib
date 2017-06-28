@@ -1094,7 +1094,7 @@ INTEGER(KIND=int64), INTENT(IN)  :: rows
 REAL(KIND=real64),   INTENT(OUT) :: field(cols, rows)
 CHARACTER(LEN=*),    INTENT(OUT) :: message
 
-INTEGER(KIND=int64) :: i, j, nshft, num, iword, ioff, mant, iexp
+INTEGER(KIND=int64) :: i, j, nshft, num, iword, ioff, mant, iexp, inner_num
 
 INTEGER(KIND=int64) :: ival
 
@@ -1163,7 +1163,7 @@ END DO
 !$OMP&                base, cols, mask_bits, field, packed_field, rmdi, istart,&
 !$OMP&                aprec)                                                   &
 !$OMP&         PRIVATE(j, nbits_bmap, mant, iexp, ival, iword, itmp,           &
-!$OMP&                 nshft, i1, i2, i, num, imap, idx, ioff)
+!$OMP&                 nshft, i1, i2, i, num, imap, idx, ioff, inner_num)
 DO j=1,rows
   ibase(j) = packed_field(istart(j)-2)
   nbits(j) = IAND(ISHFT(packed_field(istart(j)-1),-16),mask16)
@@ -1262,11 +1262,19 @@ DO j=1,rows
       num = cols
     END IF
 
+    ! Calculate the number of packed values we can write before the final word
+    ! of packed_field() is reached
+    inner_num = (num * nbits(j) + 31)/32 - 1
+    inner_num = (inner_num * 32 + nbits(j) - 1)/nbits(j)
+
     ! Decode data
     IF (obtmap(j)) THEN
-      DO i=1,num-1
 
-        ! Bit offset to value:
+      ! Unpack the values before the final word is reached - these may straddle
+      ! word boundaries.
+      DO i=1,inner_num
+
+        ! Bit offset to value (the total bits already written):
         ioff  = (i-1)*nbits(j)
 
         ! Calculate how many whole words have already been written (beyond the 
@@ -1280,33 +1288,45 @@ DO j=1,rows
                     IAND(INT(packed_field(iword),   KIND=int64), mask32), 32), &
                     IAND(INT(packed_field(iword+1), KIND=int64), mask32))
 
-        ! Number of bits we have to shift to the right:
+        ! Number of bits into ival we have to count, before we are
+        ! at the start of the current packed value:
         nshft = 64 - IAND(ioff, INT(31, KIND=int64)) - nbits(j)
 
         ! Mask ival and calculate decoded value:
         ival = IBITS(ival,nshft,nbits(j))
         field(idx(i),j) = ival*aprec + base(j)
+
       END DO
 
-      ! Bit offset to value:
-      ioff  = (num-1)*nbits(j)
+      ! Unpack the final word - these values won't straddle word boundaries
+      DO i=inner_num+1,num
 
-      ! Number of word in packed_field which contains first bit:
-      iword = ISHFT(ioff,-5)+istart(j)
+        ! Bit offset to value (the total bits already written):
+        ioff  = (i-1)*nbits(j)
 
-      ival = INT(packed_field(iword), KIND=int64)
+        ! Calculate how many whole words have already been written (beyond the
+        ! start of the data)
+        iword = ISHFT(ioff,-5)+istart(j)
 
-      ! Number of bits we have to shift to the right:
-      nshft = 32 - IAND(ioff, INT(31, KIND=int64)) - nbits(j)
+        ival = INT(packed_field(iword), KIND=int64)
 
-      ! Mask ival and calculate decoded value:
-      ival = IBITS(ival,nshft,nbits(j))
-      field(idx(num),j) = ival*aprec + base(j)
+        ! Number of bits into ival we have to count, before we are
+        ! at the start of the current packed value:
+        nshft = 32 - IAND(ioff, INT(31, KIND=int64)) - nbits(j)
+
+        ! Mask ival and calculate decoded value:
+        ival = IBITS(ival,nshft,nbits(j))
+        field(idx(i),j) = ival*aprec + base(j)
+
+      END DO
 
     ELSE
-      DO i=1,num-1
 
-        ! Bit offset to value:
+      ! Unpack the values before the final word is reached - these may straddle
+      ! word boundaries.
+      DO i=1,inner_num
+
+        ! Bit offset to value (the total bits already written):
         ioff  = (i-1)*nbits(j)
 
         ! Calculate how many whole words have already been written (beyond the 
@@ -1320,7 +1340,8 @@ DO j=1,rows
                   IAND(INT(packed_field(iword),   KIND=int64), mask32), 32),   &
                   IAND(INT(packed_field(iword+1), KIND=int64), mask32))
 
-        ! Number of bits we have to shift to the right:
+        ! Number of bits into ival we have to count, before we are
+        ! at the start of the current packed value:
         nshft = 64 - IAND(ioff, INT(31, KIND=int64)) - nbits(j)
 
         ! Mask ival and calculate decoded value:
@@ -1328,20 +1349,25 @@ DO j=1,rows
         field(i,j) = ival*aprec + base(j)
       END DO
 
-      ! Bit offset to value:
-      ioff  = (num-1)*nbits(j)
+      ! Unpack the final word - these values won't straddle word boundaries
+      DO i=inner_num+1,num
+        ! Bit offset to value (the total bits already written):
+        ioff  = (i-1)*nbits(j)
 
-      ! Number of word in packed_field which contains first bit:
-      iword = ISHFT(ioff,-5)+istart(j)
+        ! Calculate how many whole words have already been written (beyond the
+        ! start of the data)
+        iword = ISHFT(ioff,-5)+istart(j)
 
-      ival = INT(packed_field(iword), KIND=int64)
+        ival = INT(packed_field(iword), KIND=int64)
 
-      ! Number of bits we have to shift to the right:
-      nshft = 32 - IAND(ioff, INT(31, KIND=int64)) - nbits(j)
+        ! Number of bits into ival we have to count, before we are
+        ! at the start of the current packed value:
+        nshft = 32 - IAND(ioff, INT(31, KIND=int64)) - nbits(j)
 
-      ! Mask ival and calculate decoded value:
-      ival = IBITS(ival,nshft,nbits(j))
-      field(num,j) = ival*aprec + base(j)
+        ! Mask ival and calculate decoded value:
+        ival = IBITS(ival,nshft,nbits(j))
+        field(i,j) = ival*aprec + base(j)
+      END DO
 
     END IF
 

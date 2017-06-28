@@ -41,11 +41,15 @@ CC=gcc
 # Precision flags (passed to all compilation commands)
 CCFLAGS_PREC=
 # Flag used to set OpenMP (passed to all compilation commands)
-CCFLAGS_OPENMP=
+CCFLAGS_OPENMP=-Wno-unknown-pragmas
 # Flag used to unset OpenMP (passed to all compilation commands)
-CCFLAGS_NOOPENMP=
+CCFLAGS_NOOPENMP=-Wno-unknown-pragmas
 # Any other flags (to be passed to all compilation commands)
-CCFLAGS_EXTRA=
+CCFLAGS_EXTRA=-std=c99 -Wall -Wextra -Werror -Wformat=2 -Winit-self -Wfloat-equal   \
+              -Wpointer-arith -Wbad-function-cast -Wcast-qual -Wcast-align          \
+              -Wconversion -Wlogical-op -Wstrict-prototypes -Wmissing-declarations  \
+              -Wredundant-decls -Wnested-externs -Woverlength-strings               \
+              -fdiagnostics-show-option
 # Flag used to set PIC (Position-independent-code; required by dynamic lib 
 # and so will only be passed to compile objects destined for the dynamic lib)
 CCFLAGS_PIC=-fPIC
