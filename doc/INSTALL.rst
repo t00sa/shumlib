@@ -34,9 +34,9 @@ configuration for your site already exists, otherwise you can create a new file
 or try using an existing file that appears to be a close match for your own
 platform/architecture.
 
-Either way the existing configuration files are liberally commented to indicate 
+Either way the existing configuration files are liberally commented to indicate
 what each value represents - making any of them a good starting point to base
-your own file on. You should assume that all of the available values must be 
+your own file on. You should assume that all of the available values must be
 defined (but some may be left blank).
 
 Running Make
@@ -50,12 +50,12 @@ passing the file to make, e.g.
     make -f <configuration> [library_name(s)]
 
 Where ``<configuration>`` gives the full path to the configuration file you wish
-to build and a ``library_name`` refers to any of the library sub-directories
-starting with ``shum_*`` e.g. ``shum_wgdos_packing``.  Note that these trailing
-arguments are optional - if you omit them the default behaviour will be to
-compile all available libraries. Otherwise only named libraries *and any
-libraries on which they depend* will be compiled (so for instance if the
-argument ``shum_wgdos_pack`` is passed this will also compile
+to use for the build, and ``library_name`` refers to one or more of the library
+sub-directories starting with ``shum_*`` (e.g. ``shum_wgdos_packing``).  Note
+that these trailing arguments are optional - if you omit them the default
+behaviour will be to compile all available libraries. Otherwise only named
+libraries *and any libraries on which they depend* will be compiled (so for
+instance if the argument ``shum_wgdos_packing`` is passed this will also compile
 ``shum_string_conv``, since the packing library makes use of it).
 
 So for example, to compile the WGDOS packing library and its dependent
@@ -88,23 +88,52 @@ FRUIT Testing
 %%%%%%%%%%%%%
 
 Shumlib also includes a series of unit-tests, to confirm that the runtime
-behaviour of the libraries is as expected. To build and run these tests you must
-first build at least one library (see above) and then re-run the make command
-with the single argument ``test``; e.g:
+behaviour of the libraries is as expected.
+
+To build and run the tests for a specific library, you must run make with the
+tests you wish to run as arguments. The names of the tests are given as the
+``library_name`` they apply to, appended with ``_tests``. You may specify more
+than one test at a time; e.g:
 
 .. parsed-literal::
 
-  make -f <configuration> test
+  make -f <configuration> <library_name>_tests [<library_name2>_tests ...]
 
-This will compile the FRUIT tests (FRUIT is an external unit testing framework
-distributed with Shumlib) and then execute them and display the results. You
+This will compile the specified libraries and their depdendancies as required.
+Following this it will compile the unit tests for the specified libraries. It
+will then compile the FRUIT driver (FRUIT is an external unit testing framework
+distributed with Shumlib) and execute the tests, displaying the results. You
 will notice that the test output appears twice - this is because each library is
 also built twice; once as a dynamic library and once as a static library, and
 these are tested separately.
 
-Note that any additional environment variables passed to the initial build must
-also be passed to the above command (e.g. if you specified an alternative
-``LIBDIR_OUT`` you should specify it again for the testing).
+If you wish to build and run *all* of the availible tests, you can run make with
+the ``check`` target; e.g:
+
+.. parsed-literal::
+
+  make -f <configuration> check
+
+This will build all the libraries which contain unit tests, their dependancies,
+and the FRUIT driver as required. It will then execute and display the tests as
+above.
+
+Note that this will not necessarily mean *all* the libraries within
+Shumlib are compiled, as not all of them will necessarily have tests, or be
+dependancies of libraries which do.
+
+Note also, that any additional environment variables passed to the initial build
+must also be passed to the above commands (e.g. if you specified an alternative
+``LIBDIR_OUT`` you should specify it again for the testing). This is true
+regardless of if you are running an individual test, or all of them usuing the
+``check`` target.
+
+As an example, to compile and run the WGDOS packing library unit tests using the
+``meto-x86-ifort-gcc`` config you would run the command:
+
+.. parsed-literal::
+
+    make -f make/meto-x86-ifort-gcc.mk shum_wgdos_packing_tests
 
 Cleanup
 %%%%%%%

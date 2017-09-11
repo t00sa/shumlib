@@ -15,23 +15,23 @@
 #--------------------------------------------------------------------------------
 
 f_${VERSION_LIBNAME}_version_mod.f90:
-	echo "MODULE f_${VERSION_LIBNAME}_version_mod" > $@
-	echo "USE, INTRINSIC :: ISO_C_BINDING" >> $@
-	echo "IMPLICIT NONE" >> $@
-	echo "INTERFACE" >> $@
-	echo "  FUNCTION get_${VERSION_LIBNAME}_version() RESULT(version) & " >> $@
-	echo "    BIND(C, name='get_${VERSION_LIBNAME}_version')" >> $@
-	echo "  IMPORT :: C_INT64_T" >> $@
-	echo "  IMPLICIT NONE" >> $@
-	echo "  INTEGER(KIND=C_INT64_T) :: version" >> $@
-	echo "  END FUNCTION get_${VERSION_LIBNAME}_version" >> $@
-	echo "END INTERFACE" >> $@
-	echo "END MODULE f_${VERSION_LIBNAME}_version_mod" >> $@
+	@echo "MODULE f_${VERSION_LIBNAME}_version_mod" > $@
+	@echo "USE, INTRINSIC :: ISO_C_BINDING" >> $@
+	@echo "IMPLICIT NONE" >> $@
+	@echo "INTERFACE" >> $@
+	@echo "  FUNCTION get_${VERSION_LIBNAME}_version() RESULT(version) &" >> $@
+	@echo "    BIND(C, name='get_${VERSION_LIBNAME}_version')" >> $@
+	@echo "  IMPORT :: C_INT64_T" >> $@
+	@echo "  IMPLICIT NONE" >> $@
+	@echo "  INTEGER(KIND=C_INT64_T) :: version" >> $@
+	@echo "  END FUNCTION get_${VERSION_LIBNAME}_version" >> $@
+	@echo "END INTERFACE" >> $@
+	@echo "END MODULE f_${VERSION_LIBNAME}_version_mod" >> $@
 
 c_${VERSION_LIBNAME}_version.h:
-	echo "#define SHUMLIB_LIBNAME ${VERSION_LIBNAME}" > $@
-	echo "#include \"shumlib_version.h\"" >> $@
-	echo "#undef SHUMLIB_LIBNAME" >> $@
+	@echo "#define SHUMLIB_LIBNAME ${VERSION_LIBNAME}" > $@
+	@echo "#include \"shumlib_version.h\"" >> $@
+	@echo "#undef SHUMLIB_LIBNAME" >> $@
 
 f_${VERSION_LIBNAME}_version_mod.o: \
         f_${VERSION_LIBNAME}_version_mod.f90 \

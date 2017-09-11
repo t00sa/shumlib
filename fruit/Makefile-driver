@@ -8,43 +8,60 @@ DRIVER=${PWD}/fruit/fruit_driver.f90
 STATIC_EXEC=${LIBDIR_OUT}/tests/fruit_tests_static.exe
 DYNAMIC_EXEC=${LIBDIR_OUT}/tests/fruit_tests_dynamic.exe
 
+# All of the libraries which have FRUIT tests
+FRUITTESTS=$(patsubst %/test,%,$(wildcard $(addsuffix /test, ${ALL_LIBS})))
+
+# Currently built libraries
+FRUIT_CURRENT_LIBS=$(patsubst lib%.so, %, $(notdir $(wildcard ${LIBDIR_OUT}/lib/*.so)))
+
+# Intersection of the above - i.e. names of libraries which are both compiled
+# and have tests available (so we can compile only tests that actually exist)
+FRUIT_AVAILIBLE_TESTS=$(foreach libname,                                       \
+                        ${FRUIT_CURRENT_LIBS},                                 \
+                        $(filter ${libname},                                   \
+                        ${FRUITTESTS}))
+
 .PHONY: test
 test: $(STATIC_EXEC) $(DYNAMIC_EXEC)
 
 # Construct the paths to the test directories from the names
-TEST_DIR=$(patsubst %, $(PWD)/%/test/, $(FRUITTESTS))
+TEST_DIR=$(patsubst %, $(PWD)/%/test/, $(FRUIT_AVAILIBLE_TESTS))
 
 # Include flags for the test directories
 TEST_FLAGS_INCL=$(addprefix -I, $(TEST_DIR))
 
 # Also construct the object filenames (static + dynamic)
-TEST_OBJ_STATIC=$(patsubst %, fruit_test_%.o, $(FRUITTESTS))
-TEST_OBJ_DYNAMIC=$(patsubst %, fruit_test_%_PIC.o, $(FRUITTESTS))
+TEST_OBJ_STATIC_F=$(patsubst %, fruit_test_%.o, $(FRUIT_AVAILIBLE_TESTS))
+TEST_OBJ_DYNAMIC_F=$(patsubst %, fruit_test_%_PIC.o, $(FRUIT_AVAILIBLE_TESTS))
+TEST_OBJ_STATIC_C=$(patsubst %, c_fruit_test_%.o, $(FRUIT_AVAILIBLE_TESTS))
+TEST_OBJ_DYNAMIC_C=$(patsubst %, c_fruit_test_%_PIC.o, $(FRUIT_AVAILIBLE_TESTS))
 
 # Create the full paths to the object files by combining the above
-TEST_STATIC=$(join $(TEST_DIR), $(TEST_OBJ_STATIC))
-TEST_DYNAMIC=$(join $(TEST_DIR), $(TEST_OBJ_DYNAMIC))
+TEST_STATIC=$(wildcard $(join $(TEST_DIR), $(TEST_OBJ_STATIC_F)))              \
+            $(wildcard $(join $(TEST_DIR), $(TEST_OBJ_STATIC_C)))
+TEST_DYNAMIC=$(wildcard $(join $(TEST_DIR), $(TEST_OBJ_DYNAMIC_F)))            \
+             $(wildcard $(join $(TEST_DIR), $(TEST_OBJ_DYNAMIC_C)))
 
 # The flags used to link against each library
-TEST_FLAGS_LINK=-lfruit $(addprefix -l, $(LIBNAMES))
+TEST_FLAGS_LINK=$(addprefix -l, $(FRUIT_CURRENT_LIBS))
 
 # Write the driver file - it is a very simple Fortran file which contains
 # the means to call each test module - note that everything must be named
 # according to a specific convention for this to work
 $(DRIVER): ${TEST_DYNAMIC} ${TEST_STATIC}
-	echo "PROGRAM fruit_driver" > ${DRIVER}
-	echo "USE fruit" >> ${DRIVER}
-	for name in $(FRUITTESTS) ; do \
+	@echo "PROGRAM fruit_driver" > ${DRIVER}
+	@echo "USE fruit" >> ${DRIVER}
+	@for name in $(FRUIT_AVAILIBLE_TESTS) ; do \
 	    echo "USE fruit_test_$${name}_mod" >> ${DRIVER} ; \
 	done
-	echo "IMPLICIT NONE" >> ${DRIVER}
-	echo "CALL init_fruit" >> ${DRIVER}
-	for name in $(FRUITTESTS) ; do \
+	@echo "IMPLICIT NONE" >> ${DRIVER}
+	@echo "CALL init_fruit" >> ${DRIVER}
+	@for name in $(FRUIT_AVAILIBLE_TESTS) ; do \
 	    echo "CALL fruit_test_$${name}" >> ${DRIVER} ; \
 	done
-	echo "CALL fruit_summary" >> ${DRIVER}
-	echo "CALL fruit_finalize" >> ${DRIVER}
-	echo "END PROGRAM fruit_driver" >> ${DRIVER}
+	@echo "CALL fruit_summary" >> ${DRIVER}
+	@echo "CALL fruit_finalize" >> ${DRIVER}
+	@echo "END PROGRAM fruit_driver" >> ${DRIVER}
 
 # Note: In both cases below the linking flags are included *twice*; this is
 # intentional, because some compilers strip away un-used symbols as they 

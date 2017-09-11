@@ -171,7 +171,7 @@ All Shumlib libraries expose a function named in this format; it allows access
 to the Shumlib version number used when compiling the library.
 
     **Required header/s**
-        None - always defined provided any other part of library is included.
+        ``c_shum_wgdos_packing_version.h``
 
     **Syntax**
         ``version = get_shum_wgdos_packing_version()``

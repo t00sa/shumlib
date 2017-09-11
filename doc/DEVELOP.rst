@@ -32,13 +32,13 @@ Shumlib modules should therefore contain these definitions:
 
 .. parsed-literal::
 
-    USE, INTRINSIC :: ISO_C_BINDING, ONLY: &                                   
+    USE, INTRINSIC :: ISO_C_BINDING, ONLY: &
       C_INT64_T, C_INT32_T, C_FLOAT, C_DOUBLE
 
     INTEGER, PARAMETER :: int64  = C_INT64_T
     INTEGER, PARAMETER :: int32  = C_INT32_T
     INTEGER, PARAMETER :: real64 = C_DOUBLE
-    INTEGER, PARAMETER :: real32 = C_FLOAT    
+    INTEGER, PARAMETER :: real32 = C_FLOAT
 
 And then *all* ``REAL`` and ``INTEGER`` variables should have their ``KIND`` set
 to one of these. An obvious question might be whether you can actually rely on
@@ -89,11 +89,11 @@ roughly the order they are processed when invoking a build:
         hopefully self explanatory. After setting up its variables each of these
         then invokes the top-level makefile.
 
-    **Top-level makefile** 
+    **Top-level makefile**
         Provides the main control structures for the build; handling things like
         the dependencies between different libraries, sets up some key variables
         and the handing-off to the individual library makefiles with global
-        targets like ``test`` or ``clean``) (finer detail in a section below).
+        targets like ``check`` or ``clean``) (finer detail in a section below).
 
     **Library makefiles**
         Each library (directory beginning with ``shum_``) contains a ``src``
@@ -107,8 +107,8 @@ roughly the order they are processed when invoking a build:
         In parallel to the ``src`` directory, each library directory
         (``shum_*``) also contains a ``test`` directory, containing additional
         code required to produce unit tests for the associated
-        library. Presently only the Fortran interfaces are tested, via the
-        "FRUIT" testing framework (more on this below).
+        library. The Fortran and C interfaces for the library are tested, via
+        the "FRUIT" testing framework (more on this below).
 
     **FRUIT and FRUIT driver makefile**
         As part of the testing the FRUIT testing framework is built (also into a
@@ -141,7 +141,7 @@ one can see the following definition for the byteswapping library:
 .. parsed-literal::
 
     BSWAP=shum_byteswap
-    ${BSWAP}: ${STR_CONV} ${OUTDIRS} 
+    ${BSWAP}: ${STR_CONV} ${OUTDIRS}
 	    ${MAKE} -C ${BSWAP}/src
 
 Notice that the dependencies for the ``${BSWAP}`` target include the variable
@@ -151,10 +151,11 @@ depends on functions from the string conversion library. By setting it up this
 way the string conversion library will *always* be built before the byteswapping
 library if required.
 
-Libraries for which tests are defined specify a second build target (appended
-with ``_test``) that depends on both ``fruit`` (the target for the FRUIT testing
-framework itself) and the main library (to ensure the library is always
-recompiled if needed before tests are run).
+Libraries for which tests are defined will also auto-generate a second build
+target (the library name appended with ``_tests``) that depends on both
+``fruit`` (the target for the FRUIT testing framework itself) and the main
+library (to ensure the library is always recompiled if needed before tests are
+run).
 
 Most of the actual build instructions in this file simply spawn sub-make
 commands located in the required directories (the ``src`` or ``test``
@@ -182,18 +183,18 @@ portability. Therefore every object file produced in these makefiles is repeated
 twice (once with and once without the ``PIC`` flag, and using a different naming
 scheme: appending ``_PIC`` before the extension).
 
-*If* the library has dependencies on any of the other Shumlib libraries, the 
-commands that compile each object should specify the output include directory 
-(i.e. with ``-I${LIBDIR_OUT}/include``) so that any headers (or "mod" files) 
+*If* the library has dependencies on any of the other Shumlib libraries, the
+commands that compile each object should specify the output include directory
+(i.e. with ``-I${LIBDIR_OUT}/include``) so that any headers (or "mod" files)
 are picked up correctly.
 
 Structure of the testing makefiles
 ''''''''''''''''''''''''''''''''''
 
-Currently we only have testing defined for Fortran using the FRUIT framework, so
-libraries that define tests are using this approach; it's possible in the future
-we will add some form of C testing framework or other types of testing as well,
-at which point the build instructions for those will also appear in this file.
+Testing is defined for Fortran using the FRUIT framework, so libraries that
+define Fortran unit tests have them built from this makefile using this approach.
+In addition this makefile may also build C unit tests, which are driven by FRUIT
+from Fortran using ``IOS_C_BINDING`` interfaces.
 
 Note that this file doesn't build *executables*, only the object files. See the
 section on FRUIT testing for details of how these are used to produce the final
@@ -206,10 +207,10 @@ FRUIT Testing
 FRUIT is an externally developed Fortran testing framework which has been
 reproduced and modified to form the basis for testing in Shumlib. It was chosen
 for its fairly simple nature - the entire framework consists of a single
-Fortran file (plus one extension file if one wishes to test MPI code). 
+Fortran file (plus one extension file if one wishes to test MPI code).
 
 Due to the need for a lot of Fortran "boilerplate" code in the many overloaded
-interfaces required for a testing framework, the developers of FRUIT opted for 
+interfaces required for a testing framework, the developers of FRUIT opted for
 *generated* source code. Therefore you should *not* edit the ``fruit/fruit.f90``
 file directly (should it require any modifications). The file is generated from
 a template in the ``fruit/fruit_f90_source.txt`` file and the Ruby script
@@ -242,26 +243,34 @@ Defining FRUIT tests for each library
 '''''''''''''''''''''''''''''''''''''
 
 Within each (tested) library's ``test`` directory there should be a Fortran file
-which provides its testing. In order to work correctly with the makefile that
-constructs the FRUIT driver file these files *must* obey certain conventions:
+which provides its testing. This file may implement Fortran unit tests, act as a
+driver for C unit tests using ``ISO_C_BINDING`` interfaces, or both. If the
+Fortran file is used as a driver for C tests, there must additionally be a
+corresponding C file containing those tests. In order to work correctly with the
+makefile that constructs the FRUIT driver file these files *must* obey certain
+conventions:
 
-    - The filename must be ``fruit_test_<library_name>.f90`` where
+    - The Fortran filename must be ``fruit_test_<library_name>.f90`` where
       ``<library_name>`` is the exact library name as it appears as the
       directory name of each library.
-   
-    - The object files produced from the above file by the makefile in the
-      library ``test`` directory must similary be called
-      ``fruit_test_<library_name>.o`` and ``fruit_test_<library_name>_PIC.o``.
 
-    - The *module name* within the file must be
+    - The C filename (where it exists) must be ``c_fruit_test_<library_name>.c``
+
+    - The object files produced from the above file(s) by the makefile in the
+      library ``test`` directory must similary be called
+      ``fruit_test_<library_name>.o``, ``fruit_test_<library_name>_PIC.o``,
+      and where applicable ``c_fruit_test_<library_name>.o``, and
+      ``c_fruit_test_<library_name>_PIC.o``,
+
+    - The *module name* within the Fortran file must be
       ``fruit_test_<library_name>_mod``.
 
-    - The module must be defaulted to ``PRIVATE`` except for a single exposed
-      (``PUBLIC``) subroutine which accepts *no arguments* and is named
-      ``fruit_test_<library_name>``. 
+    - The Fortran module must be defaulted to ``PRIVATE`` except for a single
+      exposed (``PUBLIC``) subroutine which accepts *no arguments* and is named
+      ``fruit_test_<library_name>``.
 
-    - The module should include the library created for the FRUIT framework
-      itself by specifying ``USE fruit``.
+    - The Fortran module should include the library created for the FRUIT
+      framework itself by specifying ``USE fruit``.
 
     - The code in the module should, just like the libraries themselves,
       explicitly define precisions for all variables (using the same method
@@ -302,10 +311,51 @@ the module) should be referenced like this:
 
 Although not *essential* the test routines written so far tend to name each test
 routine starting with ``test_`` and then quote the name without this prefix (the
-given name string is used only for reporting should the test fail).  Beyond this
-the content of the module is entirely up to the author; the module can contain
-any number of other routines or functions required to help perform the testing,
-so long as the main testing routines do not accept any arguments.
+given name string is used only for reporting should the test fail).
+
+If the test is actually written in C - and Fortran is only being used as a driver -
+there also needs to be an interface block at the start of the module, defining
+the ``ISO_C_BINDING`` binding. Although it is not a requirement, a recomendation
+is to evaluate the pass/fail status of the test in C, and return the result to
+Fortran with a ``C_BOOL`` argument, like so:
+
+.. parsed-literal::
+
+  INTERFACE
+    SUBROUTINE c_test_function(test_ret)                                         &
+               BIND(c, name="c_test_function")
+
+    IMPORT :: C_BOOL
+
+    IMPLICIT NONE
+
+    LOGICAL(KIND=C_BOOL), INTENT(OUT) :: test_ret
+
+    END SUBROUTINE c_test_function
+  END INTERFACE
+
+The Fortran subroutine which drives the C test is then a thin wrapper to call this
+test function like so (asserts are explained below):
+
+.. parsed-literal::
+
+  SUBROUTINE test_subroutine_3_name
+
+  IMPLICIT NONE
+
+  LOGICAL(KIND=C_BOOL) :: test_ret
+  LOGICAL :: check
+
+  CALL set_case_name("C test")
+  CALL c_test_function(test_ret)
+  check = test_ret
+  CALL assert_true(check, "C test fails!")
+
+  END SUBROUTINE test_subroutine_3_name
+
+Beyond this the content of the module is entirely up to the author; the module
+can contain any number of other routines or functions required to help perform
+the testing, so long as the main testing routines do not accept any arguments.
 
 The only remaining detail is how to report testing results; this is done via
 "assertions" which can be called at any time from within the test functions
@@ -411,9 +461,11 @@ attempting to compile Shumlib does not meet the requirements it will refuse to
 compile. Unfortunately there is no way around this as much of the code in the
 existing libraries relies on this assumption internally.
 
-The makefile in the ``common`` directory is included by the individual makefiles
-of each library, after they define the ``VERSION_LIBNAME`` variable, and it uses
-that name to generate appropriate objects and headers for that library in the
+The technique by which the version routines and prescision bomb are deployed to
+each library is through the use of a makefile in the ``common`` directory. This
+common makefile is included within the main makefiles of each individual
+library, after they have defined the ``VERSION_LIBNAME`` variable. This varaible
+is used to generate appropriate objects and headers for that library in the
 following way:
 
     1. First a pair of objects (with and without ``PIC``) are compiled from
@@ -422,11 +474,12 @@ following way:
     create a single, argument-less C function which returns the Shumlib version
     number; called ``get_<library_name>_version``.
 
-    2. The above object files are named ``c_<library_name>_version.c`` and are
-    placed into the *library's* directory for inclusion by its makefile later.
+    2. The above object files are named ``c_<library_name>_version<_PIC>.o`` and
+    are placed into the *library's* directory for inclusion by its makefile
+    later.
 
     3. A custom header file called ``c_<library_name>_version.h`` is produced
-    (again in the *library's* directory). It re-uses the same library name macro 
+    (again in the *library's* directory). It re-uses the same library name macro
     to produce a prototype for the function defined in step (1).
 
     4. A custom Fortran module file called ``f_<library_name>_version_mod.f90``
