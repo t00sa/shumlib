@@ -117,6 +117,10 @@ END INTERFACE
 !------------------------------------------------------------------------------!
 INTERFACE f_shum_byteswap
 MODULE PROCEDURE                                                               &
+  shum_byteswap_int64_int64args,                                               &
+  shum_byteswap_int64_int32args,                                               &
+  shum_byteswap_int32_int64args,                                               &
+  shum_byteswap_int32_int32args,                                               &
   shum_byteswap_real64_int64args,                                              &
   shum_byteswap_real64_int32args,                                              & 
   shum_byteswap_real32_int64args,                                              &
@@ -124,6 +128,160 @@ MODULE PROCEDURE                                                               &
 END INTERFACE
 
 CONTAINS
+
+!------------------------------------------------------------------------------!
+
+FUNCTION shum_byteswap_int64_int64args(bytes, swap_words, word_len, message)
+                          
+IMPLICIT NONE
+
+INTEGER(KIND=int64) ::                                                         &
+  shum_byteswap_int64_int64args
+
+INTEGER(KIND=int64), INTENT(IN) ::                                             &
+  swap_words,                                                                  &
+  word_len
+
+INTEGER(KIND=int64), INTENT(INOUT), TARGET ::                                  &
+  bytes(:)
+
+CHARACTER(LEN=*), INTENT(OUT) :: message
+CHARACTER(KIND=C_CHAR, LEN=1), ALLOCATABLE :: cmessage(:)
+
+IF (word_len*swap_words > SIZE(bytes)*8) THEN
+  shum_byteswap_int64_int64args = 1
+  WRITE(message, "(A,I0,1X,I0,A,I0,A)")                                        &
+    "f_shum_byteswap: Request to swap ", swap_words, word_len,                 &
+    "-byte words overflows ", SIZE(bytes)*8, " byte input array"
+ELSE
+
+  message = ""
+  cmessage = f_shum_f2c_string(message)
+  shum_byteswap_int64_int64args = c_shum_byteswap(C_LOC(bytes(1)),             &
+                                                  swap_words,                  &
+                                                  word_len,                    &
+                                                  cmessage,                    &
+                                                  LEN(message, KIND=int64) + 1)
+  message = f_shum_c2f_string(cmessage)
+END IF
+
+END FUNCTION shum_byteswap_int64_int64args
+
+!------------------------------------------------------------------------------!
+
+FUNCTION shum_byteswap_int64_int32args(bytes, swap_words, word_len, message)
+                          
+IMPLICIT NONE
+
+INTEGER(KIND=int32) ::                                                         &
+  shum_byteswap_int64_int32args
+
+INTEGER(KIND=int32), INTENT(IN) ::                                             &
+  swap_words,                                                                  &
+  word_len
+
+INTEGER(KIND=int64), INTENT(INOUT), TARGET ::                                  &
+  bytes(:)
+
+CHARACTER(LEN=*), INTENT(OUT) :: message
+CHARACTER(KIND=C_CHAR, LEN=1), ALLOCATABLE :: cmessage(:)
+
+IF (word_len*swap_words > SIZE(bytes)*8) THEN
+  shum_byteswap_int64_int32args = 1
+  WRITE(message, "(A,I0,1X,I0,A,I0,A)")                                        &
+    "f_shum_byteswap: Request to swap ", swap_words, word_len,                 &
+    "-byte words overflows ", SIZE(bytes)*8, " byte input array"
+ELSE
+
+  message = ""
+  cmessage = f_shum_f2c_string(message)
+  shum_byteswap_int64_int32args = INT(c_shum_byteswap(C_LOC(bytes(1)),         &
+                                                  INT(swap_words, KIND=int64), &
+                                                  INT(word_len, KIND=int64),   &
+                                                  cmessage,                    &
+                                                LEN(message, KIND=int64) + 1), &                     
+                                       KIND=int32)
+  message = f_shum_c2f_string(cmessage)
+END IF
+
+END FUNCTION shum_byteswap_int64_int32args
+
+!------------------------------------------------------------------------------!
+
+FUNCTION shum_byteswap_int32_int64args(bytes, swap_words, word_len, message)
+                          
+IMPLICIT NONE
+
+INTEGER(KIND=int64) ::                                                         &
+  shum_byteswap_int32_int64args
+
+INTEGER(KIND=int64), INTENT(IN) ::                                             &
+  swap_words,                                                                  &
+  word_len
+
+INTEGER(KIND=int32), INTENT(INOUT), TARGET ::                                  &
+  bytes(:)
+
+CHARACTER(LEN=*), INTENT(OUT) :: message
+CHARACTER(KIND=C_CHAR, LEN=1), ALLOCATABLE :: cmessage(:)
+
+IF (word_len*swap_words > SIZE(bytes)*4) THEN
+  shum_byteswap_int32_int64args = 1
+  WRITE(message, "(A,I0,1X,I0,A,I0,A)")                                        &
+    "f_shum_byteswap: Request to swap ", swap_words, word_len,                 &
+    "-byte words overflows ", SIZE(bytes)*4, " byte input array"
+ELSE
+
+  message = ""
+  cmessage = f_shum_f2c_string(message)
+  shum_byteswap_int32_int64args = c_shum_byteswap(C_LOC(bytes(1)),             &
+                                                  swap_words,                  &
+                                                  word_len,                    &
+                                                  cmessage,                    &
+                                                  LEN(message, KIND=int64) + 1)
+  message = f_shum_c2f_string(cmessage)
+END IF
+
+END FUNCTION shum_byteswap_int32_int64args
+
+!------------------------------------------------------------------------------!
+
+FUNCTION shum_byteswap_int32_int32args(bytes, swap_words, word_len, message)
+                          
+IMPLICIT NONE
+
+INTEGER(KIND=int32) ::                                                         &
+  shum_byteswap_int32_int32args
+
+INTEGER(KIND=int32), INTENT(IN) ::                                             &
+  swap_words,                                                                  &
+  word_len
+
+INTEGER(KIND=int32), INTENT(INOUT), TARGET ::                                  &
+  bytes(:)
+
+CHARACTER(LEN=*), INTENT(OUT) :: message
+CHARACTER(KIND=C_CHAR, LEN=1), ALLOCATABLE :: cmessage(:)
+
+IF (word_len*swap_words > SIZE(bytes)*4) THEN
+  shum_byteswap_int32_int32args = 1
+  WRITE(message, "(A,I0,1X,I0,A,I0,A)")                                        &
+    "f_shum_byteswap: Request to swap ", swap_words, word_len,                 &
+    "-byte words overflows ", SIZE(bytes)*4, " byte input array"
+ELSE
+
+  message = ""
+  cmessage = f_shum_f2c_string(message)
+  shum_byteswap_int32_int32args = INT(c_shum_byteswap(C_LOC(bytes(1)),         &
+                                                  INT(swap_words, KIND=int64), &
+                                                  INT(word_len, KIND=int64),   &
+                                                  cmessage,                    &
+                                                LEN(message, KIND=int64) + 1), &                     
+                                       KIND=int32)
+  message = f_shum_c2f_string(cmessage)
+END IF
+
+END FUNCTION shum_byteswap_int32_int32args
 
 !------------------------------------------------------------------------------!
 

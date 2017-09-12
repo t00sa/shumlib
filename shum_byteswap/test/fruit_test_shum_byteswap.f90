@@ -62,6 +62,10 @@ WRITE(OUTPUT_UNIT, "(A,I0)")                                                   &
     "Testing shum_byteswap at Shumlib version: ", version
 
 CALL run_test_case(test_returns_valid_endian, "returns_valid_endian")
+CALL run_test_case(test_64bit_int_data_8_word_size, "64bit_int_data_8_word_size")
+CALL run_test_case(test_64bit_int_data_4_word_size, "64bit_int_data_4_word_size")
+CALL run_test_case(test_32bit_int_data_8_word_size, "32bit_int_data_8_word_size")
+CALL run_test_case(test_32bit_int_data_4_word_size, "32bit_int_data_4_word_size")
 CALL run_test_case(test_64bit_data_8_word_size, "64bit_data_8_word_size")
 CALL run_test_case(test_64bit_data_4_word_size, "64bit_data_4_word_size")
 CALL run_test_case(test_32bit_data_8_word_size, "32bit_data_8_word_size")
@@ -85,6 +89,214 @@ check = ((endian == f_shum_littleendian) .OR. (endian == f_shum_bigendian))
 CALL assert_true(check, "Returned value is not a valid endian enum value")
 
 END SUBROUTINE test_returns_valid_endian
+
+!------------------------------------------------------------------------------!
+
+SUBROUTINE test_64bit_int_data_8_word_size
+
+USE f_shum_byteswap_mod, ONLY: f_shum_byteswap
+
+IMPLICIT NONE 
+
+INTEGER, PARAMETER :: len = 10
+INTEGER, PARAMETER :: word_size = 8
+
+INTEGER(KIND=int64) :: data_in(len)
+INTEGER(KIND=int64) :: data_swapped_expected(len)
+INTEGER(KIND=int64) :: data_in_copy(len)
+
+INTEGER :: status
+INTEGER :: i
+CHARACTER(LEN=500) :: message
+
+DO i = 1, len
+  data_in(i) = i
+  data_in_copy(i) = i
+END DO
+
+data_swapped_expected(1)  = INT(z"100000000000000", KIND=int64)
+data_swapped_expected(2)  = INT(z"200000000000000", KIND=int64)
+data_swapped_expected(3)  = INT(z"300000000000000", KIND=int64)
+data_swapped_expected(4)  = INT(z"400000000000000", KIND=int64)
+data_swapped_expected(5)  = INT(z"500000000000000", KIND=int64)
+data_swapped_expected(6)  = INT(z"600000000000000", KIND=int64)
+data_swapped_expected(7)  = INT(z"700000000000000", KIND=int64)
+data_swapped_expected(8)  = INT(z"800000000000000", KIND=int64)
+data_swapped_expected(9)  = INT(z"900000000000000", KIND=int64)
+data_swapped_expected(10) = INT(z"A00000000000000", KIND=int64)
+
+status = f_shum_byteswap(data_in, INT(len, KIND=int64), INT(word_size, KIND=int64), message)
+CALL assert_equals(0, status,                                                  &
+    "Byteswap of initial array returned non-zero exit status")
+
+CALL assert_equals(data_swapped_expected, data_in, len,                        &
+    "Byteswapped array is not as expected")
+
+status = f_shum_byteswap(data_swapped_expected, INT(len, KIND=int64), INT(word_size, KIND=int64), message)
+CALL assert_equals(0, status,                                                  &
+    "Byteswap of byteswapped array returned non-zero exit status")
+
+CALL assert_equals(data_in_copy, data_swapped_expected, len,                   &
+    "Integer64 byteswapped array does not agree with intiial array")
+
+
+END SUBROUTINE test_64bit_int_data_8_word_size
+
+!------------------------------------------------------------------------------!
+
+SUBROUTINE test_64bit_int_data_4_word_size
+
+USE f_shum_byteswap_mod, ONLY: f_shum_byteswap
+
+IMPLICIT NONE 
+
+INTEGER, PARAMETER :: len = 10
+INTEGER, PARAMETER :: word_size = 4
+
+INTEGER(KIND=int32) :: data_in(len)
+INTEGER(KIND=int32) :: data_swapped_expected(len)
+INTEGER(KIND=int32) :: data_in_copy(len)
+
+INTEGER :: status
+INTEGER :: i
+CHARACTER(LEN=500) :: message
+
+DO i = 1, len
+  data_in(i) = i
+  data_in_copy(i) = i
+END DO
+
+data_swapped_expected(1)  = INT(z"1000000", KIND=int32)
+data_swapped_expected(2)  = INT(z"2000000", KIND=int32)
+data_swapped_expected(3)  = INT(z"3000000", KIND=int32)
+data_swapped_expected(4)  = INT(z"4000000", KIND=int32)
+data_swapped_expected(5)  = INT(z"5000000", KIND=int32)
+data_swapped_expected(6)  = INT(z"6000000", KIND=int32)
+data_swapped_expected(7)  = INT(z"7000000", KIND=int32)
+data_swapped_expected(8)  = INT(z"8000000", KIND=int32)
+data_swapped_expected(9)  = INT(z"9000000", KIND=int32)
+data_swapped_expected(10) = INT(z"A000000", KIND=int32)
+
+status = f_shum_byteswap(data_in, INT(len, KIND=int64), INT(word_size, KIND=int64), message)
+CALL assert_equals(0, status,                                                  &
+    "Byteswap of initial array returned non-zero exit status")
+
+CALL assert_equals(data_swapped_expected, data_in, len,                        &
+    "Byteswapped array is not as expected")
+
+status = f_shum_byteswap(data_swapped_expected, INT(len, KIND=int64), INT(word_size, KIND=int64), message)
+CALL assert_equals(0, status,                                                  &
+    "Byteswap of byteswapped array returned non-zero exit status")
+
+CALL assert_equals(data_in_copy, data_swapped_expected, len,                   &
+    "Integer64 byteswapped array does not agree with intiial array")
+
+
+END SUBROUTINE test_64bit_int_data_4_word_size
+
+!------------------------------------------------------------------------------!
+
+SUBROUTINE test_32bit_int_data_8_word_size
+
+USE f_shum_byteswap_mod, ONLY: f_shum_byteswap
+
+IMPLICIT NONE 
+
+INTEGER, PARAMETER :: len = 10
+INTEGER, PARAMETER :: word_size = 8
+
+INTEGER(KIND=int64) :: data_in(len)
+INTEGER(KIND=int64) :: data_swapped_expected(len)
+INTEGER(KIND=int64) :: data_in_copy(len)
+
+INTEGER :: status
+INTEGER :: i
+CHARACTER(LEN=500) :: message
+
+DO i = 1, len
+  data_in(i) = i
+  data_in_copy(i) = i
+END DO
+
+data_swapped_expected(1)  = INT(z"100000000000000", KIND=int64)
+data_swapped_expected(2)  = INT(z"200000000000000", KIND=int64)
+data_swapped_expected(3)  = INT(z"300000000000000", KIND=int64)
+data_swapped_expected(4)  = INT(z"400000000000000", KIND=int64)
+data_swapped_expected(5)  = INT(z"500000000000000", KIND=int64)
+data_swapped_expected(6)  = INT(z"600000000000000", KIND=int64)
+data_swapped_expected(7)  = INT(z"700000000000000", KIND=int64)
+data_swapped_expected(8)  = INT(z"800000000000000", KIND=int64)
+data_swapped_expected(9)  = INT(z"900000000000000", KIND=int64)
+data_swapped_expected(10) = INT(z"A00000000000000", KIND=int64)
+
+status = f_shum_byteswap(data_in, len, word_size, message)
+CALL assert_equals(0, status,                                                  &
+    "Byteswap of initial array returned non-zero exit status")
+
+CALL assert_equals(data_swapped_expected, data_in, len,                        &
+    "Byteswapped array is not as expected")
+
+status = f_shum_byteswap(data_swapped_expected, len, word_size, message)
+CALL assert_equals(0, status,                                                  &
+    "Byteswap of byteswapped array returned non-zero exit status")
+
+CALL assert_equals(data_in_copy, data_swapped_expected, len,                   &
+    "Integer64 byteswapped array does not agree with intiial array")
+
+
+END SUBROUTINE test_32bit_int_data_8_word_size
+
+!------------------------------------------------------------------------------!
+
+SUBROUTINE test_32bit_int_data_4_word_size
+
+USE f_shum_byteswap_mod, ONLY: f_shum_byteswap
+
+IMPLICIT NONE 
+
+INTEGER, PARAMETER :: len = 10
+INTEGER, PARAMETER :: word_size = 4
+
+INTEGER(KIND=int32) :: data_in(len)
+INTEGER(KIND=int32) :: data_swapped_expected(len)
+INTEGER(KIND=int32) :: data_in_copy(len)
+
+INTEGER :: status
+INTEGER :: i
+CHARACTER(LEN=500) :: message
+
+DO i = 1, len
+  data_in(i) = i
+  data_in_copy(i) = i
+END DO
+
+data_swapped_expected(1)  = INT(z"1000000", KIND=int32)
+data_swapped_expected(2)  = INT(z"2000000", KIND=int32)
+data_swapped_expected(3)  = INT(z"3000000", KIND=int32)
+data_swapped_expected(4)  = INT(z"4000000", KIND=int32)
+data_swapped_expected(5)  = INT(z"5000000", KIND=int32)
+data_swapped_expected(6)  = INT(z"6000000", KIND=int32)
+data_swapped_expected(7)  = INT(z"7000000", KIND=int32)
+data_swapped_expected(8)  = INT(z"8000000", KIND=int32)
+data_swapped_expected(9)  = INT(z"9000000", KIND=int32)
+data_swapped_expected(10) = INT(z"A000000", KIND=int32)
+
+status = f_shum_byteswap(data_in, len, word_size, message)
+CALL assert_equals(0, status,                                                  &
+    "Byteswap of initial array returned non-zero exit status")
+
+CALL assert_equals(data_swapped_expected, data_in, len,                        &
+    "Byteswapped array is not as expected")
+
+status = f_shum_byteswap(data_swapped_expected, len, word_size, message)
+CALL assert_equals(0, status,                                                  &
+    "Byteswap of byteswapped array returned non-zero exit status")
+
+CALL assert_equals(data_in_copy, data_swapped_expected, len,                   &
+    "Integer64 byteswapped array does not agree with intiial array")
+
+
+END SUBROUTINE test_32bit_int_data_4_word_size
 
 !------------------------------------------------------------------------------!
 
