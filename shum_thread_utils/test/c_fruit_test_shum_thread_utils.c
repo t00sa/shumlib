@@ -25,20 +25,7 @@
 #include <stdio.h>
 #include <inttypes.h>
 #include "c_shum_thread_utils.h"
-
-/******************************************************************************/
-/* Prototypes                                                                 */
-/******************************************************************************/
-
-void c_test_returns_valid_lock      (bool *);
-void c_test_invalid_lock_release    (bool *);
-void c_test_create_and_release_lock (bool *);
-void c_test_create_many_locks       (bool *);
-void c_test_backfill_locks          (bool *);
-void c_test_sweep_release_locks     (bool *);
-void c_test_inpar                   (bool *, int64_t *);
-void c_test_threadid                (bool *, int64_t *);
-void c_test_threadflush             (bool *, volatile int64_t *);
+#include "c_fruit_test_shum_thread_utils.h"
 
 /******************************************************************************/
 /* tests                                                                      */

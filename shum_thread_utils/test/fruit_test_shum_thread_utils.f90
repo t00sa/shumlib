@@ -322,12 +322,13 @@ check = test_ret
 CALL assert_true(check, "Did succesfully call c_shum_inPar()")
 CALL assert_true(par==0, "c_shum_inPar() detected a false parallel region")
 
+!$ CALL omp_set_num_threads(3)
 !$OMP PARALLEL
 !$ CALL c_test_inpar(test_ret,par)
 !$OMP END PARALLEL
 !$ check = test_ret
 !$ CALL assert_true(check, "Did succesfully call c_shum_inPar()")
-!$ CALL assert_true(par==1, "c_shum_inPar() did not detected a parallel region")
+!$ CALL assert_true(par==1, "c_shum_inPar() did not detect a parallel region")
 
 END SUBROUTINE test_inpar
 
