@@ -69,6 +69,8 @@ ${FRUIT}: ${OUTDIRS}
 STR_CONV=shum_string_conv
 ${STR_CONV}: ${OUTDIRS}
 	${MAKE} -C ${STR_CONV}/src
+${STR_CONV}_tests: fruit ${STR_CONV}
+	${MAKE} -C ${STR_CONV}/test
 
 # Byte-swapping
 #--------------
