@@ -32,7 +32,7 @@
 // Master definition of version number (uses YYYYMMX format) 
 //                              where "X" is the release number in month MM
 #if !defined(SHUMLIB_VERSION)
-#define SHUMLIB_VERSION 2017061
+#define SHUMLIB_VERSION 2017101
 #endif
 
 // Check the macro we need is defined
