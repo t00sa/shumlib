@@ -96,9 +96,15 @@ THREAD_UTILS=shum_thread_utils
 ${THREAD_UTILS}: ${OUTDIRS}
 	${MAKE} -C ${THREAD_UTILS}/src
 
+# LL to/from EQ transformation and wind rotation
+#-----------------------------------------------
+LLEQ=shum_latlon_eq_grids
+${LLEQ}: ${OUTDIRS}
+	${MAKE} -C ${LLEQ}/src
+
 # All libs targets
 #--------------
-ALL_LIBS=${BSWAP} ${STR_CONV} ${DATA_CONV} ${PACK} ${THREAD_UTILS}
+ALL_LIBS=${BSWAP} ${STR_CONV} ${DATA_CONV} ${PACK} ${THREAD_UTILS} $(LLEQ)
 
 # auto-generate test targets
 $(wildcard $(addsuffix /test, ${ALL_LIBS})): %/test: ${FRUIT} %
