@@ -11,7 +11,7 @@ MAKE=make
 # Compiler command
 FC=ftn
 # Precision flags (passed to all compilation commands)
-FCFLAGS_PREC=
+FCFLAGS_PREC=-fp-model precise
 # Flag used to set OpenMP (passed to all compilation commands)
 FCFLAGS_OPENMP=-openmp
 # Flag used to unset OpenMP (passed to all compilation commands)
