@@ -69,8 +69,6 @@ ${FRUIT}: ${OUTDIRS}
 STR_CONV=shum_string_conv
 ${STR_CONV}: ${OUTDIRS}
 	${MAKE} -C ${STR_CONV}/src
-${STR_CONV}_tests: fruit ${STR_CONV}
-	${MAKE} -C ${STR_CONV}/test
 
 # Byte-swapping
 #--------------
@@ -102,9 +100,15 @@ LLEQ=shum_latlon_eq_grids
 ${LLEQ}: ${OUTDIRS}
 	${MAKE} -C ${LLEQ}/src
 
+# Fieldsfile API
+#---------------
+FFILE=shum_fieldsfile
+${FFILE}: ${OUTDIRS}
+	${MAKE} -C ${FFILE}/src
+
 # All libs targets
 #--------------
-ALL_LIBS=${BSWAP} ${STR_CONV} ${DATA_CONV} ${PACK} ${THREAD_UTILS} $(LLEQ)
+ALL_LIBS=${BSWAP} ${STR_CONV} ${DATA_CONV} ${PACK} ${THREAD_UTILS} ${LLEQ} ${FFILE}
 
 # auto-generate test targets
 $(wildcard $(addsuffix /test, ${ALL_LIBS})): %/test: ${FRUIT} %
@@ -137,7 +141,7 @@ test_generic:
 #--------------------------------------------------------------------------------
 .PHONY: clean clean-temp clean-build
 clean-temp:
-	@$(foreach libname,$(ALL_LIBS),${MAKE} -C $(libname)/src clean;)
+	@$(foreach libname,${ALL_LIBS},${MAKE} -C $(libname)/src clean;)
 	@$(foreach libname_test,$(wildcard $(addsuffix /test, ${ALL_LIBS})),${MAKE} -C $(libname_test) clean;)
 	${MAKE} -C ${FRUIT} clean
 	${MAKE} -f ${FRUIT}/Makefile-driver clean
