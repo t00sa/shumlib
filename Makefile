@@ -115,10 +115,15 @@ FFILE_PREREQ=BSWAP
 SPIRAL=shum_spiral_search
 SPIRAL_PREREQ=
 
+# Fieldsfile classes
+#-------------------
+FFCLASS=shum_fieldsfile_class
+FFCLASS_PREREQ=FFILE PACK
+
 # All libs targets
 #--------------
 ALL_LIBS_VARS=BSWAP STR_CONV DATA_CONV PACK THREAD_UTILS LLEQ FFILE \
-	      HORIZ_INTERP SPIRAL
+	      HORIZ_INTERP SPIRAL FFCLASS
 ALL_LIBS=$(foreach lib,${ALL_LIBS_VARS},${${lib}})
 
 # auto-generate main targets
