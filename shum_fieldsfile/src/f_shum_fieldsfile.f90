@@ -24,7 +24,7 @@
 MODULE f_shum_fieldsfile_mod
 
 USE, INTRINSIC :: ISO_C_BINDING, ONLY:                                         &
-  C_INT64_T, C_INT32_T, C_FLOAT, C_DOUBLE
+  C_INT64_T, C_INT32_T, C_FLOAT, C_DOUBLE, C_BOOL
 
 USE f_shum_lookup_indices_mod, ONLY:                                           &
   lblrec, lbpack, lbegin, lbnrec, lbuser1, lbrel, lbuser2
@@ -113,7 +113,8 @@ END INTERFACE
   INTEGER, PARAMETER :: int64  = C_INT64_T
   INTEGER, PARAMETER :: int32  = C_INT32_T
   INTEGER, PARAMETER :: real64 = C_DOUBLE
-  INTEGER, PARAMETER :: real32 = C_FLOAT                                       
+  INTEGER, PARAMETER :: real32 = C_FLOAT 
+  INTEGER, PARAMETER :: bool   = C_BOOL                                      
 !------------------------------------------------------------------------------!
 
 INTEGER(KIND=int64), PARAMETER :: f_shum_fixed_length_header_len = 256
@@ -354,8 +355,8 @@ CHARACTER(LEN=*),    INTENT(IN)  :: filename
 INTEGER(KIND=int64), INTENT(IN)  :: n_lookups
 INTEGER(KIND=int64), INTENT(OUT) :: ff_id
 CHARACTER(LEN=*),    INTENT(OUT) :: message
-LOGICAL(KIND=int64), OPTIONAL,                                                 &
-                     INTENT(IN)  :: overwrite
+LOGICAL(KIND=bool),  INTENT(IN),                                               &
+                     OPTIONAL    :: overwrite
 
 INTEGER(KIND=int64)    :: status
 TYPE(ff_type), POINTER :: ff
@@ -1392,8 +1393,8 @@ INTEGER(KIND=int64), INTENT(IN)    :: index
 REAL(KIND=real64),   INTENT(INOUT),                                            &
                      ALLOCATABLE   :: field_data(:)
 CHARACTER(LEN=*),    INTENT(OUT)   :: message
-LOGICAL(KIND=int64), OPTIONAL,                                                 &
-                     INTENT(IN)    :: ignore_dtype
+LOGICAL(KIND=bool),  INTENT(IN),                                               &
+                     OPTIONAL      :: ignore_dtype
 
 LOGICAL                :: ignore_dtype_local
 INTEGER(KIND=int64)    :: status
@@ -1510,8 +1511,8 @@ INTEGER(KIND=int64), INTENT(IN)     :: index
 INTEGER(KIND=int64), INTENT(INOUT),                                            &
                      ALLOCATABLE    :: field_data(:)
 CHARACTER(LEN=*),    INTENT(OUT)    :: message
-LOGICAL(KIND=int64), OPTIONAL,                                                 &
-                     INTENT(IN)     :: ignore_dtype
+LOGICAL(KIND=bool),  INTENT(IN),                                               &
+                     OPTIONAL       :: ignore_dtype
 
 LOGICAL                :: ignore_dtype_local
 INTEGER(KIND=int64)    :: status
@@ -1628,8 +1629,8 @@ INTEGER(KIND=int64), INTENT(IN)     :: index
 REAL(KIND=real32),   INTENT(INOUT),                                            &
                      ALLOCATABLE    :: field_data(:)
 CHARACTER(LEN=*),    INTENT(OUT)    :: message
-LOGICAL(KIND=int64), OPTIONAL,                                                 &
-                     INTENT(IN)     :: ignore_dtype
+LOGICAL(KIND=bool),  INTENT(IN),                                               &
+                     OPTIONAL       :: ignore_dtype
 
 LOGICAL                :: ignore_dtype_local
 INTEGER(KIND=int64)    :: status
@@ -1749,8 +1750,8 @@ INTEGER(KIND=int64), INTENT(IN)     :: index
 INTEGER(KIND=int32), INTENT(INOUT),                                            & 
                      ALLOCATABLE    :: field_data(:)
 CHARACTER(LEN=*),    INTENT(OUT)    :: message
-LOGICAL(KIND=int64), OPTIONAL,                                                 &
-                     INTENT(IN)     :: ignore_dtype
+LOGICAL(KIND=bool),  INTENT(IN),                                               &
+                     OPTIONAL       :: ignore_dtype
 
 LOGICAL                :: ignore_dtype_local
 INTEGER(KIND=int64)    :: status
@@ -3132,8 +3133,8 @@ INTEGER(KIND=int64), INTENT(IN)  :: ff_id
 INTEGER(KIND=int64), INTENT(IN)  :: index
 REAL(KIND=real64),   INTENT(IN)  :: field_data(:)
 CHARACTER(LEN=*),    INTENT(OUT) :: message
-LOGICAL(KIND=int64), OPTIONAL,                                                 &
-                     INTENT(IN)  :: ignore_dtype
+LOGICAL(KIND=bool),  INTENT(IN),                                               &
+                     OPTIONAL    :: ignore_dtype
 
 INTEGER(KIND=int64) :: status
 
@@ -3264,8 +3265,8 @@ INTEGER(KIND=int64), INTENT(IN)  :: ff_id
 INTEGER(KIND=int64), INTENT(IN)  :: index
 INTEGER(KIND=int64), INTENT(IN)  :: field_data(:)
 CHARACTER(LEN=*),    INTENT(OUT) :: message
-LOGICAL(KIND=int64), OPTIONAL,                                                 &
-                     INTENT(IN)  :: ignore_dtype
+LOGICAL(KIND=bool),  INTENT(IN),                                               &
+                     OPTIONAL    :: ignore_dtype
 
 INTEGER(KIND=int64) :: status
 
@@ -3396,8 +3397,8 @@ INTEGER(KIND=int64), INTENT(IN)  :: ff_id
 INTEGER(KIND=int64), INTENT(IN)  :: index
 REAL(KIND=real32),   INTENT(IN)  :: field_data(:)
 CHARACTER(LEN=*),    INTENT(OUT) :: message
-LOGICAL(KIND=int64), OPTIONAL,                                                 &
-                     INTENT(IN)  :: ignore_dtype
+LOGICAL(KIND=bool),  INTENT(IN),                                               &
+                     OPTIONAL    :: ignore_dtype
 
 INTEGER(KIND=int64) :: status
 
@@ -3537,8 +3538,8 @@ INTEGER(KIND=int64), INTENT(IN)  :: ff_id
 INTEGER(KIND=int64), INTENT(IN)  :: index
 INTEGER(KIND=int32), INTENT(IN)  :: field_data(:)
 CHARACTER(LEN=*),    INTENT(OUT) :: message
-LOGICAL(KIND=int64), OPTIONAL,                                                 &
-                     INTENT(IN)  :: ignore_dtype
+LOGICAL(KIND=bool),  INTENT(IN),                                               &
+                     OPTIONAL    :: ignore_dtype
 
 INTEGER(KIND=int64) :: status
 
@@ -3679,8 +3680,8 @@ INTEGER(KIND=int64), INTENT(IN)  :: ff_id
 INTEGER(KIND=int64), INTENT(IN)  :: lookup(f_shum_lookup_dim1_len)
 REAL(KIND=real64),   INTENT(IN)  :: field_data(:)
 CHARACTER(LEN=*),    INTENT(OUT) :: message
-LOGICAL(KIND=int64), OPTIONAL,                                                 &
-                     INTENT(IN)  :: ignore_dtype
+LOGICAL(KIND=bool),  INTENT(IN),                                               &
+                     OPTIONAL    :: ignore_dtype
 
 INTEGER(KIND=int64) :: status
 
@@ -3821,8 +3822,8 @@ INTEGER(KIND=int64), INTENT(IN)  :: ff_id
 INTEGER(KIND=int64), INTENT(IN)  :: lookup(f_shum_lookup_dim1_len)
 INTEGER(KIND=int64), INTENT(IN)  :: field_data(:)
 CHARACTER(LEN=*),    INTENT(OUT) :: message
-LOGICAL(KIND=int64), OPTIONAL,                                                 &
-                     INTENT(IN)  :: ignore_dtype
+LOGICAL(KIND=bool),  INTENT(IN),                                               &
+                     OPTIONAL    :: ignore_dtype
 
 INTEGER(KIND=int64) :: status
 
@@ -3963,8 +3964,8 @@ INTEGER(KIND=int64), INTENT(IN)  :: ff_id
 INTEGER(KIND=int64), INTENT(IN)  :: lookup(f_shum_lookup_dim1_len)
 REAL(KIND=real32)  , INTENT(IN)  :: field_data(:)
 CHARACTER(LEN=*),    INTENT(OUT) :: message
-LOGICAL(KIND=int64), OPTIONAL,                                                 &
-                     INTENT(IN)  :: ignore_dtype
+LOGICAL(KIND=bool),  INTENT(IN),                                               &
+                     OPTIONAL    :: ignore_dtype
 
 INTEGER(KIND=int64) :: status
 
@@ -4117,8 +4118,8 @@ INTEGER(KIND=int64), INTENT(IN)  :: ff_id
 INTEGER(KIND=int64), INTENT(IN)  :: lookup(f_shum_lookup_dim1_len)
 INTEGER(KIND=int32), INTENT(IN)  :: field_data(:)
 CHARACTER(LEN=*),    INTENT(OUT) :: message
-LOGICAL(KIND=int64), OPTIONAL,                                                 &
-                     INTENT(IN)  :: ignore_dtype
+LOGICAL(KIND=bool),  INTENT(IN),                                               &
+                     OPTIONAL    :: ignore_dtype
 
 INTEGER(KIND=int64) :: status
 

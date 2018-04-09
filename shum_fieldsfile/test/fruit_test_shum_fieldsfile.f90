@@ -23,7 +23,7 @@ MODULE fruit_test_shum_fieldsfile_mod
 
 USE fruit
 USE, INTRINSIC :: ISO_C_BINDING, ONLY:                                         &
-  C_INT64_T, C_INT32_T, C_FLOAT, C_DOUBLE, C_INT
+  C_INT64_T, C_INT32_T, C_FLOAT, C_DOUBLE, C_INT, C_BOOL
 
 IMPLICIT NONE 
 
@@ -52,7 +52,8 @@ END INTERFACE
   INTEGER, PARAMETER :: int64  = C_INT64_T
   INTEGER, PARAMETER :: int32  = C_INT32_T
   INTEGER, PARAMETER :: real64 = C_DOUBLE
-  INTEGER, PARAMETER :: real32 = C_FLOAT                                       
+  INTEGER, PARAMETER :: real32 = C_FLOAT
+  INTEGER, PARAMETER :: bool   = C_BOOL
 !------------------------------------------------------------------------------!
 
 ! The unit, filename, and id of the temporary file used by these tests
@@ -217,6 +218,8 @@ INTEGER(KIND=int32), ALLOCATABLE :: i32_field_data_r(:)
 INTEGER :: i, j, k
 INTEGER :: failures_at_entry
 INTEGER :: failures_at_exit
+
+LOGICAL(KIND=bool) :: check
 
 ! Get the number of failed tests prior to this test starting
 CALL get_failed_count(failures_at_entry)
@@ -525,8 +528,8 @@ status = f_shum_read_integer_constants(ff_id, integer_constants_r, message)
 CALL assert_equals(0_int64, status,                                            & 
                    "Failed to read integer_constants: "//TRIM(message))
 
-CALL assert_true(ALLOCATED(integer_constants_r),                               &
-                 "Re-read integer_contants not allocated by read call")
+check = ALLOCATED(integer_constants_r)
+CALL assert_true(check, "Re-read integer_contants not allocated by read call")
 
 CALL assert_equals(int_const_dim_test, SIZE(integer_constants_r, KIND=int64),  &
                    "Re-read integer_constants incorrect size")
@@ -540,8 +543,8 @@ status = f_shum_read_real_constants(ff_id, real_constants_r, message)
 CALL assert_equals(0_int64, status,                                            &
                    "Failed to read real_constants: "//TRIM(message))
 
-CALL assert_true(ALLOCATED(real_constants_r),                                  &
-                 "Re-read real_contants not allocated by read call")
+check = ALLOCATED(real_constants_r)
+CALL assert_true(check, "Re-read real_contants not allocated by read call")
 
 CALL assert_equals(real_const_dim_test, SIZE(real_constants_r, KIND=int64),    &
                    "Re-read real_constants incorrect size")
@@ -556,7 +559,8 @@ status = f_shum_read_level_dependent_constants(                                &
 CALL assert_equals(0_int64, status,                                            &
                    "Failed to read level_dependent_constants: "//TRIM(message))
 
-CALL assert_true(ALLOCATED(level_constants_r),                                 &
+check = ALLOCATED(level_constants_r)
+CALL assert_true(check,                                                        &
                  "Re-read level_dependent_contants not allocated by read call")
 
 CALL assert_equals(lev_const_dim1_test,                                        &
@@ -577,7 +581,8 @@ status = f_shum_read_row_dependent_constants(ff_id, row_constants_r, message)
 CALL assert_equals(0_int64, status,                                            &
                    "Failed to read row_dependent_constants: "//TRIM(message))
 
-CALL assert_true(ALLOCATED(row_constants_r),                                   &
+check = ALLOCATED(row_constants_r)
+CALL assert_true(check,                                                        &
                  "Re-read row_dependent_contants not allocated by read call")
 
 CALL assert_equals(row_const_dim1_test,                                        &
@@ -598,7 +603,8 @@ status = f_shum_read_column_dependent_constants(ff_id, col_constants_r, message)
 CALL assert_equals(0_int64, status,                                            &
                    "Failed to read column_dependent_constants: "//TRIM(message))
 
-CALL assert_true(ALLOCATED(col_constants_r),                                   &
+check = ALLOCATED(col_constants_r)
+CALL assert_true(check,                                                        &
                  "Re-read column_dependent_contants not allocated by read call")
 
 CALL assert_equals(col_const_dim1_test,                                        &
@@ -619,7 +625,8 @@ status = f_shum_read_additional_parameters(ff_id, addl_params_r, message)
 CALL assert_equals(0_int64, status,                                            &
                    "Failed to read additional_parameters: "//TRIM(message))
 
-CALL assert_true(ALLOCATED(addl_params_r),                                     &
+check = ALLOCATED(addl_params_r)
+CALL assert_true(check,                                                        &
                  "Re-read additional_parameters not allocated by read call")
 
 CALL assert_equals(addl_param_dim1_test,                                       &
@@ -640,8 +647,8 @@ status = f_shum_read_extra_constants(ff_id, extra_constants_r, message)
 CALL assert_equals(0_int64, status,                                            &
                    "Failed to read extra_constants: "//TRIM(message))
 
-CALL assert_true(ALLOCATED(extra_constants_r),                                 &
-                 "Re-read extra_constants not allocated by read call")
+check = ALLOCATED(extra_constants_r)
+CALL assert_true(check, "Re-read extra_constants not allocated by read call")
 
 CALL assert_equals(extra_const_dim_test, SIZE(extra_constants_r, KIND=int64),  &
                    "Re-read extra_constants incorrect size")
@@ -655,8 +662,8 @@ status = f_shum_read_temp_histfile(ff_id, temp_histfile_r, message)
 CALL assert_equals(0_int64, status,                                            &
                    "Failed to read temp_histfile: "//TRIM(message))
 
-CALL assert_true(ALLOCATED(temp_histfile_r),                                   &
-                 "Re-read temp_histfile not allocated by read call")
+check = ALLOCATED(temp_histfile_r)
+CALL assert_true(check, "Re-read temp_histfile not allocated by read call")
 
 CALL assert_equals(temp_hist_dim_test, SIZE(temp_histfile_r, KIND=int64),      &
                    "Re-read temp_histfile incorrect size")
@@ -670,8 +677,8 @@ status = f_shum_read_compressed_index(ff_id, comp_index_1_r, 1_int64, message)
 CALL assert_equals(0_int64, status,                                            &
                    "Failed to read compressed_index 1: "//TRIM(message))
 
-CALL assert_true(ALLOCATED(comp_index_1_r),                                    &
-                 "Re-read compressed_index 1 not allocated by read call")
+check = ALLOCATED(comp_index_1_r)
+CALL assert_true(check, "Re-read compressed_index 1 not allocated by read call")
 
 CALL assert_equals(comp_ind_1_dim_test, SIZE(comp_index_1_r, KIND=int64),      &
                    "Re-read compressed_index 1 incorrect size")
@@ -685,8 +692,8 @@ status = f_shum_read_compressed_index(ff_id, comp_index_2_r, 2_int64, message)
 CALL assert_equals(0_int64, status,                                            &
                    "Failed to read compressed_index 2: "//TRIM(message))
 
-CALL assert_true(ALLOCATED(comp_index_2_r),                                    &
-                 "Re-read compressed_index 2 not allocated by read call")
+check = ALLOCATED(comp_index_2_r)
+CALL assert_true(check, "Re-read compressed_index 2 not allocated by read call")
 
 CALL assert_equals(comp_ind_2_dim_test, SIZE(comp_index_2_r, KIND=int64),      &
                    "Re-read compressed_index 2 incorrect size")
@@ -700,8 +707,8 @@ status = f_shum_read_compressed_index(ff_id, comp_index_3_r, 3_int64, message)
 CALL assert_equals(0_int64, status,                                            &
                    "Failed to read compressed_index 3: "//TRIM(message))
 
-CALL assert_true(ALLOCATED(comp_index_3_r),                                    &
-                 "Re-read compressed_index 3 not allocated by read call")
+check = ALLOCATED(comp_index_3_r)
+CALL assert_true(check, "Re-read compressed_index 3 not allocated by read call")
 
 CALL assert_equals(comp_ind_3_dim_test, SIZE(comp_index_3_r, KIND=int64),      &
                    "Re-read compressed_index 3 incorrect size")
@@ -714,8 +721,8 @@ status = f_shum_read_lookup(ff_id, lookup_r, message)
 
 CALL assert_equals(0_int64, status, "Failed to read lookup: "//TRIM(message))
 
-CALL assert_true(ALLOCATED(lookup_r),                                          &
-                 "Re-read lookup not allocated by read call")
+check = ALLOCATED(lookup_r)
+CALL assert_true(check, "Re-read lookup not allocated by read call")
 
 CALL assert_equals(f_shum_lookup_dim1_len,                                     &
                    SIZE(lookup_r, 1, KIND=int64),                              &
@@ -754,7 +761,8 @@ DO k = 1, n_fields_test
                            ff_id, INT(k, KIND=int64), r64_field_data_r, message)
       CALL assert_equals(0_int64, status,                                      &
            "Failed to read real 64-bit data: "//TRIM(message))
-      CALL assert_true(ALLOCATED(r64_field_data_r),                            &
+      check = ALLOCATED(r64_field_data_r)
+      CALL assert_true(check,                                                  &
            "Re-read real 64-bit data array not allocated by read call")
       CALL assert_equals(rows*columns,                                         &
            SIZE(r64_field_data_r, 1, KIND=int64),                              &
@@ -768,7 +776,8 @@ DO k = 1, n_fields_test
                            ff_id, INT(k, KIND=int64), i64_field_data_r, message)
       CALL assert_equals(0_int64, status,                                      &
            "Failed to read integer 64-bit data: "//TRIM(message))
-      CALL assert_true(ALLOCATED(i64_field_data_r),                            &
+      check = ALLOCATED(i64_field_data_r)
+      CALL assert_true(check,                                                  &
            "Re-read integer 64-bit data array not allocated by read call")
       CALL assert_equals(rows*columns,                                         &
            SIZE(i64_field_data_r, 1, KIND=int64),                              &
@@ -782,7 +791,8 @@ DO k = 1, n_fields_test
                            ff_id, INT(k, KIND=int64), r32_field_data_r, message)
       CALL assert_equals(0_int64, status,                                      &
            "Failed to read real 32-bit data: "//TRIM(message))
-      CALL assert_true(ALLOCATED(r32_field_data_r),                            &
+      check = ALLOCATED(r32_field_data_r)
+      CALL assert_true(check,                                                  &
            "Re-read real 32-bit data array not allocated by read call")
       CALL assert_equals(rows*columns,                                         &
            SIZE(r32_field_data, 1, KIND=int64),                                &
@@ -796,7 +806,8 @@ DO k = 1, n_fields_test
                            ff_id, INT(k, KIND=int64), i32_field_data_r, message)
       CALL assert_equals(0_int64, status,                                      &
            "Failed to read integer 32-bit data: "//TRIM(message))
-      CALL assert_true(ALLOCATED(i32_field_data_r),                            &
+      check = ALLOCATED(i32_field_data_r)
+      CALL assert_true(check,                                                  &
            "Re-read integer 32-bit data array not allocated by read call")
       CALL assert_equals(rows*columns,                                         &
            SIZE(i32_field_data, 1, KIND=int64),                                &
@@ -929,6 +940,8 @@ INTEGER(KIND=int32), ALLOCATABLE :: i32_field_data_r(:)
 INTEGER :: i, j, k
 INTEGER :: failures_at_entry
 INTEGER :: failures_at_exit
+
+LOGICAL(KIND=bool) :: check
 
 ! Get the number of failed tests prior to this test starting
 CALL get_failed_count(failures_at_entry)
@@ -1221,8 +1234,8 @@ status = f_shum_read_integer_constants(ff_id, integer_constants_r, message)
 CALL assert_equals(0_int64, status,                                            & 
                    "Failed to read integer_constants: "//TRIM(message))
 
-CALL assert_true(ALLOCATED(integer_constants_r),                               &
-                 "Re-read integer_contants not allocated by read call")
+check = ALLOCATED(integer_constants_r)
+CALL assert_true(check, "Re-read integer_contants not allocated by read call")
 
 CALL assert_equals(int_const_dim_test, SIZE(integer_constants_r, KIND=int64),  &
                    "Re-read integer_constants incorrect size")
@@ -1236,8 +1249,8 @@ status = f_shum_read_real_constants(ff_id, real_constants_r, message)
 CALL assert_equals(0_int64, status,                                            &
                    "Failed to read real_constants: "//TRIM(message))
 
-CALL assert_true(ALLOCATED(real_constants_r),                                  &
-                 "Re-read real_contants not allocated by read call")
+check = ALLOCATED(real_constants_r)
+CALL assert_true(check, "Re-read real_contants not allocated by read call")
 
 CALL assert_equals(real_const_dim_test, SIZE(real_constants_r, KIND=int64),    &
                    "Re-read real_constants incorrect size")
@@ -1252,7 +1265,8 @@ status = f_shum_read_level_dependent_constants(                                &
 CALL assert_equals(0_int64, status,                                            &
                    "Failed to read level_dependent_constants: "//TRIM(message))
 
-CALL assert_true(ALLOCATED(level_constants_r),                                 &
+check = ALLOCATED(level_constants_r)
+CALL assert_true(check,                                                        &
                  "Re-read level_dependent_contants not allocated by read call")
 
 CALL assert_equals(lev_const_dim1_test,                                        &
@@ -1273,7 +1287,8 @@ status = f_shum_read_row_dependent_constants(ff_id, row_constants_r, message)
 CALL assert_equals(0_int64, status,                                            &
                    "Failed to read row_dependent_constants: "//TRIM(message))
 
-CALL assert_true(ALLOCATED(row_constants_r),                                   &
+check = ALLOCATED(row_constants_r)
+CALL assert_true(check,                                                        &
                  "Re-read row_dependent_contants not allocated by read call")
 
 CALL assert_equals(row_const_dim1_test,                                        &
@@ -1294,7 +1309,8 @@ status = f_shum_read_column_dependent_constants(ff_id, col_constants_r, message)
 CALL assert_equals(0_int64, status,                                            &
                    "Failed to read column_dependent_constants: "//TRIM(message))
 
-CALL assert_true(ALLOCATED(col_constants_r),                                   &
+check = ALLOCATED(col_constants_r)
+CALL assert_true(check,                                                        &
                  "Re-read column_dependent_contants not allocated by read call")
 
 CALL assert_equals(col_const_dim1_test,                                        &
@@ -1315,7 +1331,8 @@ status = f_shum_read_additional_parameters(ff_id, addl_params_r, message)
 CALL assert_equals(0_int64, status,                                            &
                    "Failed to read additional_parameters: "//TRIM(message))
 
-CALL assert_true(ALLOCATED(addl_params_r),                                     &
+check = ALLOCATED(addl_params_r)
+CALL assert_true(check,                                                        &
                  "Re-read additional_parameters not allocated by read call")
 
 CALL assert_equals(addl_param_dim1_test,                                       &
@@ -1336,8 +1353,8 @@ status = f_shum_read_extra_constants(ff_id, extra_constants_r, message)
 CALL assert_equals(0_int64, status,                                            &
                    "Failed to read extra_constants: "//TRIM(message))
 
-CALL assert_true(ALLOCATED(extra_constants_r),                                 &
-                 "Re-read extra_constants not allocated by read call")
+check = ALLOCATED(extra_constants_r)
+CALL assert_true(check, "Re-read extra_constants not allocated by read call")
 
 CALL assert_equals(extra_const_dim_test, SIZE(extra_constants_r, KIND=int64),  &
                    "Re-read extra_constants incorrect size")
@@ -1351,8 +1368,8 @@ status = f_shum_read_temp_histfile(ff_id, temp_histfile_r, message)
 CALL assert_equals(0_int64, status,                                            &
                    "Failed to read temp_histfile: "//TRIM(message))
 
-CALL assert_true(ALLOCATED(temp_histfile_r),                                   &
-                 "Re-read temp_histfile not allocated by read call")
+check = ALLOCATED(temp_histfile_r)
+CALL assert_true(check, "Re-read temp_histfile not allocated by read call")
 
 CALL assert_equals(temp_hist_dim_test, SIZE(temp_histfile_r, KIND=int64),      &
                    "Re-read temp_histfile incorrect size")
@@ -1366,7 +1383,8 @@ status = f_shum_read_compressed_index(ff_id, comp_index_1_r, 1_int64, message)
 CALL assert_equals(0_int64, status,                                            &
                    "Failed to read compressed_index 1: "//TRIM(message))
 
-CALL assert_true(ALLOCATED(comp_index_1_r),                                    &
+check = ALLOCATED(comp_index_1_r)
+CALL assert_true(check,                                                        &
                  "Re-read compressed_index 1 not allocated by read call")
 
 CALL assert_equals(comp_ind_1_dim_test, SIZE(comp_index_1_r, KIND=int64),      &
@@ -1381,7 +1399,8 @@ status = f_shum_read_compressed_index(ff_id, comp_index_2_r, 2_int64, message)
 CALL assert_equals(0_int64, status,                                            &
                    "Failed to read compressed_index 2: "//TRIM(message))
 
-CALL assert_true(ALLOCATED(comp_index_2_r),                                    &
+check = ALLOCATED(comp_index_2_r)
+CALL assert_true(check,                                                        &
                  "Re-read compressed_index 2 not allocated by read call")
 
 CALL assert_equals(comp_ind_2_dim_test, SIZE(comp_index_2_r, KIND=int64),      &
@@ -1396,7 +1415,8 @@ status = f_shum_read_compressed_index(ff_id, comp_index_3_r, 3_int64, message)
 CALL assert_equals(0_int64, status,                                            &
                    "Failed to read compressed_index 3: "//TRIM(message))
 
-CALL assert_true(ALLOCATED(comp_index_3_r),                                    &
+check = ALLOCATED(comp_index_3_r)
+CALL assert_true(check,                                                        &
                  "Re-read compressed_index 3 not allocated by read call")
 
 CALL assert_equals(comp_ind_3_dim_test, SIZE(comp_index_3_r, KIND=int64),      &
@@ -1410,8 +1430,8 @@ status = f_shum_read_lookup(ff_id, lookup_r, message)
 
 CALL assert_equals(0_int64, status, "Failed to read lookup: "//TRIM(message))
 
-CALL assert_true(ALLOCATED(lookup_r),                                          &
-                 "Re-read lookup not allocated by read call")
+check = ALLOCATED(lookup_r)
+CALL assert_true(check, "Re-read lookup not allocated by read call")
 
 CALL assert_equals(f_shum_lookup_dim1_len,                                     &
                    SIZE(lookup_r, 1, KIND=int64),                              &
@@ -1450,7 +1470,8 @@ DO k = 1, n_fields_test
                            ff_id, INT(k, KIND=int64), r64_field_data_r, message)
       CALL assert_equals(0_int64, status,                                      &
            "Failed to read real 64-bit data: "//TRIM(message))
-      CALL assert_true(ALLOCATED(r64_field_data_r),                            &
+      check = ALLOCATED(r64_field_data_r)
+      CALL assert_true(check,                                                  &
            "Re-read real 64-bit data array not allocated by read call")
       CALL assert_equals(rows*columns,                                         &
            SIZE(r64_field_data_r, 1, KIND=int64),                              &
@@ -1464,7 +1485,8 @@ DO k = 1, n_fields_test
                            ff_id, INT(k, KIND=int64), i64_field_data_r, message)
       CALL assert_equals(0_int64, status,                                      &
            "Failed to read integer 64-bit data: "//TRIM(message))
-      CALL assert_true(ALLOCATED(i64_field_data_r),                            &
+      check = ALLOCATED(i64_field_data_r)
+      CALL assert_true(check,                                                  &
            "Re-read integer 64-bit data array not allocated by read call")
       CALL assert_equals(rows*columns,                                         &
            SIZE(i64_field_data_r, 1, KIND=int64),                              &
@@ -1478,7 +1500,8 @@ DO k = 1, n_fields_test
                            ff_id, INT(k, KIND=int64), r32_field_data_r, message)
       CALL assert_equals(0_int64, status,                                      &
            "Failed to read real 32-bit data: "//TRIM(message))
-      CALL assert_true(ALLOCATED(r32_field_data_r),                            &
+      check = ALLOCATED(r32_field_data_r)
+      CALL assert_true(check,                                                  &
            "Re-read real 32-bit data array not allocated by read call")
       CALL assert_equals(rows*columns,                                         &
            SIZE(r32_field_data, 1, KIND=int64),                                &
@@ -1492,7 +1515,8 @@ DO k = 1, n_fields_test
                            ff_id, INT(k, KIND=int64), i32_field_data_r, message)
       CALL assert_equals(0_int64, status,                                      &
            "Failed to read integer 32-bit data: "//TRIM(message))
-      CALL assert_true(ALLOCATED(i32_field_data_r),                            &
+      check = ALLOCATED(i32_field_data_r)
+      CALL assert_true(check,                                                  &
            "Re-read integer 32-bit data array not allocated by read call")
       CALL assert_equals(rows*columns,                                         &
            SIZE(i32_field_data, 1, KIND=int64),                                &

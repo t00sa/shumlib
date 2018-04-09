@@ -3,7 +3,7 @@
 def generate_assertation(t, dim, has_range, equals = "1")
   #---- variable type ------
   t_def = {
-    "logical" => "logical",
+    "logical" => "logical(kind=bool)",
     "string"  => "character (len = *)", 
     "int32"   => "integer(kind=int32)",
     "int64"   => "integer(kind=int64)",

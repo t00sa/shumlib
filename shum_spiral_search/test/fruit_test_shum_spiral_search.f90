@@ -42,7 +42,8 @@ PUBLIC :: fruit_test_shum_spiral_search
   INTEGER, PARAMETER :: int64  = C_INT64_T
   INTEGER, PARAMETER :: int32  = C_INT32_T
   INTEGER, PARAMETER :: real64 = C_DOUBLE
-  INTEGER, PARAMETER :: real32 = C_FLOAT                                       
+  INTEGER, PARAMETER :: real32 = C_FLOAT
+  INTEGER, PARAMETER :: bool   = C_BOOL                    
 !------------------------------------------------------------------------------!
 
 ! The number of distinct test cases used
@@ -95,8 +96,8 @@ SUBROUTINE sample_6x6_data_64                                       &
 IMPLICIT NONE
 REAL(KIND=real64), INTENT(OUT) :: latitude(6)
 REAL(KIND=real64), INTENT(OUT) :: longitude(6)
-LOGICAL(KIND=C_BOOL), INTENT(OUT) :: lsm(36)
-LOGICAL(KIND=C_BOOL), INTENT(OUT) :: unres_mask(36)
+LOGICAL(KIND=bool), INTENT(OUT) :: lsm(36)
+LOGICAL(KIND=bool), INTENT(OUT) :: unres_mask(36)
 INTEGER(KIND=int64), INTENT(OUT) :: index_unres(36)
 REAL(KIND=real64), INTENT(OUT) :: planet_radius
 
@@ -132,8 +133,8 @@ SUBROUTINE sample_6x6_data_32                                       &
 IMPLICIT NONE 
 REAL(KIND=real32), INTENT(OUT) :: latitude(6)
 REAL(KIND=real32), INTENT(OUT) :: longitude(6)
-LOGICAL(KIND=C_BOOL), INTENT(OUT) :: lsm(36) 
-LOGICAL(KIND=C_BOOL), INTENT(OUT) :: unres_mask(36)
+LOGICAL(KIND=bool), INTENT(OUT) :: lsm(36) 
+LOGICAL(KIND=bool), INTENT(OUT) :: unres_mask(36)
 INTEGER(KIND=int32), INTENT(OUT) :: index_unres(36)
 REAL(KIND=real32)   :: planet_radius
 
@@ -169,14 +170,14 @@ IMPLICIT NONE
 REAL(KIND=real64) :: lats(6)
 REAL(KIND=real64) :: lons(6)
 
-LOGICAL(KIND=C_BOOL) :: lsm(36)
-LOGICAL(KIND=C_BOOL) :: unres_mask(36)
+LOGICAL(KIND=bool) :: lsm(36)
+LOGICAL(KIND=bool) :: unres_mask(36)
 INTEGER(KIND=int64) :: index_unres(36)
 INTEGER(KIND=int64) :: indices(36)
 
-LOGICAL(KIND=C_BOOL) :: is_land_field = .TRUE.
-LOGICAL(KIND=C_BOOL) :: constrained   = .FALSE.
-LOGICAL(KIND=C_BOOL) :: cyclic        = .FALSE.
+LOGICAL(KIND=bool) :: is_land_field = .TRUE.
+LOGICAL(KIND=bool) :: constrained   = .FALSE.
+LOGICAL(KIND=bool) :: cyclic        = .FALSE.
 
 INTEGER(KIND=int64) :: no_point_unres = 5
 INTEGER(KIND=int64) :: points_phi = 6
@@ -289,14 +290,14 @@ IMPLICIT NONE
 REAL(KIND=real32) :: lats(6)
 REAL(KIND=real32) :: lons(6)
 
-LOGICAL(KIND=C_BOOL) :: lsm(36)
-LOGICAL(KIND=C_BOOL) :: unres_mask(36)
+LOGICAL(KIND=bool) :: lsm(36)
+LOGICAL(KIND=bool) :: unres_mask(36)
 INTEGER(KIND=int32) :: index_unres(36)
 INTEGER(KIND=int32) :: indices(36)
 
-LOGICAL(KIND=C_BOOL) :: is_land_field = .TRUE.
-LOGICAL(KIND=C_BOOL) :: constrained   = .FALSE.
-LOGICAL(KIND=C_BOOL) :: cyclic        = .FALSE.
+LOGICAL(KIND=bool) :: is_land_field = .TRUE.
+LOGICAL(KIND=bool) :: constrained   = .FALSE.
+LOGICAL(KIND=bool) :: cyclic        = .FALSE.
 
 INTEGER(KIND=int32) :: no_point_unres = 5
 INTEGER(KIND=int32) :: points_phi = 6

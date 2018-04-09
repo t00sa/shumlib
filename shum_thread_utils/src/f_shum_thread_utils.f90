@@ -24,7 +24,7 @@
 MODULE f_shum_thread_utils_mod
 
 !$ USE OMP_LIB
-USE, INTRINSIC :: ISO_C_BINDING
+USE, INTRINSIC :: ISO_C_BINDING, ONLY: C_INT64_T
 
 IMPLICIT NONE
 PRIVATE
@@ -34,7 +34,7 @@ INTEGER, PARAMETER                 :: noOwner=-1
 TYPE threadLock
   LOGICAL                          :: inUse = .FALSE.
 !$ INTEGER(KIND=omp_lock_kind)     :: lock
-  INTEGER(KIND=c_int64_t)          :: owner = noOwner
+  INTEGER(KIND=C_INT64_T)          :: owner = noOwner
   INTEGER                          :: lockqueue = 0
 END TYPE threadLock
 
@@ -63,7 +63,7 @@ IMPLICIT NONE
 INTEGER, PARAMETER :: no_lock = -1
 
 TYPE(threadLock), ALLOCATABLE :: temp(:)
-INTEGER(KIND=c_int64_t)       :: r
+INTEGER(KIND=C_INT64_T)       :: r
 INTEGER                       :: n, old_locks_size
 
 !$OMP CRITICAL (SHUM_THREAD_UTILS_LOCKSTATE)
@@ -125,8 +125,8 @@ FUNCTION releaseLock(l)                                                        &
 
 IMPLICIT NONE
 
-INTEGER(KIND=c_int64_t), INTENT(IN) :: l
-INTEGER(KIND=c_int64_t)             :: r
+INTEGER(KIND=C_INT64_T), INTENT(IN) :: l
+INTEGER(KIND=C_INT64_T)             :: r
 
 r = failCode
 
@@ -171,9 +171,9 @@ FUNCTION Lock(l)                                                               &
 
 IMPLICIT NONE
 
-INTEGER(KIND=c_int64_t), INTENT(IN) :: l
-INTEGER(KIND=c_int64_t)             :: tid
-INTEGER(KIND=c_int64_t)             :: r
+INTEGER(KIND=C_INT64_T), INTENT(IN) :: l
+INTEGER(KIND=C_INT64_T)             :: tid
+INTEGER(KIND=C_INT64_T)             :: r
 
 r = failCode
 
@@ -232,9 +232,9 @@ FUNCTION TestLock(l)                                                           &
 
 IMPLICIT NONE
 
-INTEGER(KIND=c_int64_t), INTENT(IN) :: l
-INTEGER(KIND=c_int64_t)             :: tid
-INTEGER(KIND=c_int64_t)             :: r
+INTEGER(KIND=C_INT64_T), INTENT(IN) :: l
+INTEGER(KIND=C_INT64_T)             :: tid
+INTEGER(KIND=C_INT64_T)             :: r
 
 LOGICAL :: test_set
 
@@ -300,8 +300,8 @@ FUNCTION Unlock(l)                                                             &
 
 IMPLICIT NONE
 
-INTEGER(KIND=c_int64_t), INTENT(IN) :: l
-INTEGER(KIND=c_int64_t)             :: r
+INTEGER(KIND=C_INT64_T), INTENT(IN) :: l
+INTEGER(KIND=C_INT64_T)             :: r
 
 r = failCode
 
@@ -339,7 +339,7 @@ FUNCTION threadFlush()                                                         &
 
 IMPLICIT NONE
 
-INTEGER(KIND=c_int64_t) :: r
+INTEGER(KIND=C_INT64_T) :: r
 
 !$OMP FLUSH
 r = successCode
@@ -356,7 +356,7 @@ FUNCTION threadID()                                                            &
 
 IMPLICIT NONE
 
-INTEGER(KIND=c_int64_t) :: r
+INTEGER(KIND=C_INT64_T) :: r
 
 r = 0
 !$ r = omp_get_thread_num()
@@ -373,7 +373,7 @@ FUNCTION inPar()                                                               &
 
 IMPLICIT NONE
 
-INTEGER(KIND=c_int64_t) :: r
+INTEGER(KIND=C_INT64_T) :: r
 
 r = 0
 !$ IF(omp_in_parallel()) r = 1

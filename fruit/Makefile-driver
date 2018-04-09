@@ -16,7 +16,7 @@ FRUIT_CURRENT_LIBS=$(patsubst lib%.so, %, $(notdir $(wildcard ${LIBDIR_OUT}/lib/
 
 # Intersection of the above - i.e. names of libraries which are both compiled
 # and have tests available (so we can compile only tests that actually exist)
-FRUIT_AVAILIBLE_TESTS=$(foreach libname,                                       \
+FRUIT_AVAILABLE_TESTS=$(foreach libname,                                       \
                         ${FRUIT_CURRENT_LIBS},                                 \
                         $(filter ${libname},                                   \
                         ${FRUITTESTS}))
@@ -25,16 +25,16 @@ FRUIT_AVAILIBLE_TESTS=$(foreach libname,                                       \
 test: $(STATIC_EXEC) $(DYNAMIC_EXEC)
 
 # Construct the paths to the test directories from the names
-TEST_DIR=$(patsubst %, $(PWD)/%/test/, $(FRUIT_AVAILIBLE_TESTS))
+TEST_DIR=$(patsubst %, $(PWD)/%/test/, $(FRUIT_AVAILABLE_TESTS))
 
 # Include flags for the test directories
 TEST_FLAGS_INCL=$(addprefix -I, $(TEST_DIR))
 
 # Also construct the object filenames (static + dynamic)
-TEST_OBJ_STATIC_F=$(patsubst %, fruit_test_%.o, $(FRUIT_AVAILIBLE_TESTS))
-TEST_OBJ_DYNAMIC_F=$(patsubst %, fruit_test_%_PIC.o, $(FRUIT_AVAILIBLE_TESTS))
-TEST_OBJ_STATIC_C=$(patsubst %, c_fruit_test_%.o, $(FRUIT_AVAILIBLE_TESTS))
-TEST_OBJ_DYNAMIC_C=$(patsubst %, c_fruit_test_%_PIC.o, $(FRUIT_AVAILIBLE_TESTS))
+TEST_OBJ_STATIC_F=$(patsubst %, fruit_test_%.o, $(FRUIT_AVAILABLE_TESTS))
+TEST_OBJ_DYNAMIC_F=$(patsubst %, fruit_test_%_PIC.o, $(FRUIT_AVAILABLE_TESTS))
+TEST_OBJ_STATIC_C=$(patsubst %, c_fruit_test_%.o, $(FRUIT_AVAILABLE_TESTS))
+TEST_OBJ_DYNAMIC_C=$(patsubst %, c_fruit_test_%_PIC.o, $(FRUIT_AVAILABLE_TESTS))
 
 # Create the full paths to the object files by combining the above
 TEST_STATIC=$(wildcard $(join $(TEST_DIR), $(TEST_OBJ_STATIC_F)))              \
@@ -52,7 +52,7 @@ $(DRIVER): ${TEST_DYNAMIC} ${TEST_STATIC}
 	@echo "PROGRAM fruit_driver" > ${DRIVER}
 	@echo "USE iso_c_binding" >> ${DRIVER}
 	@echo "USE fruit" >> ${DRIVER}
-	@for name in $(FRUIT_AVAILIBLE_TESTS) ; do \
+	@for name in $(FRUIT_AVAILABLE_TESTS) ; do \
 	    echo "USE fruit_test_$${name}_mod" >> ${DRIVER} ; \
 	done
 	@echo "IMPLICIT NONE" >> ${DRIVER}
@@ -65,7 +65,7 @@ $(DRIVER): ${TEST_DYNAMIC} ${TEST_STATIC}
 	@echo "END INTERFACE" >> ${DRIVER}
 	@echo "INTEGER :: status" >> ${DRIVER}
 	@echo "CALL init_fruit" >> ${DRIVER}
-	@for name in $(FRUIT_AVAILIBLE_TESTS) ; do \
+	@for name in $(FRUIT_AVAILABLE_TESTS) ; do \
 	    echo "CALL fruit_test_$${name}" >> ${DRIVER} ; \
 	done
 	@echo "CALL fruit_summary" >> ${DRIVER}

@@ -20,6 +20,7 @@ INTEGER, PARAMETER :: int64  = C_INT64_T
 INTEGER, PARAMETER :: int32  = C_INT32_T
 INTEGER, PARAMETER :: real64 = C_DOUBLE
 INTEGER, PARAMETER :: real32 = C_FLOAT
+INTEGER, PARAMETER :: bool   = C_BOOL
 
 ! Missing data, real and integer
 REAL(KIND=real64),   PARAMETER  :: um_rmdi     = -32768.0*32768.0
@@ -119,7 +120,7 @@ FUNCTION open_file(self, fname, num_lookup, overwrite) RESULT(status)
   CLASS(shum_file_type), INTENT(INOUT)   :: self
   CHARACTER(LEN=*), INTENT(IN) :: fname
   INTEGER(KIND=int64), OPTIONAL :: num_lookup
-  LOGICAL(KIND=C_BOOL), OPTIONAL :: overwrite
+  LOGICAL(KIND=bool), OPTIONAL :: overwrite
   TYPE(shum_ff_status_type) :: status    ! Return status object
   INTEGER(KIND=int64) :: lookup_size
   LOGICAL :: exists, read_only

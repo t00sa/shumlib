@@ -23,7 +23,7 @@
 
 
 module fruit_util
-  use iso_c_binding, only: c_int32_t, c_int64_t, c_float, c_double
+  use iso_c_binding, only: c_int32_t, c_int64_t, c_float, c_double, c_bool
   implicit none
   private
   
@@ -32,6 +32,8 @@ module fruit_util
   
   integer, parameter :: real32 = c_float
   integer, parameter :: real64 = c_double
+
+  integer, parameter :: bool = c_bool
 
   public :: equals, to_s, strip
   
@@ -99,7 +101,7 @@ contains
   function to_s_logical_ (value)
     implicit none
     character(len=500):: to_s_logical_
-    logical, intent(in) :: value
+    logical(kind=bool), intent(in) :: value
     character(len=500) :: result
     write (result, *) value
     to_s_logical_ = adjustl(trim(result))
@@ -140,7 +142,7 @@ contains
 
   function equalEpsilon (number1, number2, epsilon ) result (resultValue)
     real , intent (in) :: number1, number2, epsilon 
-    logical :: resultValue 
+    logical(kind=bool) :: resultValue 
 
     resultValue = .false.
 
@@ -160,7 +162,7 @@ contains
   function real32Equal (number1, number2 ) result (resultValue)
     real(kind=real32) , intent (in) :: number1, number2
     real(kind=real32) :: epsilon 
-    logical :: resultValue 
+    logical(kind=bool) :: resultValue 
 
     resultValue = .false.
     epsilon = 1E-6
@@ -180,7 +182,7 @@ contains
   function real64Equal (number1, number2 ) result (resultValue)
     real(kind=real64) , intent (in) :: number1, number2
     real(kind=real64) :: epsilon 
-    logical :: resultValue 
+    logical(kind=bool) :: resultValue 
 
     resultValue = .false.
     epsilon = 1E-6
@@ -199,7 +201,7 @@ contains
 
   function integer32Equal (number1, number2 ) result (resultValue)
     integer(kind=int32) , intent (in) :: number1, number2
-    logical :: resultValue 
+    logical(kind=bool) :: resultValue 
 
     resultValue = .false.
 
@@ -212,7 +214,7 @@ contains
 
   function integer64Equal (number1, number2 ) result (resultValue)
     integer(kind=int64) , intent (in) :: number1, number2
-    logical :: resultValue 
+    logical(kind=bool) :: resultValue 
 
     resultValue = .false.
 
@@ -225,7 +227,7 @@ contains
 
   function stringEqual (str1, str2 ) result (resultValue)
     character(*) , intent (in) :: str1, str2
-    logical :: resultValue 
+    logical(kind=bool) :: resultValue 
 
     resultValue = .false.
 
@@ -235,8 +237,8 @@ contains
   end function stringEqual
 
   function logicalEqual (l1, l2 ) result (resultValue)
-    logical, intent (in) :: l1, l2
-    logical              :: resultValue 
+    logical(kind=bool), intent (in) :: l1, l2
+    logical(kind=bool)              :: resultValue 
 
     resultValue = .false.
 
@@ -249,7 +251,7 @@ end module fruit_util
 
 module fruit
   use fruit_util
-  use iso_c_binding, only: c_int32_t, c_int64_t, c_float, c_double
+  use iso_c_binding, only: c_int32_t, c_int64_t, c_float, c_double, c_bool
   use iso_fortran_env, only: output_unit
   implicit none
   private
@@ -259,6 +261,8 @@ module fruit
   
   integer, parameter :: real32 = c_float
   integer, parameter :: real64 = c_double
+
+  integer, parameter :: bool = c_bool
 
   integer, parameter :: STDOUT_DEFAULT = output_unit
   integer :: stdout   = STDOUT_DEFAULT
@@ -1261,7 +1265,7 @@ contains
   ! all assertions
   !--------------------------------------------------------------------------------
   subroutine obsolete_assert_true_logical_(var1, message)
-    logical, intent (in) :: var1
+    logical(kind=bool), intent (in) :: var1
     character (*), intent (in), optional :: message
 
     call obsolete_ ('assertTrue subroutine is replaced by function assert_true')
@@ -1269,25 +1273,25 @@ contains
   end subroutine obsolete_assert_true_logical_
 
   subroutine assert_true (var1, message)
-    logical, intent (in) :: var1
+    logical(kind=bool), intent (in) :: var1
     character (*), intent (in), optional :: message
 
     if ( var1 .eqv. .true.) then
        call add_success
     else
-       call failed_assert_action(to_s(.true.), to_s(var1), message, if_is = .true.)
+       call failed_assert_action(to_s(.true._bool), to_s(var1), message, if_is = .true.)
     end if
   end subroutine assert_true
 
 
   subroutine assert_false_(var1, message)
-    logical, intent(in) :: var1
+    logical(kind=bool), intent(in) :: var1
     character(len = *), intent(in), optional :: message
 
     if (var1 .eqv. .false.) then
       call add_success
     else
-      call failed_assert_action(to_s(.true.), to_s(var1), message, if_is = .false.)
+      call failed_assert_action(to_s(.true._bool), to_s(var1), message, if_is = .false.)
     endif
   end subroutine assert_false_
 

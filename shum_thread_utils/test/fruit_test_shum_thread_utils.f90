@@ -214,12 +214,10 @@ SUBROUTINE test_returns_valid_lock
 IMPLICIT NONE
 
 LOGICAL(KIND=C_BOOL) :: test_ret
-LOGICAL :: check
 
 CALL set_case_name("test_returns_valid_lock")
 CALL c_test_returns_valid_lock(test_ret)
-check = test_ret
-CALL assert_true(check, "Returned value is not a valid lock")
+CALL assert_true(test_ret, "Returned value is not a valid lock")
 
 END SUBROUTINE test_returns_valid_lock
 
@@ -230,12 +228,10 @@ SUBROUTINE test_invalid_lock_release
 IMPLICIT NONE
 
 LOGICAL(KIND=C_BOOL) :: test_ret
-LOGICAL :: check
 
 CALL set_case_name("test_invalid_lock_release")
 CALL c_test_invalid_lock_release(test_ret)
-check = test_ret
-CALL assert_true(check, "Did not handle/detect invalid lock release request")
+CALL assert_true(test_ret, "Did not handle/detect invalid lock release request")
 
 END SUBROUTINE test_invalid_lock_release
 
@@ -246,12 +242,10 @@ SUBROUTINE test_create_and_release_lock
 IMPLICIT NONE
 
 LOGICAL(KIND=C_BOOL) :: test_ret
-LOGICAL :: check
 
 CALL set_case_name("test_create_and_release_lock")
 CALL c_test_create_and_release_lock(test_ret)
-check = test_ret
-CALL assert_true(check, "Did not correctly create, then release a lock")
+CALL assert_true(test_ret, "Did not correctly create, then release a lock")
 
 END SUBROUTINE test_create_and_release_lock
 
@@ -262,12 +256,10 @@ SUBROUTINE test_create_many_locks
 IMPLICIT NONE
 
 LOGICAL(KIND=C_BOOL) :: test_ret
-LOGICAL :: check
 
 CALL set_case_name("test_create_many_locksk")
 CALL c_test_create_many_locks(test_ret)
-check = test_ret
-CALL assert_true(check, "Did not successfully create a high number of locks")
+CALL assert_true(test_ret, "Did not successfully create a high number of locks")
 
 END SUBROUTINE test_create_many_locks
 
@@ -278,12 +270,10 @@ SUBROUTINE test_backfill_locks
 IMPLICIT NONE
 
 LOGICAL(KIND=C_BOOL) :: test_ret
-LOGICAL :: check
 
 CALL set_case_name("test_backfill_locks")
 CALL c_test_backfill_locks(test_ret)
-check = test_ret
-CALL assert_true(check, "Did not backfill lock array")
+CALL assert_true(test_ret, "Did not backfill lock array")
 
 END SUBROUTINE test_backfill_locks
 
@@ -294,12 +284,10 @@ SUBROUTINE test_sweep_release_locks
 IMPLICIT NONE
 
 LOGICAL(KIND=C_BOOL) :: test_ret
-LOGICAL :: check
 
 CALL set_case_name("test_sweep_release_locks")
 CALL c_test_sweep_release_locks(test_ret)
-check = test_ret
-CALL assert_true(check, "Did not successfully release all locks in a sweep")
+CALL assert_true(test_ret, "Did not successfully release all locks in a sweep")
 
 END SUBROUTINE test_sweep_release_locks
 
@@ -310,7 +298,6 @@ SUBROUTINE test_inpar
 IMPLICIT NONE
 
 LOGICAL(KIND=C_BOOL) :: test_ret
-LOGICAL :: check
 INTEGER(KIND=C_INT64_T) :: par
 
 par = -1
@@ -318,17 +305,17 @@ par = -1
 CALL set_case_name("test_inpar")
 
 CALL c_test_inpar(test_ret,par)
-check = test_ret
-CALL assert_true(check, "Did succesfully call c_shum_inPar()")
-CALL assert_true(par==0, "c_shum_inPar() detected a false parallel region")
+CALL assert_true(test_ret, "Did succesfully call c_shum_inPar()")
+test_ret = (par == 0)
+CALL assert_true(test_ret, "c_shum_inPar() detected a false parallel region")
 
 !$ CALL omp_set_num_threads(3)
 !$OMP PARALLEL
 !$ CALL c_test_inpar(test_ret,par)
 !$OMP END PARALLEL
-!$ check = test_ret
-!$ CALL assert_true(check, "Did succesfully call c_shum_inPar()")
-!$ CALL assert_true(par==1, "c_shum_inPar() did not detect a parallel region")
+!$ CALL assert_true(test_ret, "Did succesfully call c_shum_inPar()")
+!$ test_ret = (par == 1)
+!$ CALL assert_true(test_ret, "c_shum_inPar() did not detect a parallel region")
 
 END SUBROUTINE test_inpar
 
@@ -339,7 +326,6 @@ SUBROUTINE test_threadid
 IMPLICIT NONE
 
 LOGICAL(KIND=C_BOOL) :: test_ret
-LOGICAL :: check
 INTEGER(KIND=C_INT64_T) :: tid
 
 !$ INTEGER :: i
@@ -349,9 +335,9 @@ tid = -1
 CALL set_case_name("test_threadid")
 
 CALL c_test_threadid(test_ret,tid)
-check = test_ret
-CALL assert_true(check, "Thread IDs not calculated correctly")
-CALL assert_true(tid==0, "Thread ID not zero outside parallel region")
+CALL assert_true(test_ret, "Thread IDs not calculated correctly")
+test_ret = (tid == 0)
+CALL assert_true(test_ret, "Thread ID not zero outside parallel region")
 
 !$ CALL omp_set_num_threads(3)
 !$OMP PARALLEL DO SCHEDULE(static, 1) DEFAULT(NONE) PRIVATE(tid, i)            &
@@ -361,8 +347,7 @@ CALL assert_true(tid==0, "Thread ID not zero outside parallel region")
 !$ IF (tid/=i) test_ret = .FALSE.
 !$ END DO
 !$OMP END PARALLEL DO
-!$ check = test_ret
-!$ CALL assert_true(check, "Thread IDs not calculated correctly" //            &
+!$ CALL assert_true(test_ret, "Thread IDs not calculated correctly" //         &
 !$                         " in parallel region")
 
 END SUBROUTINE test_threadid
@@ -374,7 +359,6 @@ SUBROUTINE test_flush
 IMPLICIT NONE
 
 LOGICAL(KIND=C_BOOL) :: test_ret
-LOGICAL :: check
 
 INTEGER(KIND=C_INT64_T) :: shared1
 
@@ -386,8 +370,7 @@ CALL set_case_name("test_threadflush")
 
 shared1=0
 CALL c_test_threadflush(test_ret,shared1)
-check = test_ret
-CALL assert_true(check, "Dummy flush test fails!")
+CALL assert_true(test_ret, "Dummy flush test fails!")
 
 END SUBROUTINE test_flush
 

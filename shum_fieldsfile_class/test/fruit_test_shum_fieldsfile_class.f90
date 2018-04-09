@@ -53,6 +53,7 @@ END INTERFACE
   INTEGER, PARAMETER :: int64  = C_INT64_T
   INTEGER, PARAMETER :: int32  = C_INT32_T
   INTEGER, PARAMETER :: real64 = C_DOUBLE
+  INTEGER, PARAMETER :: bool   = C_BOOL
 !------------------------------------------------------------------------------!
 
 ! The unit, filename, and id of the temporary file used by these tests
@@ -194,7 +195,7 @@ REAL(KIND=real64),   ALLOCATABLE :: comp_index_3_r(:)
 INTEGER(KIND=int64) :: lookup_int_r(45)
 REAL(KIND=real64)   :: lookup_real_r(19)
 REAL(KIND=real64)   :: rdata_r(columns, rows)
-LOGICAL(KIND=C_BOOL) :: overwrite
+LOGICAL(KIND=bool)  :: overwrite
 
 INTEGER(KIND=int64) :: i, j
 INTEGER :: failures_at_entry

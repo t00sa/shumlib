@@ -45,7 +45,8 @@ PUBLIC :: f_shum_spiral_search_algorithm
   INTEGER, PARAMETER :: int64  = C_INT64_T
   INTEGER, PARAMETER :: int32  = C_INT32_T
   INTEGER, PARAMETER :: real64 = C_DOUBLE
-  INTEGER, PARAMETER :: real32 = C_FLOAT                                       
+  INTEGER, PARAMETER :: real32 = C_FLOAT       
+  INTEGER, PARAMETER :: bool   = C_BOOL                                
 !------------------------------------------------------------------------------!
 
 ! Trig functions work in radians, so requires conversion factors
@@ -115,14 +116,14 @@ REAL(KIND=real64), INTENT(IN) :: planet_radius
 REAL(KIND=real64), INTENT(IN) :: lats(points_phi) ! field
 REAL(KIND=real64), INTENT(IN) :: lons(points_lambda) ! field
 
-LOGICAL(KIND=C_BOOL),INTENT(IN) :: cyclic ! T if data covers complete lat circle
-LOGICAL(KIND=C_BOOL),INTENT(IN) :: constrained ! T if 200km constraint applied
-LOGICAL(KIND=C_BOOL),INTENT(IN) :: lsm(points_lambda*points_phi) ! land sea mask
-LOGICAL(KIND=C_BOOL),INTENT(IN) :: is_land_field ! F for sea, T for land field
+LOGICAL(KIND=bool),INTENT(IN) :: cyclic ! T if data covers complete lat circle
+LOGICAL(KIND=bool),INTENT(IN) :: constrained ! T if 200km constraint applied
+LOGICAL(KIND=bool),INTENT(IN) :: lsm(points_lambda*points_phi) ! land sea mask
+LOGICAL(KIND=bool),INTENT(IN) :: is_land_field ! F for sea, T for land field
 ! =F for a point that is resolved  =T for an unresolved point
-LOGICAL(KIND=C_BOOL),INTENT(IN) :: unres_mask(points_lambda*points_phi)
+LOGICAL(KIND=bool),INTENT(IN) :: unres_mask(points_lambda*points_phi)
 
-CHARACTER(LEN=400), INTENT(INOUT) :: cmessage
+CHARACTER(LEN=*), INTENT(INOUT) :: cmessage
 
 ! LOCAL VARIABLES
 
@@ -139,7 +140,7 @@ INTEGER(KIND=int64) :: curr_i_invalid_min ! Posn of invalid min dist in E-W dir
 INTEGER(KIND=int64) :: curr_j_invalid_min ! Posn of invalid min dist in S-N dir
 LOGICAL :: found ! resolved point fitting critirea has been found
 LOGICAL :: allsametype ! no resolved points of same type in lsm
-LOGICAL(KIND=C_BOOL) :: tmp_lsm(points_lambda*points_phi) ! temp land sea mask
+LOGICAL(KIND=bool) :: tmp_lsm(points_lambda*points_phi) ! temp land sea mask
 REAL(KIND=real64) :: search_dist ! distance to search
 REAL(KIND=real64) :: step ! step size to loop over
 REAL(KIND=real64) :: tempdist ! temporary distance
@@ -148,7 +149,7 @@ REAL(KIND=real64) :: max_dist ! maximum distance to search
 REAL(KIND=real64) :: distance(points_lambda, points_phi) ! Array of calculation.
 REAL(KIND=real64) :: curr_dist_valid_min ! Current distance to valid point
 REAL(KIND=real64) :: curr_dist_invalid_min ! Current distance to invalid point
-LOGICAL(KIND=C_BOOL) :: is_the_same(SIZE(tmp_lsm,1))
+LOGICAL(KIND=bool) :: is_the_same(SIZE(tmp_lsm,1))
 
 ! End of header
 
@@ -507,14 +508,14 @@ REAL(KIND=real32), INTENT(IN) :: planet_radius
 REAL(KIND=real32), INTENT(IN) :: lats(points_phi) ! field
 REAL(KIND=real32), INTENT(IN) :: lons(points_lambda) ! field
 
-LOGICAL(KIND=C_BOOL),INTENT(IN) :: cyclic ! T if data covers complete lat circle
-LOGICAL(KIND=C_BOOL),INTENT(IN) :: constrained ! T if 200km constraint applied
-LOGICAL(KIND=C_BOOL),INTENT(IN) :: lsm(points_lambda*points_phi) ! land sea mask
-LOGICAL(KIND=C_BOOL),INTENT(IN) :: is_land_field ! F for sea, T for land field
+LOGICAL(KIND=bool),INTENT(IN) :: cyclic ! T if data covers complete lat circle
+LOGICAL(KIND=bool),INTENT(IN) :: constrained ! T if 200km constraint applied
+LOGICAL(KIND=bool),INTENT(IN) :: lsm(points_lambda*points_phi) ! land sea mask
+LOGICAL(KIND=bool),INTENT(IN) :: is_land_field ! F for sea, T for land field
 ! =F for a point that is resolved  =T for an unresolved point
-LOGICAL(KIND=C_BOOL),INTENT(IN) :: unres_mask(points_lambda*points_phi)
+LOGICAL(KIND=bool),INTENT(IN) :: unres_mask(points_lambda*points_phi)
 
-CHARACTER(LEN=400), INTENT(INOUT) :: cmessage
+CHARACTER(LEN=*), INTENT(INOUT) :: cmessage
 
 ! LOCAL VARIABLES
 
@@ -531,7 +532,7 @@ INTEGER(KIND=int32) :: curr_i_invalid_min ! Posn of invalid min dist in E-W dir
 INTEGER(KIND=int32) :: curr_j_invalid_min ! Posn of invalid min dist in S-N dir
 LOGICAL :: found ! resolved point fitting critirea has been found
 LOGICAL :: allsametype ! no resolved points of same type in lsm
-LOGICAL(KIND=C_BOOL) :: tmp_lsm(points_lambda*points_phi) ! temp land sea mask
+LOGICAL(KIND=bool) :: tmp_lsm(points_lambda*points_phi) ! temp land sea mask
 REAL(KIND=real32) :: search_dist ! distance to search
 REAL(KIND=real32) :: step ! step size to loop over
 REAL(KIND=real32) :: tempdist ! temporary distance
@@ -540,7 +541,7 @@ REAL(KIND=real32) :: max_dist ! maximum distance to search
 REAL(KIND=real32) :: distance(points_lambda, points_phi) ! Array of calculation.
 REAL(KIND=real32) :: curr_dist_valid_min ! Current distance to valid point
 REAL(KIND=real32) :: curr_dist_invalid_min ! Current distance to invalid point
-LOGICAL(KIND=C_BOOL) :: is_the_same(SIZE(tmp_lsm,1))
+LOGICAL(KIND=bool) :: is_the_same(SIZE(tmp_lsm,1))
 
 ! End of header
 

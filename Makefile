@@ -136,7 +136,8 @@ $(addsuffix _PREREQ, ${ALL_LIBS_VARS}): %:
 
 # auto-generate test targets
 $(wildcard $(addprefix ${DIR_ROOT}/, $(addsuffix /test, ${ALL_LIBS}))): ${DIR_ROOT}/%/test: ${FRUIT} %
-	${MAKE} -C $@
+	test ! -d $@ || ${MAKE} -C $@
+	@test -d $@ || echo "No tests in $@"
 
 # auto-generate test prerequisite targets
 $(addsuffix _tests, ${ALL_LIBS_VARS}): %_tests: % ${OUTDIR_TESTS}
@@ -144,8 +145,7 @@ $(addsuffix _tests, ${ALL_LIBS_VARS}): %_tests: % ${OUTDIR_TESTS}
 	${MAKE} -C ${DIR_ROOT} ${DIR_ROOT}/${$(subst _tests,,$@)}/test
 
 # reverse targets
-
-REVERSE_template = $(strip $(foreach revlib,${ALL_LIBS_VARS},$(if $(findstring $(1),${${revlib}}),${revlib},)))
+REVERSE_template = $(strip $(foreach revlib,${ALL_LIBS_VARS},$(if $(filter $(1),${${revlib}}),${revlib},)))
 
 # auto-generate reverse targets
 ${ALL_LIBS}: %:
@@ -154,9 +154,8 @@ ${ALL_LIBS}: %:
 # auto-generate reverse test targets
 $(addsuffix _tests, ${ALL_LIBS}): %:
 	${MAKE} -C ${DIR_ROOT} $(call REVERSE_template,$(subst _tests,,$@))_tests
-	${MAKE} -C ${DIR_ROOT} test_generic
 
-.PHONY: libs ${ALL_LIBS} ${ALL_LIBS_VARS} $(addsuffix _PREREQ, ${ALL_LIBS_VARS}) $(wildcard $(addprefix ${DIR_ROOT}/, $(addsuffix /test, ${ALL_LIBS}))) $(addsuffix _tests, ${ALL_LIBS_VARS}) $(addsuffix _tests, ${ALL_LIBS})
+.PHONY: libs ${ALL_LIBS} ${ALL_LIBS_VARS} $(addsuffix _PREREQ, ${ALL_LIBS_VARS}) $(addprefix ${DIR_ROOT}/, $(addsuffix /test, ${ALL_LIBS})) $(addsuffix _tests, ${ALL_LIBS_VARS}) $(addsuffix _tests, ${ALL_LIBS})
 
 # Add a target which points to all libraries
 libs: ${ALL_LIBS}
@@ -166,9 +165,24 @@ libs: ${ALL_LIBS}
 
 .PHONY: test test_generic check
 
-check: test
+check: ${OUTDIR_TESTS} $(wildcard $(addprefix ${DIR_ROOT}/, $(addsuffix /test, ${ALL_LIBS})))
+	${MAKE} -C ${DIR_ROOT} libs
+	${MAKE} -C ${DIR_ROOT} test_generic
 
-test: ${OUTDIR_TESTS} $(wildcard $(addprefix ${DIR_ROOT}/, $(addsuffix /test, ${ALL_LIBS})))
+# All of the libraries which have FRUIT tests
+FRUITTESTS=$(patsubst %/test,%,$(wildcard $(addsuffix /test, ${ALL_LIBS})))
+
+# Currently built libraries
+FRUIT_CURRENT_LIBS=$(patsubst lib%.so, %, $(notdir $(wildcard ${LIBDIR_OUT}/lib/*.so)))
+
+# Intersection of the above - i.e. names of libraries which are both compiled
+# and have tests available (so we can compile only tests that actually exist)
+FRUIT_AVAILABLE_TESTS=$(foreach libname,                                       \
+                        ${FRUIT_CURRENT_LIBS},                                 \
+                        $(filter ${libname},                                   \
+                        ${FRUITTESTS}))
+
+test: ${OUTDIR_TESTS} $(addsuffix _tests, ${FRUIT_AVAILABLE_TESTS})
 	${MAKE} -C ${DIR_ROOT} test_generic
 
 test_generic:

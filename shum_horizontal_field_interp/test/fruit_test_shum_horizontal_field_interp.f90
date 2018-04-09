@@ -22,7 +22,8 @@
 MODULE fruit_test_shum_horizontal_field_interp_mod
 
 USE fruit
-USE, INTRINSIC :: ISO_C_BINDING, ONLY: C_INT64_T, C_INT32_T, C_FLOAT, C_DOUBLE
+USE, INTRINSIC :: ISO_C_BINDING, ONLY:                                         &
+  C_INT64_T, C_INT32_T, C_FLOAT, C_DOUBLE, C_BOOL
 
 IMPLICIT NONE 
 
@@ -41,7 +42,8 @@ PUBLIC :: fruit_test_shum_horizontal_field_interp
   INTEGER, PARAMETER :: int64  = C_INT64_T
   INTEGER, PARAMETER :: int32  = C_INT32_T
   INTEGER, PARAMETER :: real64 = C_DOUBLE
-  INTEGER, PARAMETER :: real32 = C_FLOAT                                       
+  INTEGER, PARAMETER :: real32 = C_FLOAT
+  INTEGER, PARAMETER :: bool   = C_BOOL                                    
 !------------------------------------------------------------------------------!
 
 ! Set a small tolerance level for real to real comparisons
@@ -619,10 +621,10 @@ REAL(KIND=real64)   :: phi_targ(points)
 REAL(KIND=real64)   :: t_lambda(points)
 REAL(KIND=real64)   :: t_lambda_out(points)
 
-LOGICAL(KIND=int64)             :: cyclic
-LOGICAL                         :: create_last_point
+LOGICAL(KIND=bool)  :: cyclic
+LOGICAL             :: create_last_point
 
-INTEGER(KIND=int32)            :: i
+INTEGER(KIND=int32) :: i
 INTEGER(KIND=int32) :: status
 CHARACTER(LEN=500)  :: message
 
@@ -737,10 +739,10 @@ REAL(KIND=real64)   :: phi_targ(points)
 REAL(KIND=real64)   :: t_lambda(points)
 REAL(KIND=real64)   :: t_lambda_out(points)
 
-LOGICAL(KIND=int64)             :: cyclic
-LOGICAL                         :: create_last_point
+LOGICAL(KIND=bool)  :: cyclic
+LOGICAL             :: create_last_point
 
-INTEGER(KIND=int32)            :: i
+INTEGER(KIND=int32) :: i
 INTEGER(KIND=int32) :: status
 CHARACTER(LEN=500)  :: message
 
@@ -836,10 +838,10 @@ REAL(KIND=real64)   :: phi_targ(points)
 REAL(KIND=real64)   :: t_lambda(points)
 REAL(KIND=real64)   :: t_lambda_out(points)
 
-LOGICAL(KIND=int64)             :: cyclic
-LOGICAL                         :: create_last_point
+LOGICAL(KIND=bool)  :: cyclic
+LOGICAL             :: create_last_point
 
-INTEGER(KIND=int32)            :: i
+INTEGER(KIND=int32) :: i
 INTEGER(KIND=int32) :: status
 CHARACTER(LEN=500)  :: message
 
@@ -933,7 +935,7 @@ REAL(KIND=real64)   :: t_lambda(points)
 
 LOGICAL             :: create_last_point
 
-INTEGER(KIND=int32)            :: i
+INTEGER(KIND=int32) :: i
 INTEGER(KIND=int32) :: status
 CHARACTER(LEN=500)  :: message
 

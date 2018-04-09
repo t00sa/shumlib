@@ -22,7 +22,8 @@
 MODULE fruit_test_shum_byteswap_mod
 
 USE fruit
-USE, INTRINSIC :: ISO_C_BINDING, ONLY: C_INT64_T, C_INT32_T, C_FLOAT, C_DOUBLE
+USE, INTRINSIC :: ISO_C_BINDING, ONLY:                                         & 
+  C_INT64_T, C_INT32_T, C_FLOAT, C_DOUBLE, C_BOOL
 
 IMPLICIT NONE 
 
@@ -37,7 +38,8 @@ IMPLICIT NONE
   INTEGER, PARAMETER :: int64  = C_INT64_T
   INTEGER, PARAMETER :: int32  = C_INT32_T
   INTEGER, PARAMETER :: real64 = C_DOUBLE
-  INTEGER, PARAMETER :: real32 = C_FLOAT                                       
+  INTEGER, PARAMETER :: real32 = C_FLOAT
+  INTEGER, PARAMETER :: bool   = C_BOOL                              
 !------------------------------------------------------------------------------!
 
 CONTAINS
@@ -106,8 +108,8 @@ USE f_shum_byteswap_mod, ONLY: f_shum_get_machine_endianism,                   &
                                f_shum_littleendian, f_shum_bigendian
 IMPLICIT NONE 
 
-INTEGER :: endian
-LOGICAL :: check
+INTEGER            :: endian
+LOGICAL(KIND=bool) :: check
 CALL set_case_name("test_byteswap_returns_valid_endian")
 endian = f_shum_get_machine_endianism()
 check = ((endian == f_shum_littleendian) .OR. (endian == f_shum_bigendian))

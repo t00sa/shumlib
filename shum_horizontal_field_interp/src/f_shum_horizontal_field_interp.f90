@@ -28,7 +28,7 @@
 MODULE f_shum_horizontal_field_interp_mod
 
 USE, INTRINSIC :: ISO_C_BINDING, ONLY:                                         &
-  C_INT64_T, C_INT32_T, C_FLOAT, C_DOUBLE
+  C_INT64_T, C_INT32_T, C_FLOAT, C_DOUBLE, C_BOOL
 
 IMPLICIT NONE
 
@@ -51,7 +51,8 @@ PUBLIC :: f_shum_horizontal_field_bi_lin_interp_get_coeffs                    &
   INTEGER, PARAMETER :: int64  = C_INT64_T
   INTEGER, PARAMETER :: int32  = C_INT32_T
   INTEGER, PARAMETER :: real64 = C_DOUBLE
-  INTEGER, PARAMETER :: real32 = C_FLOAT                                       
+  INTEGER, PARAMETER :: real32 = C_FLOAT
+  INTEGER, PARAMETER :: bool   = C_BOOL                                    
 !------------------------------------------------------------------------------!
 
 CONTAINS
@@ -201,7 +202,7 @@ REAL(KIND=real64), INTENT(OUT) :: weight_t_l(points)
                                 ! Weight applied to value at top
                                 ! left corner of source gridbox
 
-LOGICAL(KIND=int64),  INTENT(IN) :: cyclic ! =T, then source data is cyclic
+LOGICAL(KIND=bool), INTENT(IN) :: cyclic ! =T, then source data is cyclic
                                            ! =F, then source data is non-cyclic
 
 !--- Local variables:---------------------------------------------------
@@ -269,7 +270,7 @@ REAL(KIND=real64), INTENT(IN)  :: phi_srce(points_phi_srce)
 REAL(KIND=real64), INTENT(OUT) :: t_lambda(points)
                                 ! Local value of target longitude
 
-LOGICAL(KIND=int64),  INTENT(IN) :: cyclic ! =T, then source data is cyclic
+LOGICAL(KIND=bool), INTENT(IN) :: cyclic ! =T, then source data is cyclic
                                            ! =F, then source data is non-cyclic
 
 !--- Local variables:---------------------------------------------------
