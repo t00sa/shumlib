@@ -17,7 +17,7 @@ FCFLAGS_OPENMP=-h omp
 # Flag used to unset OpenMP (passed to all compilation commands)
 FCFLAGS_NOOPENMP=-h noomp
 # Any other flags (to be passed to all compliation commands)
-FCFLAGS_EXTRA=-G2 -O2 -Ovector1 -hfp0 -hflex_mp=strict -hcpu=x86_64 -target-network=none
+FCFLAGS_EXTRA=-G2 -O2 -Ovector1 -hfp0 -hflex_mp=strict -hcpu=x86_64 -target-network=none -hnosafe_addr
 # Flag used to set PIC (Position-independent-code; required by dynamic lib
 # and so will only be passed to compile objects destined for the dynamic lib)
 FCFLAGS_PIC=-h pic
@@ -50,7 +50,7 @@ CCFLAGS_OPENMP=-h omp
 # Flag used to unset OpenMP (passed to all compilation commands)
 CCFLAGS_NOOPENMP=-h noomp
 # Any other flags (to be passed to all compilation commands)
-CCFLAGS_EXTRA=-G2 -O3 -h c99 -hconform -hstdc -hnotolerant -hnognu -herror_on_warning -hcpu=x86_64 -target-network=none
+CCFLAGS_EXTRA=-G2 -O3 -h c99 -hconform -hstdc -hnotolerant -hnognu -herror_on_warning -hcpu=x86_64 -target-network=none -hnosafe_addr
 # Flag used to set PIC (Position-independent-code; required by dynamic lib 
 # and so will only be passed to compile objects destined for the dynamic lib)
 CCFLAGS_PIC=-h pic
