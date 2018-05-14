@@ -104,7 +104,7 @@ THREAD_UTILS_PREREQ=
 # LL to/from EQ transformation and wind rotation
 #-----------------------------------------------
 LLEQ=shum_latlon_eq_grids
-LLEQ_PREREQ=
+LLEQ_PREREQ=CONSTS
 
 # Fieldsfile API
 #---------------
@@ -114,17 +114,22 @@ FFILE_PREREQ=BSWAP
 # Spiral Search Algorithm
 #------------------------
 SPIRAL=shum_spiral_search
-SPIRAL_PREREQ=
+SPIRAL_PREREQ=CONSTS
 
 # Fieldsfile classes
 #-------------------
 FFCLASS=shum_fieldsfile_class
 FFCLASS_PREREQ=FFILE PACK
 
+# Constants
+#---------------
+CONSTS=shum_constants
+CONSTS_PREREQ=
+
 # All libs vars
 #--------------
-ALL_LIBS_VARS=BSWAP STR_CONV DATA_CONV PACK THREAD_UTILS LLEQ FFILE \
-	      HORIZ_INTERP SPIRAL FFCLASS
+ALL_LIBS_VARS=CONSTS BSWAP STR_CONV DATA_CONV PACK THREAD_UTILS LLEQ \
+	      FFILE HORIZ_INTERP SPIRAL FFCLASS
 ALL_LIBS=$(foreach lib,${ALL_LIBS_VARS},${${lib}})
 
 # Forward targets (targets with "VAR" names)

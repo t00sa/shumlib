@@ -27,11 +27,14 @@ MODULE f_shum_latlon_eq_grids_mod
 USE, INTRINSIC :: ISO_C_BINDING, ONLY:                                         &
   C_INT64_T, C_INT32_T, C_FLOAT, C_DOUBLE
 
+USE f_shum_conversions_mod, ONLY:                                              &
+                                 shum_pi_over_180_const,                       &
+                                 shum_180_over_pi_const
 IMPLICIT NONE 
 
 PRIVATE
 
-PUBLIC :: f_shum_latlon_to_eq, f_shum_eq_to_latlon,                           &
+PUBLIC :: f_shum_latlon_to_eq, f_shum_eq_to_latlon,                            &
           f_shum_latlon_to_eq_vector, f_shum_eq_to_latlon_vector,              &
           f_shum_latlon_eq_vector_coeff
 
@@ -48,11 +51,6 @@ PUBLIC :: f_shum_latlon_to_eq, f_shum_eq_to_latlon,                           &
   INTEGER, PARAMETER :: real64 = C_DOUBLE
   INTEGER, PARAMETER :: real32 = C_FLOAT                                       
 !------------------------------------------------------------------------------!
-
-! Rotation is done in radians, so requires conversion factors
-REAL(KIND=real64), PARAMETER :: pi                = 3.14159265358979323846_real64
-REAL(KIND=real64), PARAMETER :: pi_over_180       = pi/180.0_real64
-REAL(KIND=real64), PARAMETER :: recip_pi_over_180 = 180.0_real64/pi
 
 INTERFACE f_shum_latlon_to_eq
   MODULE PROCEDURE                                                             &
@@ -148,8 +146,8 @@ IF (ABS(phi_pole) == 90.0_real64) THEN
   sin_phi_pole = SIGN(1.0_real64, phi_pole)
   cos_phi_pole = SIGN(0.0_real64, phi_pole)
 ELSE
-  sin_phi_pole = SIN(pi_over_180*phi_pole)
-  cos_phi_pole = COS(pi_over_180*phi_pole)
+  sin_phi_pole = SIN(shum_pi_over_180_const*phi_pole)
+  cos_phi_pole = COS(shum_pi_over_180_const*phi_pole)
 END IF
 
 !$OMP  PARALLEL DO DEFAULT(NONE) SCHEDULE(STATIC)                              &
@@ -165,8 +163,8 @@ DO i=1,SIZE(phi)
   END IF
 
   ! Convert latitude & longitude to radians
-  a_lambda = pi_over_180*a_lambda
-  a_phi    = pi_over_180*phi(i)
+  a_lambda = shum_pi_over_180_const*a_lambda
+  a_phi    = shum_pi_over_180_const*phi(i)
 
   ! Compute eq latitude
   arg = -cos_phi_pole*COS(a_lambda)*COS(a_phi)                                 &
@@ -175,19 +173,19 @@ DO i=1,SIZE(phi)
   arg   = MIN(arg, 1.0_real64)
   arg   = MAX(arg,-1.0_real64)
   e_phi = ASIN(arg)
-  phi_eq(i) = recip_pi_over_180*e_phi
+  phi_eq(i) = shum_180_over_pi_const*e_phi
 
   ! Compute eq longitude
   term1 = (COS(a_phi)*COS(a_lambda)*sin_phi_pole                               &
         + SIN(a_phi)*cos_phi_pole)
   term2 = COS(e_phi)
   IF (term2 < small) THEN
-    e_lambda = recip_pi_over_180*a_lambda
+    e_lambda = shum_180_over_pi_const*a_lambda
   ELSE
     arg = term1/term2
     arg = MIN(arg, 1.0_real64)
     arg = MAX(arg,-1.0_real64)
-    e_lambda = recip_pi_over_180*ACOS(arg)
+    e_lambda = shum_180_over_pi_const*ACOS(arg)
     e_lambda = SIGN(e_lambda,a_lambda)
   END IF
 
@@ -397,8 +395,8 @@ IF (ABS(phi_pole) == 90.0_real64) THEN
   sin_phi_pole = SIGN(1.0_real64, phi_pole)
   cos_phi_pole = SIGN(0.0_real64, phi_pole)
 ELSE
-  sin_phi_pole = SIN(pi_over_180*phi_pole)
-  cos_phi_pole = COS(pi_over_180*phi_pole)
+  sin_phi_pole = SIN(shum_pi_over_180_const*phi_pole)
+  cos_phi_pole = COS(shum_pi_over_180_const*phi_pole)
 END IF
 
 !$OMP  PARALLEL DO DEFAULT(NONE) SCHEDULE(STATIC)                              &
@@ -414,8 +412,8 @@ DO i=1,SIZE(phi_eq)
   END IF
  
   ! Convert eq latitude & longitude to radians
-  e_lambda = pi_over_180*e_lambda
-  e_phi    = pi_over_180*phi_eq(i)
+  e_lambda = shum_pi_over_180_const*e_lambda
+  e_phi    = shum_pi_over_180_const*phi_eq(i)
 
   ! Compute latitude
   arg = cos_phi_pole*COS(e_lambda)*COS(e_phi)                                  &
@@ -424,7 +422,7 @@ DO i=1,SIZE(phi_eq)
   arg    = MIN(arg, 1.0_real64)
   arg    = MAX(arg,-1.0_real64)
   a_phi  = ASIN(arg)
-  phi(i) = recip_pi_over_180*a_phi
+  phi(i) = shum_180_over_pi_const*a_phi
 
   ! Compute longitude
   term1 = (COS(e_phi)*COS(e_lambda)*sin_phi_pole                               &
@@ -436,7 +434,7 @@ DO i=1,SIZE(phi_eq)
     arg = term1/term2
     arg = MIN(arg, 1.0_real64)
     arg = MAX(arg,-1.0_real64)
-    a_lambda = recip_pi_over_180*ACOS(arg)
+    a_lambda = shum_180_over_pi_const*ACOS(arg)
     a_lambda = SIGN(a_lambda, e_lambda)
     a_lambda = a_lambda + lambda_zero
   END IF
@@ -641,8 +639,8 @@ IF (ABS(phi_pole) == 90.0_real64) THEN
   sin_phi_pole = SIGN(1.0_real64, phi_pole)
   cos_phi_pole = SIGN(0.0_real64, phi_pole)
 ELSE
-  sin_phi_pole = SIN(pi_over_180*phi_pole)
-  cos_phi_pole = COS(pi_over_180*phi_pole)
+  sin_phi_pole = SIN(shum_pi_over_180_const*phi_pole)
+  cos_phi_pole = COS(shum_pi_over_180_const*phi_pole)
 END IF
 
 
@@ -658,14 +656,14 @@ DO i=1,SIZE(lambda)
     a_lambda = a_lambda - SIGN(360.0_real64, a_lambda)
   END IF
 
-  a_lambda = pi_over_180*a_lambda
+  a_lambda = shum_pi_over_180_const*a_lambda
 
   e_lambda = MOD(lambda_eq(i), 360.0_real64)
   IF (ABS(e_lambda) > 180.0_real64) THEN
     e_lambda = e_lambda - SIGN(360.0_real64, e_lambda)
   END IF
 
-  e_lambda = e_lambda*pi_over_180
+  e_lambda = e_lambda*shum_pi_over_180_const
 
   ! Take sine of eq lambda
   IF (ABS(lambda_eq(i)) == 180.0_real64) THEN

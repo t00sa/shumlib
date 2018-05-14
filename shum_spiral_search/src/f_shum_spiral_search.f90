@@ -28,6 +28,12 @@ MODULE f_shum_spiral_search_mod
 USE, INTRINSIC :: ISO_C_BINDING, ONLY:                                         &
   C_INT64_T, C_INT32_T, C_FLOAT, C_DOUBLE, C_BOOL
 
+USE f_shum_conversions_mod, ONLY:                                              &
+                                 shum_pi_const,                                &
+                                 shum_pi_over_180_const,                       &
+                                 shum_pi_const_32,                             &
+                                 shum_pi_over_180_const_32
+
 IMPLICIT NONE 
 
 PRIVATE
@@ -49,11 +55,6 @@ PUBLIC :: f_shum_spiral_search_algorithm
   INTEGER, PARAMETER :: bool   = C_BOOL                                
 !------------------------------------------------------------------------------!
 
-! Trig functions work in radians, so requires conversion factors
-REAL(KIND=real64), PARAMETER :: pi               = 3.14159265358979323846_real64
-REAL(KIND=real64), PARAMETER :: pi_over_180      = pi/180.0_real64
-REAL(KIND=real64), PARAMETER :: pi_32b           = 3.14159265358979323846_real32
-REAL(KIND=real64), PARAMETER :: pi_32b_over_180      = pi_32b/180.0_real32
 REAL(KIND=real64), PARAMETER :: RMDI      = -32768.0_real64*32768.0_real64
 REAL(KIND=real32), PARAMETER :: RMDI_32b  = -32768.0_real32*32768.0_real32
 
@@ -162,7 +163,7 @@ IF (constrained) THEN
   max_dist=200000.0_real64
 ELSE
   ! reset the max distance to half the circumference of earth
-  max_dist=planet_radius*pi
+  max_dist=planet_radius*shum_pi_const
 END IF
 
 ! Test to see if all resolved points are of the opposite type
@@ -222,7 +223,7 @@ DO k=1, no_point_unres
   END IF
 
 ! Assume if we don't find a valid min the value is at planet_radius*pi+1.
-  curr_dist_valid_min = (planet_radius*pi)+1.0_real64
+  curr_dist_valid_min = (planet_radius*shum_pi_const)+1.0_real64
 ! We want nearest one so we dont want to limit search to max_dist.
   curr_dist_invalid_min = RMDI
 ! Give some initial RMDI values in case they are never set
@@ -441,7 +442,7 @@ DO k=1, no_point_unres
             // 'points of any type within the limit, will just use closest ' &
             // 'resolved point of the same type'
             status = -20
-            max_dist=planet_radius*pi
+            max_dist=planet_radius*shum_pi_const
             curr_dist_valid_min=max_dist
             search_dist=search_dist+step
           ELSE
@@ -462,7 +463,7 @@ DO k=1, no_point_unres
           // 'points of any type within the limit, will just use closest ' &
           // 'resolved point of the same type'
           status = -30
-          max_dist=planet_radius*pi
+          max_dist=planet_radius*shum_pi_const
           curr_dist_valid_min=max_dist
           search_dist=search_dist+step
         ELSE
@@ -554,7 +555,7 @@ IF (constrained) THEN
   max_dist=200000.0_real32
 ELSE
   ! reset the max distance to half the circumference of earth
-  max_dist=planet_radius*pi_32b
+  max_dist=planet_radius*shum_pi_const_32
 END IF
 
 ! Test to see if all resolved points are of the opposite type
@@ -614,7 +615,7 @@ DO k=1, no_point_unres
   END IF
  
 ! Assume if we don't find a valid min the value is at planet_radius*pi+1.
-  curr_dist_valid_min = (planet_radius*pi_32b)+1.0_real32
+  curr_dist_valid_min = (planet_radius*shum_pi_const_32)+1.0_real32
 ! We want nearest one so we dont want to limit search to max_dist.
   curr_dist_invalid_min = RMDI_32b
 ! Give some initial RMDI values in case they are never set
@@ -833,7 +834,7 @@ DO k=1, no_point_unres
             // 'points of any type within the limit, will just use closest ' &
             // 'resolved point of the same type'
             status = -20
-            max_dist=planet_radius*pi_32b
+            max_dist=planet_radius*shum_pi_const_32
             curr_dist_valid_min=max_dist
             search_dist=search_dist+step
           ELSE
@@ -854,7 +855,7 @@ DO k=1, no_point_unres
           // 'points of any type within the limit, will just use closest ' &
           // 'resolved point of the same type'
           status = -30
-          max_dist=planet_radius*pi_32b
+          max_dist=planet_radius*shum_pi_const_32
           curr_dist_valid_min=max_dist
           search_dist=search_dist+step
         ELSE
@@ -888,10 +889,10 @@ REAL(KIND=real64) :: dlon_rad
 REAL(KIND=real64) :: lat0_rad
 REAL(KIND=real64) :: lat1_rad
 
-lat0_rad = lat0*pi_over_180
-lat1_rad = lat1*pi_over_180
+lat0_rad = lat0*shum_pi_over_180_const
+lat1_rad = lat1*shum_pi_over_180_const
 dlat_rad = lat1_rad - lat0_rad
-dlon_rad = (lon1-lon0)*pi_over_180
+dlon_rad = (lon1-lon0)*shum_pi_over_180_const
 
 ! Use the Haversine formula.
 calc_distance_arg64 = 2.0_real64*planet_radius*                      &
@@ -912,10 +913,10 @@ REAL(KIND=real32) :: dlon_rad
 REAL(KIND=real32) :: lat0_rad
 REAL(KIND=real32) :: lat1_rad
 
-lat0_rad = lat0*pi_32b_over_180
-lat1_rad = lat1*pi_32b_over_180
+lat0_rad = lat0*shum_pi_over_180_const_32
+lat1_rad = lat1*shum_pi_over_180_const_32
 dlat_rad = lat1_rad - lat0_rad
-dlon_rad = (lon1-lon0)*pi_32b_over_180
+dlon_rad = (lon1-lon0)*shum_pi_over_180_const_32
 
 ! Use the Haversine formula.
 calc_distance_arg32 = 2.0_real32*planet_radius*                      &
