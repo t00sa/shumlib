@@ -20,7 +20,12 @@ include ${COMMON_DIR}/Makefile-version
 f_shum_spiral_search.o: f_shum_spiral_search.f90
 	${FC} ${FCFLAGS} -c -I${LIBDIR_OUT}/include $<
 
-libshum_spiral_search.a: f_shum_spiral_search.o \
+c_shum_spiral_search.o: c_shum_spiral_search.f90 f_shum_spiral_search.o
+	${FC} ${FCFLAGS} -c -I${LIBDIR_OUT}/include $<
+
+libshum_spiral_search.a: \
+        f_shum_spiral_search.o \
+	c_shum_spiral_search.o \
 	${VERSION_OBJECTS}
 	${AR} $@ $^
 
@@ -31,7 +36,12 @@ libshum_spiral_search.a: f_shum_spiral_search.o \
 f_shum_spiral_search_PIC.o: f_shum_spiral_search.f90
 	${FC} ${FCFLAGS} ${FCFLAGS_PIC} -c -I${LIBDIR_OUT}/include $< -o $@
 
-libshum_spiral_search.so: f_shum_spiral_search_PIC.o \
+c_shum_spiral_search_PIC.o: c_shum_spiral_search.f90 f_shum_spiral_search_PIC.o
+	${FC} ${FCFLAGS} ${FCFLAGS_PIC} -c -I${LIBDIR_OUT}/include $< -o $@
+
+libshum_spiral_search.so: \
+	f_shum_spiral_search_PIC.o \
+	c_shum_spiral_search_PIC.o \
 	${VERSION_OBJECTS_PIC}
 	${FC} ${FCFLAGS_SHARED} ${FCFLAGS} ${FCFLAGS_PIC} $^ -o $@
 

@@ -47,7 +47,7 @@ PUBLIC :: fruit_test_shum_spiral_search
 !------------------------------------------------------------------------------!
 
 ! The number of distinct test cases used
-  INTEGER, PARAMETER :: cases = 2
+INTEGER, PARAMETER :: cases = 2
 
 !------------------------------------------------------------------------------!
 
@@ -62,8 +62,7 @@ CONTAINS
 SUBROUTINE fruit_test_shum_spiral_search
 
 USE, INTRINSIC :: ISO_FORTRAN_ENV, ONLY: OUTPUT_UNIT
-USE f_shum_spiral_search_version_mod, ONLY:                                  &
-                                          get_shum_spiral_search_version
+USE f_shum_spiral_search_version_mod, ONLY: get_shum_spiral_search_version
 
 IMPLICIT NONE
 
@@ -87,9 +86,6 @@ END SUBROUTINE fruit_test_shum_spiral_search
 ! isn't for a numerical workout but easy to identify and work with arrays.
 !------------------------------------------------------------------------------!
 
-! This is Joe Mancell's suggested 6x6 case
-!------------------------------------------------------------------------------!
-
 SUBROUTINE sample_6x6_data_64                                       &
                              (latitude, longitude, lsm, unres_mask, &
                                    index_unres, planet_radius )
@@ -98,49 +94,47 @@ REAL(KIND=real64), INTENT(OUT) :: latitude(6)
 REAL(KIND=real64), INTENT(OUT) :: longitude(6)
 LOGICAL(KIND=bool), INTENT(OUT) :: lsm(36)
 LOGICAL(KIND=bool), INTENT(OUT) :: unres_mask(36)
-INTEGER(KIND=int64), INTENT(OUT) :: index_unres(36)
+INTEGER(KIND=int64), INTENT(OUT) :: index_unres(5)
 REAL(KIND=real64), INTENT(OUT) :: planet_radius
 
-latitude(:)  = [ 30.0_real64, 35.0_real64, 40.0_real64, 45.0_real64,       &
+latitude(:)  = [ 30.0_real64, 35.0_real64, 40.0_real64, 45.0_real64,           &
                  50.0_real64, 55.0_real64 ]
-longitude(:) = [  0.0_real64,  5.0_real64, 10.0_real64, 15.0_real64,       &
+longitude(:) = [  0.0_real64,  5.0_real64, 10.0_real64, 15.0_real64,           &
                  20.0_real64, 25.0_real64 ]
-lsm(:) = [.FALSE.,.FALSE.,.FALSE.,.FALSE.,.FALSE.,.FALSE., &
-          .FALSE.,.FALSE.,.FALSE.,.FALSE.,.FALSE.,.FALSE., &
-          .FALSE.,.FALSE.,.FALSE.,.FALSE.,.FALSE.,.FALSE., &
-          .FALSE.,.FALSE.,.FALSE.,.FALSE.,.FALSE.,.FALSE., &
-          .FALSE.,.FALSE.,.FALSE.,.FALSE.,.TRUE. ,.TRUE., &
-          .FALSE.,.FALSE.,.FALSE.,.FALSE.,.TRUE. ,.TRUE.  ]
-unres_mask(:)=[.TRUE. ,.TRUE. ,.FALSE.,.FALSE.,.FALSE.,.FALSE., &
-               .TRUE. ,.FALSE.,.FALSE.,.FALSE.,.FALSE.,.FALSE., &
-               .FALSE.,.FALSE.,.FALSE.,.FALSE.,.FALSE.,.FALSE., &
-               .FALSE.,.FALSE.,.TRUE. ,.FALSE.,.FALSE.,.FALSE., &
-               .FALSE.,.FALSE.,.FALSE.,.TRUE. ,.FALSE.,.FALSE., &
-               .FALSE.,.FALSE.,.FALSE.,.FALSE.,.FALSE.,.FALSE. ]
+lsm(:) = [     .FALSE.,.FALSE.,.FALSE.,.FALSE.,.FALSE.,.FALSE.,                &
+               .FALSE.,.FALSE.,.FALSE.,.FALSE.,.FALSE.,.FALSE.,                &
+               .FALSE.,.FALSE.,.FALSE.,.FALSE.,.FALSE.,.FALSE.,                &
+               .FALSE.,.FALSE.,.FALSE.,.FALSE.,.FALSE.,.FALSE.,                &
+               .FALSE.,.FALSE.,.FALSE.,.FALSE.,.TRUE. ,.TRUE.,                 &
+               .FALSE.,.FALSE.,.FALSE.,.FALSE.,.TRUE. ,.TRUE.    ]
+unres_mask(:)=[.TRUE. ,.TRUE. ,.FALSE.,.FALSE.,.FALSE.,.FALSE.,                &
+               .TRUE. ,.FALSE.,.FALSE.,.FALSE.,.FALSE.,.FALSE.,                &
+               .FALSE.,.FALSE.,.FALSE.,.FALSE.,.FALSE.,.FALSE.,                &
+               .FALSE.,.FALSE.,.TRUE. ,.FALSE.,.FALSE.,.FALSE.,                &
+               .FALSE.,.FALSE.,.FALSE.,.TRUE. ,.FALSE.,.FALSE.,                &
+               .FALSE.,.FALSE.,.FALSE.,.FALSE.,.FALSE.,.FALSE.   ]
 
-index_unres(1:6) = [ 1_int64, 2_int64, 7_int64, 21_int64, 28_int64,  &
-                  -1_int64 ] 
-index_unres(7:36) = 0_int64
+index_unres(1:5) = [ 1_int64, 2_int64, 7_int64, 21_int64, 28_int64]
 planet_radius = 6000000.0_real64
 
 END SUBROUTINE sample_6x6_data_64
 
 !------------------------------------------------------------------------------!
 
-SUBROUTINE sample_6x6_data_32                                       &
-                             (latitude, longitude, lsm, unres_mask, &
-                                   index_unres, planet_radius ) 
+SUBROUTINE sample_6x6_data_32                                                  &
+                             (latitude, longitude, lsm, unres_mask,            &
+                              index_unres, planet_radius ) 
 IMPLICIT NONE 
 REAL(KIND=real32), INTENT(OUT) :: latitude(6)
 REAL(KIND=real32), INTENT(OUT) :: longitude(6)
 LOGICAL(KIND=bool), INTENT(OUT) :: lsm(36) 
 LOGICAL(KIND=bool), INTENT(OUT) :: unres_mask(36)
-INTEGER(KIND=int32), INTENT(OUT) :: index_unres(36)
+INTEGER(KIND=int32), INTENT(OUT) :: index_unres(5)
 REAL(KIND=real32)   :: planet_radius
 
 REAL(KIND=real64)   :: latitude_64(6)
 REAL(KIND=real64)   :: longitude_64(6)
-INTEGER(KIND=int64) :: index_unres_64(36)
+INTEGER(KIND=int64) :: index_unres_64(5)
 REAL(KIND=real64)   :: planet_radius_64
 
 INTEGER(KIND=int32) :: i
@@ -152,7 +146,7 @@ DO i=1,6
   latitude(i) = REAL(latitude_64(i), KIND=real32)
   longitude(i) = REAL(longitude_64(i), KIND=real32)
 END DO
-DO i=1,36
+DO i=1,5
   index_unres(i) = INT(index_unres_64(i), KIND=int32)
 END DO
 planet_radius = REAL(planet_radius_64, KIND=real32)
@@ -167,27 +161,29 @@ USE f_shum_spiral_search_mod, ONLY: f_shum_spiral_search_algorithm
 
 IMPLICIT NONE 
 
-REAL(KIND=real64) :: lats(6)
-REAL(KIND=real64) :: lons(6)
+INTEGER(KIND=int64), PARAMETER :: no_point_unres = 5
+INTEGER(KIND=int64), PARAMETER :: points_phi = 6
+INTEGER(KIND=int64), PARAMETER :: points_lambda = 6
 
-LOGICAL(KIND=bool) :: lsm(36)
-LOGICAL(KIND=bool) :: unres_mask(36)
-INTEGER(KIND=int64) :: index_unres(36)
-INTEGER(KIND=int64) :: indices(36)
+REAL(KIND=real64) :: lats(points_phi)
+REAL(KIND=real64) :: lons(points_lambda)
+
+LOGICAL(KIND=bool) :: lsm(points_phi*points_lambda)
+LOGICAL(KIND=bool) :: unres_mask(points_phi*points_lambda)
+INTEGER(KIND=int64) :: index_unres(no_point_unres)
+INTEGER(KIND=int64) :: indices(no_point_unres)
 
 LOGICAL(KIND=bool) :: is_land_field = .TRUE.
 LOGICAL(KIND=bool) :: constrained   = .FALSE.
-LOGICAL(KIND=bool) :: cyclic        = .FALSE.
+LOGICAL(KIND=bool) :: cyclic_domain = .FALSE.
 
-INTEGER(KIND=int64) :: no_point_unres = 5
-INTEGER(KIND=int64) :: points_phi = 6
-INTEGER(KIND=int64) :: points_lambda = 6
-
+REAL(KIND=real64) :: constrained_max_dist = 200000.0
 REAL(KIND=real64) :: planet_radius
+REAL(KIND=real64) :: dist_step = 3.0
 
-INTEGER(KIND=int64) :: result_land(5)
-INTEGER(KIND=int64) :: result_land_con(5)
-INTEGER(KIND=int64) :: result_sea(5)
+INTEGER(KIND=int64) :: result_land(no_point_unres)
+INTEGER(KIND=int64) :: result_land_con(no_point_unres)
+INTEGER(KIND=int64) :: result_sea(no_point_unres)
 
 INTEGER(KIND=int64)          :: i
 INTEGER(KIND=int64)          :: status
@@ -195,18 +191,14 @@ CHARACTER(LEN=400)           :: message
 CHARACTER(LEN=200)           :: case_info
 
 ! Retrieve the set of data points to be tested
-CALL sample_6x6_data(lats, lons, lsm, unres_mask, index_unres, &
-                          planet_radius )
+CALL sample_6x6_data(lats, lons, lsm, unres_mask, index_unres, planet_radius )
 
 ! Set expected results arrays
 result_land(:) = [29_int64, 29_int64, 29_int64, 29_int64, 29_int64 ]
 result_land_con(:) = [29_int64, 29_int64, 29_int64, 29_int64, 29_int64 ]
 result_sea(:) = [8_int64, 3_int64, 8_int64, 20_int64, 27_int64 ]
 
-!!!WRITE(6, "(A,36L1)") " Test lsm: ",lsm 
 WRITE(case_info, "(A,36L1,A)") " (Test lsm: ",lsm ,")"
-!!!WRITE(6, "(A,36L1)") " Test unres_mask: ",unres_mask
-!!!WRITE(6, "(A,36I4)") " Test index_unres: ",index_unres
 
 ! The above grid will be tested using the 3 spiral search options
 ! and for non-cyclic & cyclic (though this appears to make no difference)
@@ -214,65 +206,55 @@ WRITE(case_info, "(A,36L1,A)") " (Test lsm: ",lsm ,")"
 DO i = 1,cases
 
   IF (cases==2) THEN
-    cyclic=.TRUE.
+    cyclic_domain=.TRUE.
   END IF
 
   is_land_field = .TRUE.
-  status = f_shum_spiral_search_algorithm                            &
-           (lsm, index_unres, no_point_unres,                        &
-            points_phi, points_lambda, lats, lons,                   &
-            is_land_field, constrained, cyclic, unres_mask,          &
+  status = f_shum_spiral_search_algorithm                                      &
+           (lsm, index_unres, no_point_unres,                                  &
+            points_phi, points_lambda, lats, lons,                             &
+            is_land_field, constrained, constrained_max_dist,                  &
+            dist_step, cyclic_domain, unres_mask,                              &
             indices, planet_radius, message)
 
   WRITE(case_info, "(A,I0,A)") " (Test spiral case: ", i,")"
-!!!  WRITE(6, "(A,I0,A)") " (Test spiral case: ", i," land_field"
-!!!  WRITE(6, "(A,36I3)") " Out Indices: ",indices
-  WRITE(case_info, "(A,16I3,A)") " (Out Indices: ",indices(1:16) ,")"
 
-CALL assert_equals(0_int64, status,                                       &
-  "Land Spiral search algorithm returned non-zero exit status"//case_info// &
-  " Message: "//TRIM(message))
+  CALL assert_equals(0_int64, status,                                          &
+    "Land Spiral search algorithm returned non-zero exit status"//case_info//  &
+    " Message: "//TRIM(message))
 
-  CALL assert_equals(result_land, indices(1:5), 5,            &
+  CALL assert_equals(result_land, indices, INT(no_point_unres, KIND=int32),    &
     "Resolved land indices do not agree with expected result"//case_info)
 
   constrained   = .TRUE.
-  status = f_shum_spiral_search_algorithm                            &
-           (lsm, index_unres, no_point_unres,                        &
-            points_phi, points_lambda, lats, lons,                   &
-            is_land_field, constrained, cyclic, unres_mask,          &
+  status = f_shum_spiral_search_algorithm                                      &
+           (lsm, index_unres, no_point_unres,                                  &
+            points_phi, points_lambda, lats, lons,                             &
+            is_land_field, constrained, constrained_max_dist,                  &
+            dist_step, cyclic_domain, unres_mask,                              &
             indices, planet_radius, message)
 
-  WRITE(case_info, "(A,I0,A)") " (Test spiral case: ", i,")"
-!!!  WRITE(6, "(A,I0,A)") " (Test spiral case: ", i," land_field constrained"
-!!!  WRITE(6, "(A,36I3)") " Out Indices: ",indices
-  WRITE(case_info, "(A,16I3,A)") " (Out Indices: ",indices(1:16) ,")"
+  CALL assert_equals(-30_int64, status,                                        &
+    "Constrained Land Spiral search algorithm exit status.ne.-30"//case_info// &
+    " Message: "//TRIM(message))
 
-CALL assert_equals(-30_int64, status,                                       &
-  "Constrained Land Spiral search algorithm exit status.ne.-30"//case_info// &
-  " Message: "//TRIM(message))
-
-  CALL assert_equals(result_land_con, indices(1:5), 5,        &
-  "Resolved land indices do not agree with expected result"//case_info)
+  CALL assert_equals(result_land_con, indices, INT(no_point_unres, KIND=int32),&
+    "Resolved land indices do not agree with expected result"//case_info)
 
   is_land_field = .FALSE.
   constrained = .FALSE.
-  status = f_shum_spiral_search_algorithm                            &
-           (lsm, index_unres, no_point_unres,                        &
-            points_phi, points_lambda, lats, lons,                   &
-            is_land_field, constrained, cyclic, unres_mask,          &
+  status = f_shum_spiral_search_algorithm                                      &
+           (lsm, index_unres, no_point_unres,                                  &
+            points_phi, points_lambda, lats, lons,                             &
+            is_land_field, constrained, constrained_max_dist,                  &
+            dist_step, cyclic_domain, unres_mask,                              &
             indices, planet_radius, message)
 
-  WRITE(case_info, "(A,I0,A)") " (Test spiral case: ", i,")"
-!!!  WRITE(6, "(A,I0,A)") " (Test spiral case: ", i," sea_field"
-!!!  WRITE(6, "(A,36I3)") " Out Indices: ",indices
-  WRITE(case_info, "(A,16I3,A)") " (Out Indices: ",indices(1:16) ,")"
+  CALL assert_equals(0_int64, status,                                          &
+    "Sea Spiral search algorithm returned non-zero exit status"//case_info//   &
+    " Message: "//TRIM(message))
 
-CALL assert_equals(0_int64, status,                                       &
-  "Sea Spiral search algorithm returned non-zero exit status"//case_info// &
-  " Message: "//TRIM(message))
-
-  CALL assert_equals(result_sea, indices(1:5), 5,        &
+  CALL assert_equals(result_sea, indices, INT(no_point_unres, KIND=int32),    &
     "Resolved sea indices do not agree with expected result"//case_info)
 
 END DO
@@ -287,27 +269,29 @@ USE f_shum_spiral_search_mod, ONLY: f_shum_spiral_search_algorithm
 
 IMPLICIT NONE 
 
-REAL(KIND=real32) :: lats(6)
-REAL(KIND=real32) :: lons(6)
+INTEGER(KIND=int32), PARAMETER :: no_point_unres = 5
+INTEGER(KIND=int32), PARAMETER :: points_phi = 6
+INTEGER(KIND=int32), PARAMETER :: points_lambda = 6
 
-LOGICAL(KIND=bool) :: lsm(36)
-LOGICAL(KIND=bool) :: unres_mask(36)
-INTEGER(KIND=int32) :: index_unres(36)
-INTEGER(KIND=int32) :: indices(36)
+REAL(KIND=real32) :: lats(points_phi)
+REAL(KIND=real32) :: lons(points_lambda)
+
+LOGICAL(KIND=bool) :: lsm(points_phi*points_lambda)
+LOGICAL(KIND=bool) :: unres_mask(points_phi*points_lambda)
+INTEGER(KIND=int32) :: index_unres(no_point_unres)
+INTEGER(KIND=int32) :: indices(no_point_unres)
 
 LOGICAL(KIND=bool) :: is_land_field = .TRUE.
 LOGICAL(KIND=bool) :: constrained   = .FALSE.
-LOGICAL(KIND=bool) :: cyclic        = .FALSE.
+LOGICAL(KIND=bool) :: cyclic_domain = .FALSE.
 
-INTEGER(KIND=int32) :: no_point_unres = 5
-INTEGER(KIND=int32) :: points_phi = 6
-INTEGER(KIND=int32) :: points_lambda = 6
+REAL(KIND=real32)   :: planet_radius
+REAL(KIND=real32)   :: constrained_max_dist = 200000.0
+REAL(KIND=real32) :: dist_step = 3.0
 
-REAL(KIND=real32) :: planet_radius
-
-INTEGER(KIND=int32) :: result_land(5)
-INTEGER(KIND=int32) :: result_land_con(5)
-INTEGER(KIND=int32) :: result_sea(5)
+INTEGER(KIND=int32) :: result_land(no_point_unres)
+INTEGER(KIND=int32) :: result_land_con(no_point_unres)
+INTEGER(KIND=int32) :: result_sea(no_point_unres)
 
 INTEGER(KIND=int32)          :: i
 INTEGER(KIND=int32)          :: status
@@ -323,76 +307,63 @@ result_land(:) = [29_int32, 29_int32, 29_int32, 29_int32, 29_int32 ]
 result_land_con(:) = [29_int32, 29_int32, 29_int32, 29_int32, 29_int32 ]
 result_sea(:) = [8_int32, 3_int32, 8_int32, 20_int32, 27_int32 ]
 
-!!!WRITE(6, "(A,36L1)") " Test lsm: ",lsm 
 WRITE(case_info, "(A,36L1,A)") " (Test lsm: ",lsm ,")"
-!!!WRITE(6, "(A,36L1)") " Test unres_mask: ",unres_mask
-!!!WRITE(6, "(A,36I4)") " Test index_unres: ",index_unres
 
 ! The above grid will be tested using the 3 spiral search options
 ! and the non-cyclic and cyclic option
 
 DO i = 1,cases
 
+  WRITE(case_info, "(A,I0,A)") " (Test spiral case: ", i,")"
+
   IF (cases==2) THEN
-    cyclic=.TRUE.
+    cyclic_domain=.TRUE.
   END IF
 
   is_land_field = .TRUE.
-  status = f_shum_spiral_search_algorithm                            &
-           (lsm, index_unres, no_point_unres,                        &
-            points_phi, points_lambda, lats, lons,                   &
-            is_land_field, constrained, cyclic, unres_mask,          &
+  status = f_shum_spiral_search_algorithm                                      &
+           (lsm, index_unres, no_point_unres,                                  &
+            points_phi, points_lambda, lats, lons,                             &
+            is_land_field, constrained, constrained_max_dist,                  &
+            dist_step, cyclic_domain, unres_mask,                              &
             indices, planet_radius, message)
 
-  WRITE(case_info, "(A,I0,A)") " (Test spiral case: ", i,")"
-!!!  WRITE(6, "(A,I0,A)") " (Test spiral case: ", i," land_field"
-!!!  WRITE(6, "(A,36I3)") " Out Indices: ",indices
-  WRITE(case_info, "(A,16I3,A)") " (Out Indices: ",indices(1:16) ,")"
+  CALL assert_equals(0_int32, status,                                          &
+    "Land Spiral search algorithm returned non-zero exit status"//case_info//  &
+    " Message: "//TRIM(message))
 
-CALL assert_equals(0_int32, status,                                       &
-  "Land Spiral search algorithm returned non-zero exit status"//case_info// &
-  " Message: "//TRIM(message))
-
-  CALL assert_equals(result_land, indices(1:5), 5,            &
+  CALL assert_equals(result_land, indices, no_point_unres,                     &
     "Resolved land indices do not agree with expected result"//case_info)
 
   constrained   = .TRUE.
-  status = f_shum_spiral_search_algorithm                            &
-           (lsm, index_unres, no_point_unres,                        &
-            points_phi, points_lambda, lats, lons,                   &
-            is_land_field, constrained, cyclic, unres_mask,          &
+  status = f_shum_spiral_search_algorithm                                      &
+           (lsm, index_unres, no_point_unres,                                  &
+            points_phi, points_lambda, lats, lons,                             &
+            is_land_field, constrained, constrained_max_dist,                  &
+            dist_step, cyclic_domain, unres_mask,                              &
             indices, planet_radius, message)
 
-  WRITE(case_info, "(A,I0,A)") " (Test spiral case: ", i,")"
-!!!  WRITE(6, "(A,I0,A)") " (Test spiral case: ", i," land_field constrained"
-!!!  WRITE(6, "(A,36I3)") " Out Indices: ",indices
-  WRITE(case_info, "(A,16I3,A)") " (Out Indices: ",indices(1:16) ,")"
+  CALL assert_equals(-30_int32, status,                                        &
+    "Constrained Land Spiral search algorithm exit status .ne.-30"//case_info//&
+    " Message: "//TRIM(message))
 
-CALL assert_equals(-30_int32, status,                                       &
-  "Constrained Land Spiral search algorithm exit status .ne.-30"//case_info// &
-  " Message: "//TRIM(message))
-
-  CALL assert_equals(result_land_con, indices(1:5), 5,        &
-  "Resolved land indices do not agree with expected result"//case_info)
+  CALL assert_equals(result_land_con, indices, no_point_unres,                 &
+    "Resolved land indices do not agree with expected result"//case_info)
 
   is_land_field = .FALSE.
   constrained = .FALSE.
-  status = f_shum_spiral_search_algorithm                            &
-           (lsm, index_unres, no_point_unres,                        &
-            points_phi, points_lambda, lats, lons,                   &
-            is_land_field, constrained, cyclic, unres_mask,          &
+  status = f_shum_spiral_search_algorithm                                      &
+           (lsm, index_unres, no_point_unres,                                  &
+            points_phi, points_lambda, lats, lons,                             &
+            is_land_field, constrained, constrained_max_dist,                  &
+            dist_step, cyclic_domain, unres_mask,                              &
             indices, planet_radius, message)
 
-  WRITE(case_info, "(A,I0,A)") " (Test spiral case: ", i,")"
-!!!  WRITE(6, "(A,I0,A)") " (Test spiral case: ", i," sea_field"
-!!!  WRITE(6, "(A,36I3)") " Out Indices: ",indices
-  WRITE(case_info, "(A,16I3,A)") " (Out Indices: ",indices(1:16) ,")"
+  CALL assert_equals(0_int32, status,                                          &
+    "Sea Spiral search algorithm returned non-zero exit status"//case_info//   &
+    " Message: "//TRIM(message))
 
-CALL assert_equals(0_int32, status,                                       &
-  "Sea Spiral search algorithm returned non-zero exit status"//case_info// &
-  " Message: "//TRIM(message))
-
-  CALL assert_equals(result_sea, indices(1:5), 5,        &
+  CALL assert_equals(result_sea, indices, no_point_unres,                      &
     "Resolved sea indices do not agree with expected result"//case_info)
 
 END DO

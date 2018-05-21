@@ -46,34 +46,37 @@ ancillary file fields with thne land-sea mask.
         ``f_shum_spiral_search_mod``
 
     **Syntax**
-        ``status = f_shum_spiral_search_algorithm(lsm, index_unres, no_point_unres, points_phi, points_lambda, lats, lons, is_land_field, constrained, cyclic, unres_mask, indices, planet_radius, cmessage)``
+        ``status = f_shum_spiral_search_algorithm(lsm, index_unres, no_point_unres, points_phi, points_lambda, lats, lons, is_land_field, constrained, constrained_max_dist, dist_step, cyclic_domain, unres_mask, indices, planet_radius, cmessage)``
 
     **Inputs**
         ``lsm (LOGICAL, KIND=C_BOOL, array, size=points_phi*points_lambda)``
-            Land-sea mask (1D array of logicals). For portability,
-            argument must be cast to C_BOOL by LOGICAL(lsm,KIND=C_BOOL).
+            Land-sea mask (1D array of logicals).
+        ``index_unres (INTEGER, 64- or 32-bit, size=no_point_unres)``
+            Indices of unresolved points.
         ``no_point_unres (INTEGER, 64- or 32-bit scalar)``
-            Number of actual points in index_unres to be considered.
+            Number of unresolved points in index_unres.
         ``points_phi, points_lambda (INTEGER, 64- or 32-bit scalars)``
             Number of latitudes & longitudes defining the grid.
         ``lats, lons (REAL, 64- or 32-bit arrays, size=points_...)``
             Latitude & longitude values defining the grid.
         ``is_land_field (LOGICAL, KIND=C_BOOL, scalar)``
-            Logical true if considering a land field.
+            True if considering a land field.
         ``constrained (LOGICAL, KIND=C_BOOL, scalar)``
-            Logical true if constraining spiral search to 200km.
-        ``cyclic (LOGICAL, KIND=C_BOOL, scalar)``
-            Logical true if grid has cyclic (wraparound) edges.
+            True if constraining spiral search.
+        ``constrained_max_dist (REAL, 64- or 32-bit scalar)``
+            If contstrained, the maximum distance (in m) to constrain by.
+        ``dist_step (REAL, 64- or 32-bit scalar)``
+            Adjusts the distance step size of the iterations done whilst searching.
+        ``cyclic_domain (LOGICAL, KIND=C_BOOL, scalar)``
+            True if grid has cyclic (wraparound) edges.
         ``unres_mask (LOGICAL, KIND=C_BOOL, size=points_phi*points_lambda)``
             Mask of grid locations of points to be resolved by spiral search.
     
     **Outputs**
-        ``indices (INTEGER, 64- or 32-bit, size=points_phi*points_lambda)``
+        ``indices (INTEGER, 64- or 32-bit, size=no_point_unres)``
             Grid locations returned as result of spiral search.
 
     **Input & Output**
-        ``index_unres (INTEGER, 64- or 32-bit, size=points_phi*points_lambda)``
-            List of grid locations of points resolved by spiral search.
         ``cmessage (CHARACTER(LEN=*))``
             Error message buffer.
 
@@ -87,12 +90,74 @@ ancillary file fields with thne land-sea mask.
         The arguments here must be either *all* 32-bit or *all* 64-bit 
         (but *not* a mixture of the two) and logicals must be kind=C_BOOL.
 
-
-
 C Functions
 %%%%%%%%%%%
 
-The spiral search will be available via a C/Python interface. 
+``get_shum_spiral_search_version``
+''''''''''''''''''''''''''''''''''
+
+All Shumlib libraries expose a function named in this format; it allows access
+to the Shumlib version number used when compiling the library.
+
+    **Required header/s**
+        ``c_shum_spiral_search_version.h``
+
+    **Syntax**
+        ``version = get_shum_spiral_search_version()``
+
+    **Returns**
+        ``version (int)``
+            Shumlib version number, in format ``YYYYMMX`` (the 4-digit year
+            followed by 2-digit month and an additional digit signifying the
+            release count within that specified month).
+
+``c_shum_spiral_search_algorithm``
+''''''''''''''''''''''''''''''''''
+
+This is the C interface to the Fortran routine (see the description of it 
+above under ``f_shum_spiral_search_algorithm``.
+
+    **Required header/s**
+        ``c_shum_spiral_search.h``
+
+    **Syntax**
+        ``c_shum_spiral_search_algorithm(lsm, index_unres, no_point_unres, no_point_unres, points_phi, points_lambda, lats, lons, is_land_field, constrained, constrained_max_dist, dist_step, cyclic_domain, unres_mask, indices, planet_radius, cmessage, message_len)``
+   
+    **Arguments**
+        ``lsm (bool*)``
+            Land-sea mask (1D array of length points_phi*points_lambda).
+        ``index_unres (int64_t*)``
+            Indices of unresolved points (1D array of length no_point_unres).
+        ``no_point_unres (int64_t*)``
+            Number of indices in index_unres.
+        ``points_phi, points_lambda (int64_t*)``
+            Number of latitudes & longitudes defining the grid.
+        ``lats, lons (double*)``
+            Latitude & longitude values defining the grid (arrays of lengths given
+            by their respective points values).
+        ``is_land_field (bool*)``
+            True if considering a land field.
+        ``constrained (bool*)``
+            True if constraining spiral search.
+        ``constrained_max_dist (double*)``
+            If constrained, gives the maximum distance (in m) to constraint by.
+        ``dist_step(double*)``
+            Adjusts the distance step size of the iterations done whilst searching.            
+        ``cyclic_domain (bool*)``
+            True if grid has cyclic (wraparound) edges.
+        ``unres_mask (bool*)``
+            Mask of grid locations (1D array of length points_phi*points_lambda) 
+            of points to be resolved by spiral search.
+        ``message (char*)``
+            Error message buffer.
+        ``message_len (int64_t*)``
+            Length of error message buffer.     
+
+    **Return Value**
+        ``(int64_t)``
+            Exit status; ``0`` means success, anything else means an error has
+            occurred and in that case the ``message`` argument will contain 
+            information about the problem.
 
 Unified Model Implementation
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%

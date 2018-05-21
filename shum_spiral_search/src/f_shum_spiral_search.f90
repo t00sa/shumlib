@@ -79,7 +79,7 @@ CONTAINS
 ! Uses the Haversine formula to calculate the distances.
 ! Searches in steps of 3*minimum local distance for each
 ! unresolved point until it finds a resolved point.  For land
-! points in a field that is not "land only" a 200km constraint
+! points in a field that is not "land only" a distance constraint
 ! is applied, i.e. if there isn't a resolved land point within
 ! this distance it uses the closest resolved sea point value
 ! instead.
@@ -93,46 +93,59 @@ CONTAINS
 ! This file belongs in section: Reconfiguration
 !
 
-FUNCTION f_shum_spiral_arg64                                         &
-           (lsm, index_unres, no_point_unres,                        &
-            points_phi, points_lambda, lats, lons,                   &
-            is_land_field, constrained, cyclic, unres_mask,          &
-            indices, planet_radius,                                  &
+FUNCTION f_shum_spiral_arg64                                                   &
+           (lsm, index_unres, no_point_unres,                                  &
+            points_phi, points_lambda, lats, lons,                             &
+            is_land_field, constrained, constrained_max_dist,                  &
+            dist_step, cyclic_domain, unres_mask,                              &
+            indices, planet_radius,                                            &
             cmessage) RESULT(status)
 
 IMPLICIT NONE
 
-! Function arguments
-
-INTEGER(KIND=int64), INTENT(IN) :: points_phi ! number of rows in grid
-INTEGER(KIND=int64), INTENT(IN) :: points_lambda ! number of columns in grid
-INTEGER(KIND=int64), INTENT(IN) :: no_point_unres ! number of unresolved points
-! index to unresolved pts
-INTEGER(KIND=int64), INTENT(INOUT) :: index_unres(points_lambda*points_phi)
-! index to resolved pts
-INTEGER(KIND=int64), INTENT(OUT) :: indices(points_lambda*points_phi)
-INTEGER(KIND=int64) :: status
-
-REAL(KIND=real64), INTENT(IN) :: planet_radius
-REAL(KIND=real64), INTENT(IN) :: lats(points_phi) ! field
-REAL(KIND=real64), INTENT(IN) :: lons(points_lambda) ! field
-
-LOGICAL(KIND=bool),INTENT(IN) :: cyclic ! T if data covers complete lat circle
-LOGICAL(KIND=bool),INTENT(IN) :: constrained ! T if 200km constraint applied
-LOGICAL(KIND=bool),INTENT(IN) :: lsm(points_lambda*points_phi) ! land sea mask
-LOGICAL(KIND=bool),INTENT(IN) :: is_land_field ! F for sea, T for land field
-! =F for a point that is resolved  =T for an unresolved point
-LOGICAL(KIND=bool),INTENT(IN) :: unres_mask(points_lambda*points_phi)
-
-CHARACTER(LEN=*), INTENT(INOUT) :: cmessage
+                                          ! Number of rows in grid
+INTEGER(KIND=int64), INTENT(IN)    :: points_phi 
+                                          ! Number of columns in grid
+INTEGER(KIND=int64), INTENT(IN)    :: points_lambda 
+                                          ! Land sea mask
+LOGICAL(KIND=bool),  INTENT(IN)    :: lsm(points_lambda*points_phi)
+                                          ! Number of unresolved points
+INTEGER(KIND=int64), INTENT(IN)    :: no_point_unres
+                                          ! Index to unresolved pts
+INTEGER(KIND=int64), INTENT(IN)    :: index_unres(no_point_unres)
+                                          ! Latitudes
+REAL(KIND=real64),   INTENT(IN)    :: lats(points_phi)
+                                          ! Longitudes
+REAL(KIND=real64),   INTENT(IN)    :: lons(points_lambda)
+                                          ! False for sea, True for land field
+LOGICAL(KIND=bool),  INTENT(IN)    :: is_land_field
+                                          ! True to apply constraint distance
+LOGICAL(KIND=bool),  INTENT(IN)    :: constrained
+                                          ! Contraint distance (m)
+REAL(KIND=real64),   INTENT(IN)    :: constrained_max_dist
+                                          ! Step size modifier for search
+REAL(KIND=real64),   INTENT(IN)    :: dist_step
+                                          ! True if covering complete lat circle
+LOGICAL(KIND=bool),  INTENT(IN)    :: cyclic_domain
+                                          ! False for a point that is resolved, 
+                                          ! True for an unresolved point
+LOGICAL(KIND=bool),  INTENT(IN)    :: unres_mask(points_lambda*points_phi)
+                                          ! Indices to resolved pts
+INTEGER(KIND=int64), INTENT(OUT)   :: indices(no_point_unres)
+                                          ! Radius of planet (in m)
+REAL(KIND=real64),   INTENT(IN)    :: planet_radius
+                                          ! Error message
+CHARACTER(LEN=*),    INTENT(INOUT) :: cmessage
+                                          ! Return status
+INTEGER(KIND=int64)                :: status
 
 ! LOCAL VARIABLES
 
 INTEGER(KIND=int64) :: i,j,k,l ! Loop counters
 INTEGER(KIND=int64) :: north ! Number of points to search north
 INTEGER(KIND=int64) :: south ! Number of points to search south
-INTEGER(KIND=int64) :: east ! Number of points to search east
-INTEGER(KIND=int64) :: west ! Number of points to search west
+INTEGER(KIND=int64) :: east  ! Number of points to search east
+INTEGER(KIND=int64) :: west  ! Number of points to search west
 INTEGER(KIND=int64) :: unres_i ! Index for i for unres
 INTEGER(KIND=int64) :: unres_j ! Index for j for unres
 INTEGER(KIND=int64) :: curr_i_valid_min ! Posn of valid min distance in E-W dir
@@ -148,7 +161,7 @@ REAL(KIND=real64) :: tempdist ! temporary distance
 REAL(KIND=real64) :: min_loc_spc ! minimum of the local spacings
 REAL(KIND=real64) :: max_dist ! maximum distance to search
 REAL(KIND=real64) :: distance(points_lambda, points_phi) ! Array of calculation.
-REAL(KIND=real64) :: curr_dist_valid_min ! Current distance to valid point
+REAL(KIND=real64) :: curr_dist_valid_min   ! Current distance to valid point
 REAL(KIND=real64) :: curr_dist_invalid_min ! Current distance to invalid point
 LOGICAL(KIND=bool) :: is_the_same(SIZE(tmp_lsm,1))
 
@@ -159,8 +172,8 @@ status = 0
 indices(:) = -1
 cmessage = ' '
 IF (constrained) THEN
-  ! 200km maximum distance to search - currently fixed
-  max_dist=200000.0_real64
+  ! use supplied maximum distance to search
+  max_dist=constrained_max_dist
 ELSE
   ! reset the max distance to half the circumference of earth
   max_dist=planet_radius*shum_pi_const
@@ -214,9 +227,9 @@ DO k=1, no_point_unres
                     lons(unres_i+1_int64), planet_radius))
   END IF
  
-  ! Do in steps 3*minimum local grid spacing
+  ! Do in steps dist_step*minimum local grid spacing
  
-  step=3.0_real64*min_loc_spc
+  step=dist_step*min_loc_spc
   search_dist=step
   IF (search_dist > max_dist) THEN
     search_dist = max_dist
@@ -231,8 +244,13 @@ DO k=1, no_point_unres
  
   found=.FALSE.
  
-  ! Loop in steps of 3*minimum local grid spacing until max search trying to
-  ! find a valid point
+  ! Loop in steps of dist_step*minimum local grid spacing until max 
+  ! search trying to find a valid point
+
+  curr_i_valid_min= 0_int64
+  curr_j_valid_min= 0_int64
+  curr_i_invalid_min= 0_int64
+  curr_j_invalid_min= 0_int64
  
   DO WHILE (search_dist <= max_dist .AND. .NOT. found)
    
@@ -241,11 +259,6 @@ DO k=1, no_point_unres
     west=-1_int64
     east=-1_int64
 
-    curr_i_valid_min= 0_int64
-    curr_j_valid_min= 0_int64
-    curr_i_invalid_min= 0_int64
-    curr_j_invalid_min= 0_int64
-   
     ! Find how many points can go south and be inside search_dist
     DO j = 1, points_phi
       IF (unres_j-j > 0) THEN
@@ -303,7 +316,7 @@ DO k=1, no_point_unres
       END IF
     END DO
     ! If LAM can't go past a boundary
-    IF (.NOT. cyclic) THEN
+    IF (.NOT. cyclic_domain) THEN
       IF ( south == -1 ) THEN
         south=unres_j-1_int64
       END IF
@@ -318,7 +331,8 @@ DO k=1, no_point_unres
       END IF
     END IF
 
-    IF (south == -1 .OR. north == -1 .OR. west == -1 .OR. east == -1) THEN
+    IF (south == -1_int64 .OR. north == -1_int64 .OR.   &
+         west == -1_int64 .OR.  east == -1_int64) THEN
       ! have hit an edge of a cyclic domain so will have to do the whole domain
       ! Want to avoid doing the whole domain as much as possible
       DO j = 1, points_phi
@@ -485,46 +499,59 @@ END DO
 END FUNCTION f_shum_spiral_arg64
 
 ! Repeat the whole function at 32-bit for comparison. 
-FUNCTION f_shum_spiral_arg32                                         &
-           (lsm, index_unres, no_point_unres,                        &
-            points_phi, points_lambda, lats, lons,                   &
-            is_land_field, constrained, cyclic, unres_mask,          &
-            indices, planet_radius,                                  &
+FUNCTION f_shum_spiral_arg32                                                   &
+           (lsm, index_unres, no_point_unres,                                  &
+            points_phi, points_lambda, lats, lons,                             &
+            is_land_field, constrained, constrained_max_dist,                  &
+            dist_step, cyclic_domain, unres_mask,                              &
+            indices, planet_radius,                                            &
             cmessage) RESULT(status)
 
 IMPLICIT NONE
 
-! Function arguments
-
-INTEGER(KIND=int32), INTENT(IN) :: points_phi ! number of rows in grid
-INTEGER(KIND=int32), INTENT(IN) :: points_lambda ! number of columns in grid
-INTEGER(KIND=int32), INTENT(IN) :: no_point_unres ! number of unresolved points
-! index to unresolved pts
-INTEGER(KIND=int32), INTENT(INOUT) :: index_unres(points_lambda*points_phi)
-! index to resolved pts
-INTEGER(KIND=int32), INTENT(OUT) :: indices(points_lambda*points_phi)
-INTEGER(KIND=int32) :: status
-
-REAL(KIND=real32), INTENT(IN) :: planet_radius
-REAL(KIND=real32), INTENT(IN) :: lats(points_phi) ! field
-REAL(KIND=real32), INTENT(IN) :: lons(points_lambda) ! field
-
-LOGICAL(KIND=bool),INTENT(IN) :: cyclic ! T if data covers complete lat circle
-LOGICAL(KIND=bool),INTENT(IN) :: constrained ! T if 200km constraint applied
-LOGICAL(KIND=bool),INTENT(IN) :: lsm(points_lambda*points_phi) ! land sea mask
-LOGICAL(KIND=bool),INTENT(IN) :: is_land_field ! F for sea, T for land field
-! =F for a point that is resolved  =T for an unresolved point
-LOGICAL(KIND=bool),INTENT(IN) :: unres_mask(points_lambda*points_phi)
-
-CHARACTER(LEN=*), INTENT(INOUT) :: cmessage
+                                          ! Number of rows in grid
+INTEGER(KIND=int32), INTENT(IN)    :: points_phi 
+                                          ! Number of columns in grid
+INTEGER(KIND=int32), INTENT(IN)    :: points_lambda 
+                                          ! Land sea mask
+LOGICAL(KIND=bool),  INTENT(IN)    :: lsm(points_lambda*points_phi)
+                                          ! Number of unresolved points
+INTEGER(KIND=int32), INTENT(IN)    :: no_point_unres
+                                          ! Index to unresolved pts
+INTEGER(KIND=int32), INTENT(IN)    :: index_unres(no_point_unres)
+                                          ! Latitudes
+REAL(KIND=real32),   INTENT(IN)    :: lats(points_phi)
+                                          ! Longitudes
+REAL(KIND=real32),   INTENT(IN)    :: lons(points_lambda)
+                                          ! False for sea, True for land field
+LOGICAL(KIND=bool),  INTENT(IN)    :: is_land_field
+                                          ! True to apply constraint distance
+LOGICAL(KIND=bool),  INTENT(IN)    :: constrained
+                                          ! Contraint distance (m)
+REAL(KIND=real32),   INTENT(IN)    :: constrained_max_dist
+                                          ! Step size modifier for search
+REAL(KIND=real32),   INTENT(IN)    :: dist_step
+                                          ! True if covering complete lat circle
+LOGICAL(KIND=bool),  INTENT(IN)    :: cyclic_domain
+                                          ! False for a point that is resolved, 
+                                          ! True for an unresolved point
+LOGICAL(KIND=bool),  INTENT(IN)    :: unres_mask(points_lambda*points_phi)
+                                          ! Index to resolved pts
+INTEGER(KIND=int32), INTENT(OUT)   :: indices(no_point_unres)
+                                          ! Radius of planet
+REAL(KIND=real32),   INTENT(IN)    :: planet_radius
+                                          ! Error message
+CHARACTER(LEN=*),    INTENT(INOUT) :: cmessage
+                                          ! Return status
+INTEGER(KIND=int32)                :: status
 
 ! LOCAL VARIABLES
 
 INTEGER(KIND=int32) :: i,j,k,l ! Loop counters
 INTEGER(KIND=int32) :: north ! Number of points to search north
 INTEGER(KIND=int32) :: south ! Number of points to search south
-INTEGER(KIND=int32) :: east ! Number of points to search east
-INTEGER(KIND=int32) :: west ! Number of points to search west
+INTEGER(KIND=int32) :: east  ! Number of points to search east
+INTEGER(KIND=int32) :: west  ! Number of points to search west
 INTEGER(KIND=int32) :: unres_i ! Index for i for unres
 INTEGER(KIND=int32) :: unres_j ! Index for j for unres
 INTEGER(KIND=int32) :: curr_i_valid_min ! Posn of valid min distance in E-W dir
@@ -540,7 +567,7 @@ REAL(KIND=real32) :: tempdist ! temporary distance
 REAL(KIND=real32) :: min_loc_spc ! minimum of the local spacings
 REAL(KIND=real32) :: max_dist ! maximum distance to search
 REAL(KIND=real32) :: distance(points_lambda, points_phi) ! Array of calculation.
-REAL(KIND=real32) :: curr_dist_valid_min ! Current distance to valid point
+REAL(KIND=real32) :: curr_dist_valid_min   ! Current distance to valid point
 REAL(KIND=real32) :: curr_dist_invalid_min ! Current distance to invalid point
 LOGICAL(KIND=bool) :: is_the_same(SIZE(tmp_lsm,1))
 
@@ -551,8 +578,8 @@ status = 0
 indices(:) = -1
 cmessage = ' '
 IF (constrained) THEN
-  ! 200km maximum distance to search - currently fixed
-  max_dist=200000.0_real32
+  ! use supplied maximum distance to search
+  max_dist=constrained_max_dist
 ELSE
   ! reset the max distance to half the circumference of earth
   max_dist=planet_radius*shum_pi_const_32
@@ -561,7 +588,7 @@ END IF
 ! Test to see if all resolved points are of the opposite type
 tmp_lsm=lsm
 
-tmp_lsm(index_unres(1:no_point_unres))=.NOT. is_land_field
+tmp_lsm(index_unres)=.NOT. is_land_field
 WHERE (tmp_lsm .EQV. is_land_field)
   is_the_same = .TRUE.
 ELSEWHERE
@@ -606,9 +633,9 @@ DO k=1, no_point_unres
                     lons(unres_i+1_int32), planet_radius))
   END IF
  
-  ! Do in steps 3*minimum local grid spacing
+  ! Do in steps dist_step*minimum local grid spacing
  
-  step=3.0_real32*min_loc_spc
+  step=dist_step*min_loc_spc
   search_dist=step
   IF (search_dist > max_dist) THEN
     search_dist = max_dist
@@ -623,8 +650,13 @@ DO k=1, no_point_unres
  
   found=.FALSE.
  
-  ! Loop in steps of 3*minimum local grid spacing until max search trying to
-  ! find a valid point
+  ! Loop in steps of dist_step*minimum local grid spacing until max 
+  ! search trying to find a valid point
+
+  curr_i_valid_min= 0_int32
+  curr_j_valid_min= 0_int32
+  curr_i_invalid_min= 0_int32
+  curr_j_invalid_min= 0_int32
  
   DO WHILE (search_dist <= max_dist .AND. .NOT. found)
    
@@ -632,11 +664,6 @@ DO k=1, no_point_unres
     north=-1_int32
     west=-1_int32
     east=-1_int32
-
-    curr_i_valid_min= 0_int32
-    curr_j_valid_min= 0_int32
-    curr_i_invalid_min= 0_int32
-    curr_j_invalid_min= 0_int32
    
     ! Find how many points can go south and be inside search_dist
     DO j = 1, points_phi
@@ -695,7 +722,7 @@ DO k=1, no_point_unres
       END IF
     END DO
     ! If LAM can't go past a boundary
-    IF (.NOT. cyclic) THEN
+    IF (.NOT. cyclic_domain) THEN
       IF ( south == -1 ) THEN
         south=unres_j-1_int32
       END IF
@@ -710,7 +737,8 @@ DO k=1, no_point_unres
       END IF
     END IF
 
-    IF (south == -1 .OR. north == -1 .OR. west == -1 .OR. east == -1) THEN
+    IF (south == -1_int32 .OR. north == -1_int32 .OR.   &
+         west == -1_int32 .OR. east  == -1_int32) THEN
       ! have hit an edge of a cyclic domain so will have to do the whole domain
       ! Want to avoid doing the whole domain as much as possible
       DO j = 1, points_phi

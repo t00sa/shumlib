@@ -114,7 +114,7 @@ FFILE_PREREQ=BSWAP
 # Spiral Search Algorithm
 #------------------------
 SPIRAL=shum_spiral_search
-SPIRAL_PREREQ=CONSTS
+SPIRAL_PREREQ=CONSTS STR_CONV
 
 # Fieldsfile classes
 #-------------------
