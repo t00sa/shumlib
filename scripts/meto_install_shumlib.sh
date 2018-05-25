@@ -89,19 +89,23 @@ if [ $PLATFORM == "x86" ] ; then
     # Ensure the module command will be available
     source /etc/profile.d/metoffice.d/modules.sh
 
-    # Intel/GCC (ifort 12)
+    # Intel/GCC (ifort 12) - Note that the "fieldsfile_class" 
+    # lib doesn't work with ifort 12, so we exclude it
     module purge
     module load ifort/12.0_64  
     CONFIG=meto-x86-ifort12+-gcc
     LIBDIR=$BUILD_DESTINATION/meto-x86-ifort-12.0.4-gcc-4.4.7
-    build_openmp_onoff $CONFIG $LIBDIR all_libs
+    build_openmp_onoff $CONFIG $LIBDIR $(sed "s/\bshum_fieldsfile_class\b//g" \
+                                         <<< $LIB_DIRS)
 
-    # Intel/Clang  (ifort 12)
+    # Intel/Clang (ifort 12) - Note that the "fieldsfile_class" 
+    # lib doesn't work with ifort 12, so we exclude it
     module purge
     module load ifort/12.0_64  
     CONFIG=meto-x86-ifort12+-clang
     LIBDIR=$BUILD_DESTINATION/meto-x86-ifort-12.0.4-clang-3.4.2
-    build_openmp_onoff $CONFIG $LIBDIR all_libs
+    build_openmp_onoff $CONFIG $LIBDIR $(sed "s/\bshum_fieldsfile_class\b//g" \
+                                         <<< $LIB_DIRS)
 
     # Intel/GCC (ifort 16)
     module purge

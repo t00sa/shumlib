@@ -962,6 +962,133 @@ whereas a file using the "sequential" method will not.
             occurred and in that case the ``message`` argument will contain 
             information about the problem.
 
+
+``f_shum_read_stashmaster``
+'''''''''''''''''''''''''''
+
+This function reads in a UM STASHmaster file from disk and populates a given
+structure with the results.
+
+    **Available via module**
+        ``f_shum_fieldsfile_mod``
+
+    **Syntax**
+        ``status = f_shum_read_stashmaster(filename, STASHmaster, message)``
+
+    **Inputs**
+        ``filename (CHARACTER)``
+            The filename of the file containing the STASHmaster.
+        ``STASHmaster (TYPE(shum_STASHmaster), 1D array length 99999)``
+            A Pointer array of type ``shum_STASHmaster`` (also provided by
+            this module).  It must have 99999 elements and after the call to
+            this function any indices (stash codes) which have an entry in
+            the given STASHmaster file will have been populated, e.g. if the
+            variable ``STASHm`` contains this argument, the grid code for 
+            STASH code 16004 would be ``STASHm(16004) % record % grid``.
+
+    **Outputs**
+        ``message (CHARACTER(LEN=*))``
+            Error message buffer.
+
+    **Return Value**
+        ``status (64-bit INTEGER)``
+            Exit status; ``0`` means success, anything else means an error has
+            occurred and in that case the ``message`` argument will contain 
+            information about the problem.
+
+``f_shum_add_new_stash_record``
+'''''''''''''''''''''''''''''''
+
+Adds a single STASH record to an existing STASHmaster structure (this is used
+by the above routine).
+
+    **Available via module**
+        ``f_shum_fieldsfile_mod``
+
+    **Syntax**
+        ``status = f_shum_add_new_stash_record(STASHmaster, model, section, item, name, space, point, time, grid, levelt, levelf, levell, pseudt, pseudf, pseudl, levcom, option, version_mask, halo, datat, dumpp, packing_codes, rotate, ppfc, user, lbvc, blev, tlev, rblevv, cfll, cfff, message)``
+
+    **Inputs**
+        Note: For the meaning of the STASH variables please consult the UM
+        Documentation Paper C04 (currently only available via a UM licence).
+
+        ``STASHmaster (TYPE(shum_STASHmaster), 1D array length 99999)``
+            A Pointer array of type ``shum_STASHmaster`` (also provided by
+            this module).  It must have 99999 elements and after the call to
+            this function the index at the computed stash codes will have 
+            been populated.
+
+        ``model (64-bit INTEGER)``
+
+        ``section (64-bit INTEGER)``
+
+        ``item (64-bit INTEGER)``
+
+        ``name (CHARACTER(LEN=36))``
+
+        ``space (64-bit INTEGER)``
+
+        ``point (64-bit INTEGER)``
+        
+        ``time (64-bit INTEGER)``
+
+        ``grid (64-bit INTEGER)``
+
+        ``levelt (64-bit INTEGER)``
+
+        ``levelf (64-bit INTEGER)``
+
+        ``levell (64-bit INTEGER)``
+
+        ``pseudt (64-bit INTEGER)``
+
+        ``pseudf (64-bit INTEGER)``
+
+        ``pseudl (64-bit INTEGER)``
+
+        ``levcom (64-bit INTEGER)``
+
+        ``option (1d array of 8-bit INTEGERs (LEN=30))``
+
+        ``version_mask (1d array of 8-bit INTEGERs (LEN=20))``
+
+        ``halo (64-bit INTEGER)``
+
+        ``datat (64-bit INTEGER)``
+
+        ``dumpp (64-bit INTEGER)``
+
+        ``packing_codes (1d array of 64-bit INTEGERs (LEN=10))``
+
+        ``rotate (64-bit INTEGER)``
+
+        ``ppfc (64-bit INTEGER)``
+
+        ``user (64-bit INTEGER)``
+
+        ``lbvc (64-bit INTEGER)``
+
+        ``blev (64-bit INTEGER)``
+
+        ``tlev (64-bit INTEGER)``
+
+        ``rblevv (64-bit INTEGER)``
+
+        ``cfll (64-bit INTEGER)``
+
+        ``cfff (64-bit INTEGER)``
+
+    **Outputs**
+        ``message (CHARACTER(LEN=*))``
+            Error message buffer.
+
+    **Return Value**
+        ``status (64-bit INTEGER)``
+            Exit status; ``0`` means success, anything else means an error has
+            occurred and in that case the ``message`` argument will contain 
+            information about the problem.
+
+
 C Functions
 %%%%%%%%%%%
 

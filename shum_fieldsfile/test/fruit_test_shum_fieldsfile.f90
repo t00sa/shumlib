@@ -106,6 +106,8 @@ CALL run_test_case(                                                            &
   test_end_to_end_direct_write_file, "end_to_end_direct_write_file")
 CALL run_test_case(                                                            &
   test_end_to_end_sequential_write_file, "end_to_end_sequential_write_file")
+CALL run_test_case(                                                            &
+  test_stashmaster_read, "stashmaster_read")
 
 END SUBROUTINE fruit_test_shum_fieldsfile
 
@@ -1539,6 +1541,134 @@ IF (failures_at_exit - failures_at_entry == 0) THEN
 END IF
 
 END SUBROUTINE test_end_to_end_sequential_write_file
+
+!------------------------------------------------------------------------------!
+
+SUBROUTINE test_stashmaster_read
+
+USE f_shum_stashmaster_mod, ONLY: shum_STASHmaster, f_shum_read_stashmaster
+
+IMPLICIT NONE 
+
+INTEGER(KIND=int64)    :: status
+CHARACTER(LEN=500)     :: message = ""
+CHARACTER(LEN=1)       :: newline
+TYPE(shum_STASHmaster) :: STASHmaster(99999)
+
+CHARACTER(LEN=*), PARAMETER   :: tempfile="fruit_test_fieldsfile_STASHmaster"
+CHARACTER(LEN=:), ALLOCATABLE :: scratch_filename
+
+INTEGER :: failures_at_entry
+INTEGER :: failures_at_exit
+
+INTEGER(KIND=int64) :: grid
+CHARACTER(LEN=36)   :: name
+INTEGER(KIND=int64) :: packing_codes(10)
+LOGICAL(KIND=bool)  :: check
+
+! Get the number of failed tests prior to this test starting
+CALL get_failed_count(failures_at_entry)
+
+! Create a temporary file to use for testing 
+ALLOCATE(CHARACTER(shum_tmpdir_len + LEN(tempfile)) :: scratch_filename)
+scratch_filename = shum_tmpdir // '/' // tempfile
+
+OPEN(scratch_test_unit, FILE=scratch_filename, STATUS="REPLACE",               &
+  IOSTAT=status, IOMSG=message)
+
+CALL assert_equals(0_int64, status,                                            & 
+                                "Failed to create STASHmaster: "//TRIM(message))
+
+! Write a simple STASHmaster file
+newline = NEW_LINE("X")
+WRITE(scratch_test_unit, "(A)", IOSTAT=status, IOMSG=message)                  &
+"H1| SUBMODEL_NUMBER=1"                                                            //newline//&
+"H2| SUBMODEL_NAME=ATMOS"                                                          //newline//&
+"H3| UM_VERSION=99.9"                                                              //newline//&
+"#"                                                                                //newline//&
+"#|Model |Sectn | Item |Name                                |"                     //newline//&
+"#|Space |Point | Time | Grid |LevelT|LevelF|LevelL|PseudT|PseudF|PseudL|LevCom|"  //newline//&
+"#| Option Codes                   | Version Mask         | Halo |"                //newline//&
+"#|DataT |DumpP | PC1  PC2  PC3  PC4  PC5  PC6  PC7  PC8  PC9  PCA |"              //newline//&
+"#|Rotate| PPF  | USER | LBVC | BLEV | TLEV |RBLEVV| CFLL | CFFF |"                //newline//&
+"#"                                                                                //newline//&
+"#===============================================================================" //newline//&
+"#"                                                                                //newline//&
+"1|    1 |    0 |    2 |Test STASH record name 1            |"                     //newline//&
+"2|    2 |    0 |    1 |   18 |    1 |    1 |    2 |    0 |    0 |    0 |    0 |"  //newline//&
+"3| 000000000000010000000000000000 | 00000000000000000001 |    1 |"                //newline//&
+"4|    1 |    2 |  -3   -3   -3   -3  -12   20   -3  -99  -99  -99 |"              //newline//&
+"5|    0 |   56 |    0 |   65 |    0 |    0 |    0 |    0 |    5 |"                //newline//&
+"#"                                                                                //newline//&
+"1|    1 |   16 |    4 |Test STASH record name 2            |"                     //newline//&
+"2|    0 |    0 |    1 |    1 |    2 |    1 |    2 |    0 |    0 |    0 |    1 |"  //newline//&
+"3| 000000000000000000000000000000 | 00000000000000000001 |    3 |"                //newline//&
+"4|    1 |    2 |  -3  -10   -3   -3  -14   21   -3  -99  -99  -99 |"              //newline//&
+"5|    0 |   16 |    0 |   65 |    0 |    0 |    0 |    0 |    3 |"                //newline//&
+"#"                                                                                //newline//&
+"#===============================================================================" //newline//&
+"#"                                                                                //newline//&
+"1|   -1 |   -1 |   -1 |END OF FILE MARK                    |"                     //newline//&
+"2|    0 |    0 |    0 |    0 |    0 |    0 |    0 |    0 |    0 |    0 |    0 |"  //newline//&
+"3| 000000000000000000000000000000 | 00000000000000000000 |    0 |"                //newline//&
+"4|    0 |    0 | -99  -99  -99  -99  -30  -99  -99  -99  -99  -99 |"              //newline//&
+"5|    0 |    0 |    0 |    0 |    0 |    0 |    0 |    0 |    0 |"                //newline//&
+"#"                                                                                //newline
+
+CALL assert_equals(0_int64, status,                                            & 
+                                 "Failed to write STASHmaster: "//TRIM(message))
+
+CLOSE(scratch_test_unit, IOSTAT=status, IOMSG=message)
+CALL assert_equals(0_int64, status,                                            & 
+                                 "Failed to close STASHmaster: "//TRIM(message))
+
+! Now try to read that file back in using the API
+status = f_shum_read_stashmaster(scratch_filename, STASHmaster, message)
+
+CALL assert_equals(0_int64, status,                                            & 
+                                  "Failed to read STASHmaster: "//TRIM(message))
+! Check that the stash codes we expect to be there are there
+check = ASSOCIATED(STASHmaster(2) % record)
+CALL assert_true(check, "STASH record for 00002 does not exist")
+check = ASSOCIATED(STASHmaster(16004) % record)
+CALL assert_true(check, "STASH record for 00002 does not exist")
+
+! Check that an arbitrary record does not exist
+check = ASSOCIATED(STASHmaster(33) % record)
+CALL assert_false(check, "STASH record for 00033 exists, but shouldn't")
+
+! Check some of the values from the valid records
+grid = STASHmaster(2) % record % grid
+CALL assert_equals(18_int64, grid, "STASH record 00002 incorrect grid code")
+grid = STASHmaster(16004) % record % grid
+CALL assert_equals(1_int64, grid, "STASH record 16004 incorrect grid code")
+
+name = STASHmaster(2) % record % name
+CALL assert_equals("Test STASH record name 1            ", name,               &
+                   "STASH record 00002 incorrect name")
+name = STASHmaster(16004) % record % name
+CALL assert_equals("Test STASH record name 2            ", name,               &
+                   "STASH record 16004 incorrect name")
+
+packing_codes = STASHmaster(2) % record % packing_codes
+CALL assert_equals([-3_int64, -3_int64, -3_int64, -3_int64,-12_int64,          &
+                    20_int64, -3_int64,-99_int64,-99_int64,-99_int64],         &
+                    packing_codes, 10,                                         &
+                    "STASH record 00002 incorrect packing codes")
+packing_codes = STASHmaster(16004) % record % packing_codes
+CALL assert_equals([-3_int64,-10_int64, -3_int64, -3_int64,-14_int64,          &
+                    21_int64, -3_int64,-99_int64,-99_int64,-99_int64],         &
+                    packing_codes, 10,                                         &
+                    "STASH record 16004 incorrect packing codes")
+
+! Tidy up the temporary file assuming the tests completed okay
+CALL get_failed_count(failures_at_exit)
+IF (failures_at_exit - failures_at_entry == 0) THEN
+  OPEN(scratch_test_unit, FILE=scratch_filename, STATUS="OLD")
+  CLOSE(scratch_test_unit, STATUS="DELETE")
+END IF
+
+END SUBROUTINE test_stashmaster_read
 
 !------------------------------------------------------------------------------!
 
