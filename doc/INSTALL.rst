@@ -105,7 +105,7 @@ than one test at a time; e.g:
 
   make -f <configuration> <library_name>_tests [<library_name2>_tests ...]
 
-This will compile the specified libraries and their depdendancies as required.
+This will compile the specified libraries and their dependencies as required.
 Following this it will compile the unit tests for the specified libraries.
 
 To execute the tests you have just built, you can use either the ``test`` or
@@ -122,17 +122,17 @@ also built twice; once as a dynamic library and once as a static library, and
 these are tested separately.
 
 (The difference between the ``test`` and ``run_tests`` targets, is that ``test`` will
-first attempt to compile any availible tests from previously built libraries, whereas
+first attempt to compile any available tests from previously built libraries, whereas
 ``run_tests`` will only execute pre-built tests.)
 
-Alternatively, if you wish to build and run *all* of the availible tests, you can run do
+Alternatively, if you wish to build and run *all* of the available tests, you can run do
 so in a single step with the ``check`` make target; e.g:
 
 .. parsed-literal::
 
   make -f <configuration> check
 
-This will build all the libraries, their dependancies, their unit tests
+This will build all the libraries, their dependencies, their unit tests
 and the FRUIT driver as required. It will then execute and display the tests as
 above.
 
@@ -143,7 +143,7 @@ be verified or displayed within the fruit output.
 Note also, that any additional environment variables passed to the initial build
 must also be passed to the above commands (e.g. if you specified an alternative
 ``LIBDIR_OUT`` you should specify it again for the testing). This is true
-regardless of if you are running an individual test, or all of them usuing the
+regardless of if you are running an individual test, or all of them using the
 ``check`` target.
 
 As an example, to compile and run the WGDOS packing library unit tests using the
@@ -202,7 +202,7 @@ to the appropriate version depending on their own OpenMP status.
 Group/Site Make Scripts
 %%%%%%%%%%%%%%%%%%%%%%%
 
-You can also find bash scripts which handle (and provide tracability for) the
+You can also find bash scripts which handle (and provide traceability for) the
 entire set of builds for a given site, in the ``scripts`` directory. 
  
 Taking the Met Office script as an example, it consists of a series of 

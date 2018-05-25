@@ -47,7 +47,7 @@ sizes to use for allocating the return arrays of the unpacking routine below.
         ``cols (INTEGER)``
             Number of columns (row length) in unpacked field.
         ``rows (INTEGER)``
-            Numer of rows in unpacked field.
+            Number of rows in unpacked field.
 
     **Input & Output**
         ``message (CHARACTER(LEN=*))``
@@ -101,7 +101,7 @@ value in the process.
             hold the packed data.
         ``n_packed_words (INTEGER)``
             This must be provided unless ``packed_field`` is an unallocated
-            ``ALLOCTABLE``. It will receive the number of elements of
+            ``ALLOCATABLE``. It will receive the number of elements of
             ``packed_field`` containing the packed data (i.e. 
             ``packed_field(1:n_packed_words)`` which may be less than the full
             extent of the array).

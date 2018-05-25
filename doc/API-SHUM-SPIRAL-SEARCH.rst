@@ -39,7 +39,7 @@ This will cause the scheme to take much longer to run, however this is unlikely
 to happen often.
 
 It is used in the Unified Model's reconfiguration for consistency of some
-ancillary file fields with thne land-sea mask.
+ancillary file fields with the land-sea mask.
 
 
     **Available via module**
@@ -64,7 +64,7 @@ ancillary file fields with thne land-sea mask.
         ``constrained (LOGICAL, KIND=C_BOOL, scalar)``
             True if constraining spiral search.
         ``constrained_max_dist (REAL, 64- or 32-bit scalar)``
-            If contstrained, the maximum distance (in m) to constrain by.
+            If constrained, the maximum distance (in m) to constrain by.
         ``dist_step (REAL, 64- or 32-bit scalar)``
             Adjusts the distance step size of the iterations done whilst searching.
         ``cyclic_domain (LOGICAL, KIND=C_BOOL, scalar)``

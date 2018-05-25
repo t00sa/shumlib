@@ -130,16 +130,16 @@ Structure of the top-level makefile
 
 For the most part the best sources of information about what the main makefile
 does are the inline comments. However a few details not explicitly mentioned or
-benefitting from additional information will be discussed here.
+benefiting from additional information will be discussed here.
 
 Note in the "Libraries" section, each library has a main library variable listed. This is
-assigned from a human-readble name for the library, which should match the name of the
+assigned from a human-readable name for the library, which should match the name of the
 top level directory under ``${DIR_ROOT}`` containing that library's code directories
-(the ``src`` or ``test`` directories). Following this, there is another vaiariable -
+(the ``src`` or ``test`` directories). Following this, there is another variable -
 the prerequisites variable - which is formed of the main library variable with the suffix
-``_PREREQ`` appended. This is assigned a space seperated list of the main variables for
+``_PREREQ`` appended. This is assigned a space separated list of the main variables for
 other libraries upon which this library depends. Finally, there is the ``ALL_LIBS_VARS``
-varaible, which is composed of a space seperated list of all the main libraray variables
+variable, which is composed of a space separated list of all the main library variables
 defined in the makefile.
 
 These variables are used to auto-generate the library make targets (so you are
@@ -166,7 +166,7 @@ library (to ensure the library is always recompiled if needed before tests are
 run).
 
 | So in our example, the ``shum_fieldsfile_class_tests`` target would first build the following targets
-  as prerequisite depenadancies:
+  as prerequisite dependencies:
 |  ``fruit``
 |  ``shum_fieldsfile``
 |  ``shum_wgdos_packing``
@@ -180,11 +180,11 @@ i) A target to build only that library's prerequisites (the library name appende
 
 ii) A target to build only that library's prerequisites and their tests (the library name appended with ``_prereq_test``)
 
-| In our example, these are the ``shum_fieldsfile_class_prereq`` target, which is equivelent to:
+| In our example, these are the ``shum_fieldsfile_class_prereq`` target, which is equivalent to:
 |  ``shum_fieldsfile``
 |  ``shum_wgdos_packing``
 
-| And the the ``shum_fieldsfile_class_prereq_test`` target, which is equivelent to:
+| And the the ``shum_fieldsfile_class_prereq_test`` target, which is equivalent to:
 |  ``fruit``
 |  ``shum_fieldsfile_class_prereq``
 |  ``shum_fieldsfile_test``
@@ -196,13 +196,13 @@ If tests have already been built, and you only wish to execute them, you can use
 (Note that running either of these targets without first having built at least one library or test will result in
 errors.)
 
-There are a few more generic targets which apply to all availible libraries. These are:
+There are a few more generic targets which apply to all available libraries. These are:
 
-i) The ``all_libs`` target builds all the availible libraries (and dependacies) as required. Note that this is the default target if none is explicitly given.
+i) The ``all_libs`` target builds all the available libraries (and dependencies) as required. Note that this is the default target if none is explicitly given.
 
-ii) The ``all_tests`` target builds all the availible libraries (and dependacies) as required.
+ii) The ``all_tests`` target builds all the available libraries (and dependencies) as required.
 
-iii) The ``check`` target is equivalent to ``all_libs`` followed by ``all_tests`` and ``run_tests`` (ie. build all libraries, then build and run all availible tests).
+iii) The ``check`` target is equivalent to ``all_libs`` followed by ``all_tests`` and ``run_tests`` (ie. build all libraries, then build and run all available tests).
 
 Finally, there are two targets for cleaning the build structure.
 
@@ -271,7 +271,7 @@ a template in the ``fruit/fruit_f90_source.txt`` file and the Ruby script
 ``fruit/fruit_f90_generator.rb`` (providing the ``txt`` file as the sole
 argument).
 
-In order to keep track of exactly what modifcations were made to the original
+In order to keep track of exactly what modifications were made to the original
 FRUIT files, copies of those files have been preserved in Shumlib, appended with
 the FRUIT version number from which they were copied. This allows easy use of
 any "diff" tool to examine the changes directly, but in summary the
@@ -311,7 +311,7 @@ conventions:
     - The C filename (where it exists) must be ``c_fruit_test_<library_name>.c``
 
     - The object files produced from the above file(s) by the makefile in the
-      library ``test`` directory must similary be called
+      library ``test`` directory must similarly be called
       ``fruit_test_<library_name>.o``, ``fruit_test_<library_name>_PIC.o``,
       and where applicable ``c_fruit_test_<library_name>.o``, and
       ``c_fruit_test_<library_name>_PIC.o``,
@@ -369,7 +369,7 @@ given name string is used only for reporting should the test fail).
 
 If the test is actually written in C - and Fortran is only being used as a driver -
 there also needs to be an interface block at the start of the module, defining
-the ``ISO_C_BINDING`` binding. Although it is not a requirement, a recomendation
+the ``ISO_C_BINDING`` binding. Although it is not a requirement, a recommendation
 is to evaluate the pass/fail status of the test in C, and return the result to
 Fortran with a ``C_BOOL`` argument, like so:
 
@@ -515,10 +515,10 @@ attempting to compile Shumlib does not meet the requirements it will refuse to
 compile. Unfortunately there is no way around this as much of the code in the
 existing libraries relies on this assumption internally.
 
-The technique by which the version routines and prescision bomb are deployed to
+The technique by which the version routines and precision bomb are deployed to
 each library is through the use of a makefile in the ``common`` directory. This
 common makefile is included within the main makefiles of each individual
-library, after they have defined the ``VERSION_LIBNAME`` variable. This varaible
+library, after they have defined the ``VERSION_LIBNAME`` variable. This variable
 is used to generate appropriate objects and headers for that library in the
 following way:
 
@@ -546,7 +546,7 @@ following way:
     6. Finally; a set of 3 variables are defined which hold key filenames which
     the library makefile will require; ``VERSION_OBJECTS`` and
     ``VERSION_OBJECTS_PIC`` (for object files to include in the static and
-    dynamic library respectivel), and ``VERSION_CLEAN`` to specify the names of
+    dynamic library respectively), and ``VERSION_CLEAN`` to specify the names of
     the two generated files for the library makefile to remove when a ``clean``
     target is issued.
 

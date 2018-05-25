@@ -85,7 +85,7 @@ If these conditions are met it returns successCode, else it returns failCode
     **Return Value**
         ``(int64_t)``
             Code for the success of the operation. Is equal to successCode on
-            successfull destruction of the lock, else it is equal to failCode.
+            successful destruction of the lock, else it is equal to failCode.
 
 ``f_shum_Lock``
 ''''''''''''''''''''''''''''
@@ -98,7 +98,7 @@ This will lock the lock "l" if:
 If these conditions are met it returns successCode, else it returns failCode
 
 If the lock is currently locked by another thread, execution will be blocked
-until that thread reliquishes it, at which point the calling thread will
+until that thread relinquishes it, at which point the calling thread will
 re-lock it and continue execution.
 
     **Required header/s**
@@ -109,12 +109,12 @@ re-lock it and continue execution.
 
     **Arguments**
         ``l (int64_t)``
-            Lock id number of the lock to aquire.
+            Lock id number of the lock to acquire.
 
     **Return Value**
         ``(int64_t)``
             Code for the success of the operation. Is equal to successCode on
-            successfull aquisition of the lock, else it is equal to failCode.
+            successful acquisition of the lock, else it is equal to failCode.
 
 ``f_shum_TestLock``
 ''''''''''''''''''''''''''''
@@ -143,12 +143,12 @@ this thread abandons trying to obtain ownership of the lock.
 
     **Arguments**
         ``l (int64_t)``
-            Lock id number of the lock to aquire.
+            Lock id number of the lock to acquire.
 
     **Return Value**
         ``(int64_t)``
             Code for the success of the operation. Is equal to successCode on
-            successfull aquisition of the lock. Is equal to alreadyLockedCode
+            successful acquisition of the lock. Is equal to alreadyLockedCode
             if the lock is already locked. Else it is equal to failCode.
 
 ``f_shum_Unlock``
@@ -174,7 +174,7 @@ If these conditions are met it returns successCode, else it returns failCode
     **Return Value**
         ``(int64_t)``
             Code for the success of the operation. Is equal to successCode on
-            successfull release of the lock, else it is equal to failCode.
+            successful release of the lock, else it is equal to failCode.
 
 ``f_shum_threadFlush``
 ''''''''''''''''''''''''''''
@@ -270,7 +270,7 @@ Starts an OpenMP parallel region, and executes ``par_ftn_ptr()`` within it.
 
         ``par_ftn_ptr (void (*)(void **const))``
             A function pointer to the code to execute in the parallel region.
-            It will be exectuted with ``struct_ptr`` passed as an argument.
+            It will be executed with ``struct_ptr`` passed as an argument.
 
     **Return Value**
         None
@@ -282,7 +282,7 @@ Starts an OpenMP parallel region, and executes ``par_ftn_ptr()`` within it.
 Similar to ``f_shum_startOMPparallel()``, except it also includes an iteration
 range (``istart``; ``iend``) and increment (``incr``) as arguments. This
 iteration range is divided as equally as possible between the threads, which
-each recieve a contiguous sub-range.
+each receive a contiguous sub-range.
 
     **Required header/s**
         ``c_shum_thread_utils.h``
@@ -320,7 +320,7 @@ each recieve a contiguous sub-range.
             passed to ``f_shum_startOMPparallelfor``
 
                 ``par_ftn_ptr (void (*)())``
-                    The function pointed to retuns ``void`` - it has no return
+                    The function pointed to returns ``void`` - it has no return
                     value.
 
                 ``struct_ptr (void **)``

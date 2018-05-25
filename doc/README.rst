@@ -11,7 +11,7 @@ is to enable developers to quickly and easily access parts of the UM code that
 are commonly duplicated elsewhere, at the same time benefiting from any
 improvements or optimisations that might be made in support of the UM itself.
 
-Shumlib Licencing
+Shumlib Licensing
 -----------------
 
 Although the UM has a restricted commercial licence, code that is moved into

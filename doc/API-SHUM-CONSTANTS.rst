@@ -146,7 +146,7 @@ and conversions.
 
     **shum_180_over_pi_const_32**
         ``[REAL(KIND=real32)]``
-            180 / Pi : onversion factor radians to degrees
+            180 / Pi : conversion factor radians to degrees
 
     **shum_zerodegc_const_32**
         ``[REAL(KIND=real32)]``

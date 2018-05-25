@@ -31,9 +31,11 @@ USE, INTRINSIC :: iso_c_binding, ONLY: &
 
 IMPLICIT NONE 
 
+! Note - this module (intentionally) has nothing set to PUBLIC - this is because
+! it shouldn't ever be accessed from Fortran and only exists to provide the
+! interface to access the routines from C (which is unaffected by Fortran's
+! PRIVATE attribute)
 PRIVATE
-
-PUBLIC :: c_shum_wgdos_pack, c_shum_wgdos_unpack, c_shum_read_wgdos_header
 
 !------------------------------------------------------------------------------!
 ! We're going to use the types from the ISO_C_BINDING module, since although   !
