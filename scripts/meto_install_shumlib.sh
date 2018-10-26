@@ -27,8 +27,8 @@
 # USAGE:  (Note - must be run from the toplevel Shumlib directory!)
 #   scripts/meto_install_shumlib.sh [xc40|x86] 
 #
-# This script was used to install shumlib version 2018.06.1
-# and is based on the families etc. from the UM at UM 11.1
+# This script was used to install shumlib version 2018.10.1
+# and is based on the families etc. from the UM at UM 11.2
 #
 #PBS -q shared
 #PBS -S /bin/bash
@@ -100,45 +100,6 @@ function build_openmp_onoff {
     rm -rf $TEMP_BUILD_DIR
 }
 
-# Intel/GCC (ifort 12) - Note that the "fieldsfile_class" 
-# lib doesn't work with ifort 12, so we exclude it
-THIS="x86_ifort_12.0_gcc"
-if [ $PLATFORM == "x86" ] || [ $PLATFORM == $THIS ] ; then
-
-    (
-    source /etc/profile.d/metoffice.d/modules.sh
-    module purge
-    module load ifort/12.0_64  
-    CONFIG=meto-x86-ifort12+-gcc
-    LIBDIR=$BUILD_DESTINATION/meto-x86-ifort-12.0.4-gcc-4.4.7
-    build_openmp_onoff $CONFIG $LIBDIR $(sed "s/\bshum_fieldsfile_class\b//g" \
-                                         <<< $LIB_DIRS)
-    )
-    if [ $? -ne 0 ] ; then
-        >&2 echo "Error compiling for $THIS"
-        exit 1
-    fi
-fi
-
-# Intel/Clang (ifort 12) - Note that the "fieldsfile_class" 
-# lib doesn't work with ifort 12, so we exclude it
-THIS="x86_ifort_12.0_clang"
-if [ $PLATFORM == "x86" ] || [ $PLATFORM == $THIS ] ; then
-    (
-    source /etc/profile.d/metoffice.d/modules.sh || :
-    module purge
-    module load ifort/12.0_64  
-    CONFIG=meto-x86-ifort12+-clang
-    LIBDIR=$BUILD_DESTINATION/meto-x86-ifort-12.0.4-clang-3.4.2
-    build_openmp_onoff $CONFIG $LIBDIR $(sed "s/\bshum_fieldsfile_class\b//g" \
-                                         <<< $LIB_DIRS)
-    )
-    if [ $? -ne 0 ] ; then
-        >&2 echo "Error compiling for $THIS"
-        exit 1
-    fi
-fi
-
 # Intel/GCC (ifort 16)
 THIS="x86_ifort_16.0_gcc"
 if [ $PLATFORM == "x86" ] || [ $PLATFORM == $THIS ] ; then
@@ -173,15 +134,15 @@ if [ $PLATFORM == "x86" ] || [ $PLATFORM == $THIS ] ; then
     fi
 fi
 
-THIS="x86_nag_6.0_gcc"
+THIS="x86_nag_6.1_gcc"
 if [ $PLATFORM == "x86" ] || [ $PLATFORM == $THIS ] ; then
-    # NagFor/GCC (nagfor 6.0.0)
+    # NagFor/GCC (nagfor 6.1.0)
     (
     source /etc/profile.d/metoffice.d/modules.sh || :
     module purge
-    module load nagfor/6.0.0_64
+    module load nagfor/6.1.0_64
     CONFIG=meto-x86-nagfor-gcc
-    LIBDIR=$BUILD_DESTINATION/meto-x86-nagfor-6.0.0-gcc-4.4.7
+    LIBDIR=$BUILD_DESTINATION/meto-x86-nagfor-6.1.0-gcc-4.4.7
     build_openmp_onoff $CONFIG $LIBDIR all_libs
     )
     if [ $? -ne 0 ] ; then
@@ -190,16 +151,16 @@ if [ $PLATFORM == "x86" ] || [ $PLATFORM == $THIS ] ; then
     fi
 fi
 
-# Portland/GCC (pgfortran 15.7) - Note that the "fieldsfile_class" 
+# Portland/GCC (pgfortran 16.10) - Note that the "fieldsfile_class" 
 # lib doesn't work with portland, so we exclude it
-THIS="x86_pgfortran_15.7_gcc"
+THIS="x86_pgfortran_16.10_gcc"
 if [ $PLATFORM == "x86" ] || [ $PLATFORM == $THIS ] ; then
     (
     source /etc/profile.d/metoffice.d/modules.sh || :
     module purge
-    module load pgfortran/15.7_64
+    module load pgfortran/16.10_64
     CONFIG=meto-x86-portland-gcc
-    LIBDIR=$BUILD_DESTINATION/meto-x86-pgfortran-15.7.0-gcc-4.4.7
+    LIBDIR=$BUILD_DESTINATION/meto-x86-pgfortran-16.10.0-gcc-4.4.7
     build_openmp_onoff $CONFIG $LIBDIR $(sed "s/\bshum_fieldsfile_class\b//g" \
                                          <<< $LIB_DIRS)
     )
