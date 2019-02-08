@@ -1,32 +1,35 @@
 ! *********************************COPYRIGHT************************************
-! (C) Crown copyright Met Office. All rights reserved.                       
-! For further details please refer to the file LICENCE.txt                   
-! which you should have received as part of this distribution.               
+! (C) Crown copyright Met Office. All rights reserved.
+! For further details please refer to the file LICENCE.txt
+! which you should have received as part of this distribution.
 ! *********************************COPYRIGHT************************************
-!                                                                            
-! This file is part of the UM Shared Library project.                        
-!                                                                            
-! The UM Shared Library is free software: you can redistribute it            
-! and/or modify it under the terms of the Modified BSD License, as           
-! published by the Open Source Initiative.                                   
-!                                                                            
-! The UM Shared Library is distributed in the hope that it will be           
-! useful, but WITHOUT ANY WARRANTY; without even the implied warranty        
-! of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the           
-! Modified BSD License for more details.                                     
-!                                                                            
-! You should have received a copy of the Modified BSD License                
-! along with the UM Shared Library.                                          
-! If not, see <http://opensource.org/licenses/BSD-3-Clause>.                 
+!
+! This file is part of the UM Shared Library project.
+!
+! The UM Shared Library is free software: you can redistribute it
+! and/or modify it under the terms of the Modified BSD License, as
+! published by the Open Source Initiative.
+!
+! The UM Shared Library is distributed in the hope that it will be
+! useful, but WITHOUT ANY WARRANTY; without even the implied warranty
+! of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+! Modified BSD License for more details.
+!
+! You should have received a copy of the Modified BSD License
+! along with the UM Shared Library.
+! If not, see <http://opensource.org/licenses/BSD-3-Clause>.
 !*******************************************************************************
 MODULE fruit_test_shum_byteswap_mod
 
 USE fruit
-USE, INTRINSIC :: ISO_C_BINDING, ONLY:                                         & 
+USE, INTRINSIC :: ISO_C_BINDING, ONLY:                                         &
   C_INT64_T, C_INT32_T, C_FLOAT, C_DOUBLE, C_BOOL
 USE f_shum_ztables_mod
 
-IMPLICIT NONE 
+IMPLICIT NONE
+PRIVATE
+
+PUBLIC :: fruit_test_shum_byteswap
 
 !------------------------------------------------------------------------------!
 ! We're going to use the types from the ISO_C_BINDING module, since although   !
@@ -40,7 +43,7 @@ IMPLICIT NONE
   INTEGER, PARAMETER :: int32  = C_INT32_T
   INTEGER, PARAMETER :: real64 = C_DOUBLE
   INTEGER, PARAMETER :: real32 = C_FLOAT
-  INTEGER, PARAMETER :: bool   = C_BOOL                              
+  INTEGER, PARAMETER :: bool   = C_BOOL
 !------------------------------------------------------------------------------!
 
 CONTAINS
@@ -50,13 +53,13 @@ SUBROUTINE fruit_test_shum_byteswap
 USE, INTRINSIC :: ISO_FORTRAN_ENV, ONLY: OUTPUT_UNIT
 USE f_shum_byteswap_version_mod, ONLY: get_shum_byteswap_version
 
-IMPLICIT NONE 
+IMPLICIT NONE
 
 INTEGER(KIND=int64) :: version
 
 ! Note: we don't have a test case for the version checking because we don't
 ! want the testing to include further hardcoded version numbers to test
-! against.  Since the version module is simple and hardcoded anyway it's 
+! against.  Since the version module is simple and hardcoded anyway it's
 ! sufficient to make sure it is callable; but let's print the version for info.
 version = get_shum_byteswap_version()
 
@@ -107,9 +110,9 @@ SUBROUTINE test_returns_valid_endian
 
 USE f_shum_byteswap_mod, ONLY: f_shum_get_machine_endianism,                   &
                                f_shum_littleendian, f_shum_bigendian
-IMPLICIT NONE 
+IMPLICIT NONE
 
-INTEGER            :: endian
+INTEGER(KIND=int64) :: endian
 LOGICAL(KIND=bool) :: check
 CALL set_case_name("test_byteswap_returns_valid_endian")
 endian = f_shum_get_machine_endianism()
@@ -124,7 +127,7 @@ SUBROUTINE test_1d_64bit_int_data_8_word_size
 
 USE f_shum_byteswap_mod, ONLY: f_shum_byteswap
 
-IMPLICIT NONE 
+IMPLICIT NONE
 
 INTEGER, PARAMETER :: len_data = 10
 INTEGER, PARAMETER :: word_size = 8
@@ -133,7 +136,7 @@ INTEGER(KIND=int64) :: data_in(len_data)
 INTEGER(KIND=int64) :: data_swapped_expected(len_data)
 INTEGER(KIND=int64) :: data_in_copy(len_data)
 
-INTEGER :: status
+INTEGER(KIND=int64) :: status
 INTEGER :: i
 CHARACTER(LEN=500) :: message
 
@@ -156,7 +159,7 @@ data_swapped_expected(10) = z0A00000000000000
 status = f_shum_byteswap(data_in,                                              &
                          INT(len_data, KIND=int64),                            &
                          INT(word_size, KIND=int64), message)
-CALL assert_equals(0, status,                                                  &
+CALL assert_equals(0_int64, status,                                            &
     "Byteswap of initial array returned non-zero exit status")
 
 CALL assert_equals(data_swapped_expected, data_in, len_data,                   &
@@ -165,7 +168,7 @@ CALL assert_equals(data_swapped_expected, data_in, len_data,                   &
 status = f_shum_byteswap(data_swapped_expected,                                &
                          INT(len_data, KIND=int64),                            &
                          INT(word_size, KIND=int64), message)
-CALL assert_equals(0, status,                                                  &
+CALL assert_equals(0_int64, status,                                            &
     "Byteswap of byteswapped array returned non-zero exit status")
 
 CALL assert_equals(data_in_copy, data_swapped_expected, len_data,              &
@@ -180,7 +183,7 @@ SUBROUTINE test_2d_64bit_int_data_8_word_size
 
 USE f_shum_byteswap_mod, ONLY: f_shum_byteswap
 
-IMPLICIT NONE 
+IMPLICIT NONE
 
 INTEGER, PARAMETER :: len1 = 5
 INTEGER, PARAMETER :: len2 = 2
@@ -190,7 +193,7 @@ INTEGER(KIND=int64) :: data_in(len1, len2)
 INTEGER(KIND=int64) :: data_swapped_expected(len1, len2)
 INTEGER(KIND=int64) :: data_in_copy(len1, len2)
 
-INTEGER :: status
+INTEGER(KIND=int64) :: status
 INTEGER :: i
 INTEGER :: j
 INTEGER :: k
@@ -219,7 +222,7 @@ data_swapped_expected(5, 2) = z0A00000000000000
 status = f_shum_byteswap(data_in,                                              &
                          INT(len1*len2, KIND=int64),                           &
                          INT(word_size, KIND=int64), message)
-CALL assert_equals(0, status,                                                  &
+CALL assert_equals(0_int64, status,                                            &
     "Byteswap of initial array returned non-zero exit status")
 
 CALL assert_equals(data_swapped_expected, data_in, len1, len2,                 &
@@ -228,7 +231,7 @@ CALL assert_equals(data_swapped_expected, data_in, len1, len2,                 &
 status = f_shum_byteswap(data_swapped_expected,                                &
                          INT(len1*len2, KIND=int64),                           &
                          INT(word_size, KIND=int64), message)
-CALL assert_equals(0, status,                                                  &
+CALL assert_equals(0_int64, status,                                            &
     "Byteswap of byteswapped array returned non-zero exit status")
 
 CALL assert_equals(data_in_copy, data_swapped_expected, len1, len2,            &
@@ -243,7 +246,7 @@ SUBROUTINE test_1d_64bit_int_data_4_word_size
 
 USE f_shum_byteswap_mod, ONLY: f_shum_byteswap
 
-IMPLICIT NONE 
+IMPLICIT NONE
 
 INTEGER, PARAMETER :: len_data = 10
 INTEGER, PARAMETER :: word_size = 4
@@ -252,7 +255,7 @@ INTEGER(KIND=int64) :: data_in(len_data)
 INTEGER(KIND=int64) :: data_swapped_expected(len_data)
 INTEGER(KIND=int64) :: data_in_copy(len_data)
 
-INTEGER :: status
+INTEGER(KIND=int64) :: status
 INTEGER :: i
 CHARACTER(LEN=500) :: message
 
@@ -275,7 +278,7 @@ data_swapped_expected(10) = z000000000A000000
 status = f_shum_byteswap(data_in,                                              &
                          INT(len_data*2, KIND=int64),                          &
                          INT(word_size, KIND=int64), message)
-CALL assert_equals(0, status,                                                  &
+CALL assert_equals(0_int64, status,                                            &
     "Byteswap of initial array returned non-zero exit status")
 
 CALL assert_equals(data_swapped_expected, data_in, len_data,                   &
@@ -284,7 +287,7 @@ CALL assert_equals(data_swapped_expected, data_in, len_data,                   &
 status = f_shum_byteswap(data_swapped_expected,                                &
                          INT(len_data*2, KIND=int64),                          &
                          INT(word_size, KIND=int64), message)
-CALL assert_equals(0, status,                                                  &
+CALL assert_equals(0_int64, status,                                            &
     "Byteswap of byteswapped array returned non-zero exit status")
 
 CALL assert_equals(data_in_copy, data_swapped_expected, len_data,              &
@@ -299,7 +302,7 @@ SUBROUTINE test_2d_64bit_int_data_4_word_size
 
 USE f_shum_byteswap_mod, ONLY: f_shum_byteswap
 
-IMPLICIT NONE 
+IMPLICIT NONE
 
 INTEGER, PARAMETER :: len1 = 5
 INTEGER, PARAMETER :: len2 = 2
@@ -309,7 +312,7 @@ INTEGER(KIND=int64) :: data_in(len1, len2)
 INTEGER(KIND=int64) :: data_swapped_expected(len1, len2)
 INTEGER(KIND=int64) :: data_in_copy(len1, len2)
 
-INTEGER :: status
+INTEGER(KIND=int64) :: status
 INTEGER :: i
 INTEGER :: j
 INTEGER :: k
@@ -338,7 +341,7 @@ data_swapped_expected(5, 2) = z000000000A000000
 status = f_shum_byteswap(data_in,                                              &
                          INT(len1*len2*2, KIND=int64),                         &
                          INT(word_size, KIND=int64), message)
-CALL assert_equals(0, status,                                                  &
+CALL assert_equals(0_int64, status,                                            &
     "Byteswap of initial array returned non-zero exit status")
 
 CALL assert_equals(data_swapped_expected, data_in, len1, len2,                 &
@@ -347,7 +350,7 @@ CALL assert_equals(data_swapped_expected, data_in, len1, len2,                 &
 status = f_shum_byteswap(data_swapped_expected,                                &
                          INT(len1*len2*2, KIND=int64),                         &
                          INT(word_size, KIND=int64), message)
-CALL assert_equals(0, status,                                                  &
+CALL assert_equals(0_int64, status,                                            &
     "Byteswap of byteswapped array returned non-zero exit status")
 
 CALL assert_equals(data_in_copy, data_swapped_expected, len1, len2,            &
@@ -362,7 +365,7 @@ SUBROUTINE test_1d_32bit_int_data_8_word_size
 
 USE f_shum_byteswap_mod, ONLY: f_shum_byteswap
 
-IMPLICIT NONE 
+IMPLICIT NONE
 
 INTEGER, PARAMETER :: len_data = 10
 INTEGER, PARAMETER :: word_size = 8
@@ -414,7 +417,7 @@ SUBROUTINE test_2d_32bit_int_data_8_word_size
 
 USE f_shum_byteswap_mod, ONLY: f_shum_byteswap
 
-IMPLICIT NONE 
+IMPLICIT NONE
 
 INTEGER, PARAMETER :: len1 = 5
 INTEGER, PARAMETER :: len2 = 2
@@ -473,7 +476,7 @@ SUBROUTINE test_1d_32bit_int_data_4_word_size
 
 USE f_shum_byteswap_mod, ONLY: f_shum_byteswap
 
-IMPLICIT NONE 
+IMPLICIT NONE
 
 INTEGER, PARAMETER :: len_data = 10
 INTEGER, PARAMETER :: word_size = 4
@@ -525,7 +528,7 @@ SUBROUTINE test_2d_32bit_int_data_4_word_size
 
 USE f_shum_byteswap_mod, ONLY: f_shum_byteswap
 
-IMPLICIT NONE 
+IMPLICIT NONE
 
 INTEGER, PARAMETER :: len1 = 5
 INTEGER, PARAMETER :: len2 = 2
@@ -584,7 +587,7 @@ SUBROUTINE test_1d_64bit_data_8_word_size
 
 USE f_shum_byteswap_mod, ONLY: f_shum_byteswap
 
-IMPLICIT NONE 
+IMPLICIT NONE
 
 INTEGER, PARAMETER :: len_data = 10
 INTEGER, PARAMETER :: word_size = 8
@@ -637,7 +640,7 @@ SUBROUTINE test_2d_64bit_data_8_word_size
 
 USE f_shum_byteswap_mod, ONLY: f_shum_byteswap
 
-IMPLICIT NONE 
+IMPLICIT NONE
 
 INTEGER, PARAMETER :: len1 = 5
 INTEGER, PARAMETER :: len2 = 2
@@ -697,7 +700,7 @@ SUBROUTINE test_1d_64bit_data_4_word_size
 
 USE f_shum_byteswap_mod, ONLY: f_shum_byteswap
 
-IMPLICIT NONE 
+IMPLICIT NONE
 
 INTEGER, PARAMETER :: len_data = 10
 INTEGER, PARAMETER :: word_size = 4
@@ -750,7 +753,7 @@ SUBROUTINE test_2d_64bit_data_4_word_size
 
 USE f_shum_byteswap_mod, ONLY: f_shum_byteswap
 
-IMPLICIT NONE 
+IMPLICIT NONE
 
 INTEGER, PARAMETER :: len1 = 5
 INTEGER, PARAMETER :: len2 = 2
@@ -810,7 +813,7 @@ SUBROUTINE test_1d_32bit_data_8_word_size
 
 USE f_shum_byteswap_mod, ONLY: f_shum_byteswap
 
-IMPLICIT NONE 
+IMPLICIT NONE
 
 INTEGER, PARAMETER :: len_data = 10
 INTEGER, PARAMETER :: word_size = 8
@@ -863,7 +866,7 @@ SUBROUTINE test_2d_32bit_data_8_word_size
 
 USE f_shum_byteswap_mod, ONLY: f_shum_byteswap
 
-IMPLICIT NONE 
+IMPLICIT NONE
 
 INTEGER, PARAMETER :: len1 = 5
 INTEGER, PARAMETER :: len2 = 2
@@ -923,7 +926,7 @@ SUBROUTINE test_1d_32bit_data_4_word_size
 
 USE f_shum_byteswap_mod, ONLY: f_shum_byteswap
 
-IMPLICIT NONE 
+IMPLICIT NONE
 
 INTEGER, PARAMETER :: len_data = 10
 INTEGER, PARAMETER :: word_size = 4
@@ -975,7 +978,7 @@ SUBROUTINE test_2d_32bit_data_4_word_size
 
 USE f_shum_byteswap_mod, ONLY: f_shum_byteswap
 
-IMPLICIT NONE 
+IMPLICIT NONE
 
 INTEGER, PARAMETER :: len1 = 5
 INTEGER, PARAMETER :: len2 = 2

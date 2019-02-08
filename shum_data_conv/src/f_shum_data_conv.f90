@@ -829,13 +829,16 @@ INTEGER(KIND=int32), INTENT(IN), TARGET ::                                     &
 INTEGER(KIND=int64), INTENT(INOUT), TARGET ::                                  &
   ibm_num_out
 
+INTEGER(KIND=int64) ::                                                         &
+  c_ieee2ibm_ret64
+
 CHARACTER(LEN=*), INTENT(OUT) :: message
 CHARACTER(KIND=C_CHAR,LEN=1), ALLOCATABLE  :: cmessage(:)
 
 ALLOCATE(cmessage(LEN(message)+1))
 cmessage(1) = C_NULL_CHAR
 
-ieee2ibm_32_scalar_32_to_64 = c_ieee2ibm(data_type, INT(num,kind=int64),       &
+c_ieee2ibm_ret64 = c_ieee2ibm(data_type, INT(num,kind=int64),                  &
                                          C_LOC(ibm_num_out),                   &
                                          INT(offset_out,kind=int64),           &
                                          C_LOC(cri_num_in),                    &
@@ -843,6 +846,8 @@ ieee2ibm_32_scalar_32_to_64 = c_ieee2ibm(data_type, INT(num,kind=int64),       &
                                          INT(size_num_in,kind=int64),          &
                                          INT(size_num_out,kind=int64),         &
                                          cmessage, LEN(message, KIND=int64) + 1)
+
+ieee2ibm_32_scalar_32_to_64 = INT(c_ieee2ibm_ret64,KIND=int32)
 
 message = f_shum_c2f_string(cmessage)
 
@@ -1060,13 +1065,16 @@ INTEGER(KIND=int64), INTENT(IN), TARGET ::                                     &
 INTEGER(KIND=int32), INTENT(INOUT), TARGET ::                                  &
   cri_num_out
 
+INTEGER(KIND=int64) ::                                                         &
+  c_ibm2ieee_ret64
+
 CHARACTER(LEN=*), INTENT(OUT) :: message
 CHARACTER(KIND=C_CHAR,LEN=1), ALLOCATABLE  :: cmessage(:)
 
 ALLOCATE(cmessage(LEN(message)+1))
 cmessage(1) = C_NULL_CHAR
 
-ibm2ieee_32_scalar_64_to_32 = c_ibm2ieee(data_type, INT(num,kind=int64),       &
+c_ibm2ieee_ret64 = c_ibm2ieee(data_type, INT(num,kind=int64),                  &
                                          C_LOC(ibm_num_in),                    &
                                          INT(offset_in,kind=int64),            &
                                          C_LOC(cri_num_out),                   &
@@ -1074,6 +1082,8 @@ ibm2ieee_32_scalar_64_to_32 = c_ibm2ieee(data_type, INT(num,kind=int64),       &
                                          INT(size_num_out,kind=int64),         &
                                          INT(size_num_in,kind=int64),          &
                                          cmessage, LEN(message, KIND=int64) + 1)
+
+ibm2ieee_32_scalar_64_to_32 = INT(c_ibm2ieee_ret64,KIND=int32)
 
 message = f_shum_c2f_string(cmessage)
 
@@ -1105,7 +1115,7 @@ INTEGER(KIND=int64), INTENT(IN) ::                                             &
   size_num_out
 
 REAL(KIND=real32), INTENT(IN), TARGET ::                                       &
-  ibm_num_in(CEILING(num*size_num_in*2.0/size_num_out))
+  ibm_num_in(CEILING(REAL(num*size_num_in)*2.0/REAL(size_num_out)))
 
 REAL(KIND=real64), INTENT(INOUT), TARGET ::                                    &
   cri_num_out(num)
@@ -1246,7 +1256,7 @@ REAL(KIND=real64), INTENT(INOUT), TARGET ::                                    &
   cri_num_out(:,:)
 
 REAL(KIND=real32), INTENT(IN), TARGET ::                                       &
-  ibm_num_in(CEILING(num*size_num_in*2.0/size_num_out))
+  ibm_num_in(CEILING(REAL(num*size_num_in)*2.0/REAL(size_num_out)))
 
 CHARACTER(LEN=*), INTENT(OUT) :: message
 CHARACTER(KIND=C_CHAR,LEN=1), ALLOCATABLE  :: cmessage(:)

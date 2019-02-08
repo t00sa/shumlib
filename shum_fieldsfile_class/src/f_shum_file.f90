@@ -1402,7 +1402,7 @@ FUNCTION write_field(self, field_number) RESULT(status)
                 DO i_value = 1, cols
                   IF (lsm_data(i_value, j_value) == 1_int64) THEN
                     field_data_r32(k_count) =                                  &
-                                          tmp_field_data_r64(i_value, j_value)
+                          REAL(tmp_field_data_r64(i_value, j_value),KIND=real32)
                     k_count = k_count + 1
                   END IF
                 END DO
@@ -1440,7 +1440,7 @@ FUNCTION write_field(self, field_number) RESULT(status)
                 DO i_value = 1, cols
                   IF (lsm_data(i_value, j_value) == 1_int64) THEN
                     field_data_i32(k_count) =                                  &
-                                          tmp_field_data_i64(i_value, j_value)
+                            INT(tmp_field_data_i64(i_value, j_value),KIND=int32)
                     k_count = k_count + 1
                   END IF
                 END DO
@@ -1573,7 +1573,7 @@ FUNCTION write_field(self, field_number) RESULT(status)
                 DO i_value = 1, cols
                   IF (lsm_data(i_value, j_value) == 0_int64) THEN
                     field_data_r32(k_count) =                                  &
-                                          tmp_field_data_r64(i_value, j_value)
+                          REAL(tmp_field_data_r64(i_value, j_value),KIND=real32)
                     k_count = k_count + 1
                   END IF
                 END DO
@@ -1611,7 +1611,7 @@ FUNCTION write_field(self, field_number) RESULT(status)
                 DO i_value = 1, cols
                   IF (lsm_data(i_value, j_value) == 0_int64) THEN
                     field_data_i32(k_count) =                                  &
-                                          tmp_field_data_i64(i_value, j_value)
+                            INT(tmp_field_data_i64(i_value, j_value),KIND=int32)
                     k_count = k_count + 1
                   END IF
                 END DO
