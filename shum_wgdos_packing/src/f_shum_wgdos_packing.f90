@@ -416,7 +416,7 @@ END IF
 
 cols = stride
 rows = SIZE(field)/cols
-field2d(1:cols, 1:rows) => field(:)
+field2d(1:cols, 1:rows) => field(1:(rows*cols))
 len_packed_field = SIZE(packed_field, 1, KIND=int64)
 
 status = f_shum_wgdos_pack_expl_arg64(                                         &
@@ -1215,6 +1215,11 @@ nop(1) = IAND(packed_field(5),mask16)
 
 DO j=2,rows
   istart(j) = istart(j-1) + nop(j-1) + 2
+  IF (istart(j)-1 > size(packed_field)) THEN
+    status = 2
+    message='Compressed data inconsistent'
+    RETURN
+  END IF
   nop(j) = IAND(packed_field(istart(j)-1),mask16)
   IF (istart(j)+nop(j)-1 > num) THEN
     status = 2
