@@ -492,7 +492,7 @@ PROCEDURE(parallel_sub), POINTER :: f_routine
 
 CALL C_F_PROCPOINTER(routine, f_routine)
 
-!$OMP PARALLEL DEFAULT(NONE) SHARED(sharepointer, f_routine)
+!$OMP PARALLEL DEFAULT(SHARED)
 CALL f_routine(sharepointer)
 !$OMP END PARALLEL
 
@@ -526,8 +526,7 @@ ELSE
 t_incr = incr
 END IF
 
-!$OMP PARALLEL DEFAULT(NONE)                                                   &
-!$OMP SHARED(sharepointer, f_routine, istart, iend, incr, t_incr)              &
+!$OMP PARALLEL DEFAULT(SHARED)                                                   &
 !$OMP PRIVATE(t_istart, t_iend, blocksize, extra, excess, tid)
 
 tid = threadID()
