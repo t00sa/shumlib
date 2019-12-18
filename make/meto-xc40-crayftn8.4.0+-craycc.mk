@@ -23,10 +23,10 @@ FCFLAGS_EXTRA ?= -O2 -Ovector1 -hfp0 -hflex_mp=strict -hipa1 -hnopgas_runtime  \
 # and so will only be passed to compile objects destined for the dynamic lib)
 FCFLAGS_PIC=-h pic
 # Flags used to toggle the building of a dynamic (shared) library
-FCFLAGS_SHARED=-shared -L${CRAYLIBS_X86_64} -lomp
+FCFLAGS_SHARED=-shared -L${CRAYLIBS_X86_64} -lomp -lmodules
 ifdef SHUM_OPENMP
 ifeq (${SHUM_OPENMP}, false)
-FCFLAGS_SHARED=-shared
+FCFLAGS_SHARED=-shared -L${CRAYLIBS_X86_64} -lmodules
 endif
 endif
 # Flags used for compiling a dynamically linked test executable; in some cases
