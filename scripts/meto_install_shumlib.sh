@@ -106,6 +106,10 @@ function build_openmp_onoff {
     export SHUM_OPENMP=false
     export SHUM_USE_C_OPENMP_VIA_THREAD_UTILS=true
     build_test_clean $config $*
+    export LIBDIR_OUT=$dir/unset_threading
+    unset SHUM_OPENMP
+    unset SHUM_USE_C_OPENMP_VIA_THREAD_UTILS
+    build_test_clean $config $*
     # Tidy up the temporary directory
     rm -rf $TEMP_BUILD_DIR
 }

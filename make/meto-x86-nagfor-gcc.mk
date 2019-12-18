@@ -1,6 +1,10 @@
 # Platform specific settings
 #-------------------------------------------------------------------------------
 
+# SHUM_OPENMP is tested in this file, but is not set by default until the main
+# makefile is included. We therefore need to set a default here.
+SHUM_OPENMP ?= true
+
 # Make
 #-----
 # Make command
@@ -77,7 +81,7 @@ CCFLAGS_PIC=-fPIC
 # Archiver command
 AR=ar -rc
 
-# Set the name of this platform; this will be included as the name of the 
+# Set the name of this platform; this will be included as the name of the
 # top-level directory in the build
 PLATFORM=meto-x86-nagfor-gcc
 
