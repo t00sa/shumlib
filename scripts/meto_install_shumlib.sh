@@ -62,6 +62,20 @@ LIB_DIRS=$(ls -d shum_* | xargs)
 # "build" directory in the working copy - like the Makefile would)
 BUILD_DESTINATION=${BUILD_DESTINATION:-$PWD/build}
 
+# This list dictates which threading variants of Shumlib will be installed
+# (all versions defined will always be built + tested, but only those set
+# by this list will end up in the BUILD_DESTINATION directory)
+INSTALL_LIBS=${INSTALL_LIBS:-"openmp no-openmp thread_utils serial_thread_utils"}
+
+# Function for testing membership of a list
+function contains {
+    local elt
+    for elt in $2 ; do
+        [[ "$elt" == "$1" ]] && return 0;
+    done
+    return 1
+}
+
 # Functions which build given libraries and tests for those libraries
 function build_test_clean {
     local config=$1
@@ -76,8 +90,11 @@ function build_test_clean {
     make -f make/$config.mk clean-temp
 }
 
-# Function which executes the above function four time - once for each of the
-# possible OpenMP state and Thread_Utils state combinations
+# Function which executes the above function several times - once for each of 
+# the possible OpenMP state and Thread_Utils state combinations. Note that
+# the build will only be copied to the destination install directory if the
+# variable LIBDIR_OUT is set - this is done selectively depending on which
+# builds are required to be installed (according to the INSTALL_LIBS variable)
 function build_openmp_onoff {
     local config=$1
     local dir=$2
@@ -86,27 +103,54 @@ function build_openmp_onoff {
     TEMP_BUILD_DIR=$(mktemp -d)
     cp -r * $TEMP_BUILD_DIR
     cd $TEMP_BUILD_DIR
-    # Perform the build
-    export LIBDIR_OUT=$dir/openmp
+
+    # OpenMP
+    unset LIBDIR_OUT
+    if contains "openmp" "$INSTALL_LIBS" ; then
+        export LIBDIR_OUT=$dir/openmp
+    fi
     export SHUM_OPENMP=true
     export SHUM_USE_C_OPENMP_VIA_THREAD_UTILS=false
     build_test_clean $config $*
-    export LIBDIR_OUT=$dir/no-openmp
+
+    # No-OpenMP
+    unset LIBDIR_OUT
+    if contains "no-openmp" "$INSTALL_LIBS" ; then
+        export LIBDIR_OUT=$dir/no-openmp
+    fi
     export SHUM_OPENMP=false
     export SHUM_USE_C_OPENMP_VIA_THREAD_UTILS=false
     build_test_clean $config $*
-    export LIBDIR_OUT=$dir/thread_utils
+
+    # Thread Utils + OpenMP
+    unset LIBDIR_OUT
+    if contains "thread_utils" "$INSTALL_LIBS" ; then
+        export LIBDIR_OUT=$dir/thread_utils
+    fi
     export SHUM_OPENMP=true
     export SHUM_USE_C_OPENMP_VIA_THREAD_UTILS=true
     build_test_clean $config $*
-    export LIBDIR_OUT=$dir/serial_thread_utils
+
+    # Thread Utils, No-OpenMP
+    unset LIBDIR_OUT
+    if contains "serial_thread_utils" "$INSTALL_LIBS" ; then
+        export LIBDIR_OUT=$dir/serial_thread_utils
+    fi
     export SHUM_OPENMP=false
     export SHUM_USE_C_OPENMP_VIA_THREAD_UTILS=true
     build_test_clean $config $*
-    export LIBDIR_OUT=$dir/unset_threading
+
+    # Unset threading - not practically a useful install; more of a test
+    # of the Makefiles; this checks to see what happens if the environment
+    # variables that control the build threading are not set
+    unset LIBDIR_OUT
+    if contains "unset_threading" "$INSTALL_LIBS" ; then
+        export LIBDIR_OUT=$dir/unset_threading
+    fi
     unset SHUM_OPENMP
     unset SHUM_USE_C_OPENMP_VIA_THREAD_UTILS
     build_test_clean $config $*
+
     # Tidy up the temporary directory
     rm -rf $TEMP_BUILD_DIR
 }
