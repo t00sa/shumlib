@@ -1345,9 +1345,9 @@ CALL assert_equals(addl_param_dim2_test,                                       &
                    SIZE(addl_params_r, 2, KIND=int64),                         &
                    "Re-read additional_parameters incorrect 2nd dimension")
 
-CALL assert_equals(TRANSFER(addl_params,[0_int64]), &
-                   TRANSFER(addl_params_r,[0_int64]),                                 &
-                   addl_param_dim1_test*addl_param_dim2_test,                                       &
+CALL assert_equals(addl_params, addl_params_r,                                 &
+                   addl_param_dim1_test,                                       &
+                   addl_param_dim2_test,                                       &
                   "Re-read additional_parameters contain incorrect values")
 
 status = f_shum_read_extra_constants(ff_id, extra_constants_r, message)
@@ -1361,8 +1361,7 @@ CALL assert_true(check, "Re-read extra_constants not allocated by read call")
 CALL assert_equals(extra_const_dim_test, SIZE(extra_constants_r, KIND=int64),  &
                    "Re-read extra_constants incorrect size")
 
-CALL assert_equals(TRANSFER(extra_constants,[0_int64]), &
-                   TRANSFER(extra_constants_r,[0_int64]),                         &
+CALL assert_equals(extra_constants, extra_constants_r,                         &
                    extra_const_dim_test,                                       &
                    "Re-read extra_constants contain incorrect values")
 
@@ -1409,8 +1408,7 @@ CALL assert_true(check,                                                        &
 CALL assert_equals(comp_ind_2_dim_test, SIZE(comp_index_2_r, KIND=int64),      &
                    "Re-read compressed_index 2 incorrect size")
 
-CALL assert_equals(TRANSFER(comp_index_2,[0_int64]),&
-                   TRANSFER(comp_index_2_r,[0_int64]),                               &
+CALL assert_equals(comp_index_2, comp_index_2_r,                               &
                    comp_ind_2_dim_test,                                        &
                    "Re-read compressed_index 2 contain incorrect values")
 
@@ -1426,8 +1424,7 @@ CALL assert_true(check,                                                        &
 CALL assert_equals(comp_ind_3_dim_test, SIZE(comp_index_3_r, KIND=int64),      &
                    "Re-read compressed_index 3 incorrect size")
 
-CALL assert_equals(TRANSFER(comp_index_3,[0_int64]),&
-                   TRANSFER(comp_index_3_r,[0_int64]),                               &
+CALL assert_equals(comp_index_3, comp_index_3_r,                               &
                    comp_ind_3_dim_test,                                        &
                    "Re-read compressed_index 3 contain incorrect values")
 
