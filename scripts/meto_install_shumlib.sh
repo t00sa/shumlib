@@ -238,12 +238,29 @@ fi
 THIS="x86_gnu_6.1.0"
 if [ $PLATFORM == "x86" ] || [ $PLATFORM == $THIS ] ; then
     (
-    source /etc/profile.d/metoffice.d/modules.sh || :
-    source /data/users/lfric/modules/setup
+    module use /data/users/lfric/modules/modulefiles.rhel7
     module purge
     module load environment/lfric/gnu/6.1.0
     CONFIG=meto-x86-gfortran-gcc
     LIBDIR=$BUILD_DESTINATION/meto-x86-gfortran-6.1.0-gcc-6.1.0
+    build_openmp_onoff $CONFIG $LIBDIR all_libs
+    )
+    if [ $? -ne 0 ] ; then
+        >&2 echo "Error compiling for $THIS"
+        exit 1
+    fi
+fi
+
+# Gfortran/GCC 10.2.0
+# Using LFRic module
+THIS="x86_gnu_10.2.0"
+if [ $PLATFORM == "x86" ] || [ $PLATFORM == $THIS ] ; then
+    (
+    module use /data/users/lfric/modules/modulefiles.rhel7
+    module purge
+    module load environment/lfric/gnu/10.2.0
+    CONFIG=meto-x86-gfortran-gcc
+    LIBDIR=$BUILD_DESTINATION/meto-x86-gfortran-10.2.0-gcc-10.2.0
     build_openmp_onoff $CONFIG $LIBDIR all_libs
     )
     if [ $? -ne 0 ] ; then
