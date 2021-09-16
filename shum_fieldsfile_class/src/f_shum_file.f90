@@ -53,6 +53,7 @@ INTEGER(KIND=INT64), PARAMETER :: stash_land_sea_mask = 30
 TYPE, PUBLIC :: shum_file_type
   PRIVATE
   CHARACTER(LEN=:), ALLOCATABLE            :: filename
+  LOGICAL                                  :: fixed_length_header_read=.FALSE.
   INTEGER(KIND=INT64)                      :: file_identifier = um_imdi
   INTEGER(KIND=INT64)                      :: fixed_length_header(             &
                            f_shum_fixed_length_header_len) = um_imdi
@@ -209,7 +210,7 @@ USE f_shum_lookup_indices_mod, ONLY:                                           &
     lbrow, lbnpt, lbuser4
 
 USE f_shum_fixed_length_header_indices_mod, ONLY:                              &
-    dataset_type, lookup_dim2, grid_staggering
+    dataset_type, lookup_dim2, grid_staggering, vert_coord_type
 IMPLICIT NONE
 CLASS(shum_file_type), INTENT(IN OUT)   :: self
 
@@ -221,8 +222,11 @@ INTEGER(KIND=INT64)              :: p_lookup
 REAL(KIND=REAL64) :: temp_lookup_real(len_real_lookup)
 
 INTEGER(KIND=INT64), PARAMETER :: grid_stagger_endgame = 6
+INTEGER(KIND=INT64), PARAMETER :: grid_stagger_arakawa_a = 1
+INTEGER(KIND=INT64), PARAMETER :: pressure_vert_coord=3
 
 LOGICAL :: is_variable_resolution = .FALSE.
+LOGICAL :: grid_supported
 
 TYPE(shum_ff_status_type) :: STATUS    ! Return status object
 
@@ -234,10 +238,23 @@ STATUS%icode = f_shum_read_fixed_length_header(                                &
 IF (STATUS%icode /= shumlib_success) THEN
   RETURN
 END IF
+self%fixed_length_header_read = .TRUE.
 
-IF (self%fixed_length_header(grid_staggering) /= grid_stagger_endgame) THEN
+! These conditions need to be met for supported files
+IF (self%fixed_length_header(grid_staggering) == grid_stagger_endgame) THEN
+  ! an endgame file
+  grid_supported=.TRUE.
+
+ELSE IF (self%fixed_length_header(grid_staggering) == grid_stagger_arakawa_a .AND.&
+         self%fixed_length_header(vert_coord_type) == pressure_vert_coord ) THEN
+  ! A background error file
+  grid_supported=.TRUE.
+ELSE
+  grid_supported=.FALSE.
+END IF
+IF (.NOT. grid_supported) THEN
   STATUS%icode = 1_int64
-  STATUS%message = 'This software only supports the Endgame grid.'
+  STATUS%message = 'This software only supports the Endgame and background error files.'
   RETURN
 END IF
 
@@ -357,6 +374,7 @@ IF (STATUS%icode > shumlib_success) THEN
 END IF
 
 ! Allocate space for both temporary lookups and final fields
+IF ( ALLOCATED(self%fields) ) DEALLOCATE(self%fields)
 ALLOCATE(self%fields(self%fixed_length_header(lookup_dim2)))
 
 ! Read the lookup
@@ -482,7 +500,7 @@ IF (field_number < 0_int64 .OR. field_number > self%num_fields) THEN
   RETURN
 END IF
 
-IF (self%fixed_length_header(1) == um_imdi) THEN
+IF (.NOT.self%fixed_length_header_read) then
   ! Header has not been loaded, so automatically load it
   STATUS = self%read_header()
   IF (STATUS%icode /= shumlib_success) THEN
@@ -1840,6 +1858,17 @@ TYPE(shum_ff_status_type) :: STATUS    ! Return status object
 
 STATUS%icode = f_shum_close_file(self%file_identifier, STATUS%message)
 
+! reset the shum_file_type fields with save attribute to initial values
+self%fixed_length_header_read=.FALSE.
+self%file_identifier = um_imdi
+self%fixed_length_header = um_imdi
+self%field_number_land_sea_mask = -99
+self%num_fields = 0
+
+! deallocate to reset the filename. the status of other allocatable members
+! is checked during file open so they do not need to be reset here.
+IF (ALLOCATED(self%filename)) DEALLOCATE(self%filename)
+
 END FUNCTION close_file
 
 !-------------------------------------------------------------------------------
@@ -2916,7 +2945,13 @@ CLASS(shum_file_type), INTENT(IN) :: self
 CHARACTER(LEN=*) :: fname
 TYPE(shum_ff_status_type) :: STATUS    ! Return status object
 
-fname = self%filename
+! return empty string if filename is not allocated
+IF (ALLOCATED(self%filename)) THEN
+  fname = self%filename
+ELSE
+  fname = ''
+ENDIF
+
 STATUS%icode = shumlib_success
 END FUNCTION get_filename
 
