@@ -146,18 +146,18 @@ IF (ALLOCATED(self%filename)) DEALLOCATE(self%filename)
 self%filename = fname
 INQUIRE(FILE=fname, EXIST=exists)
 
-IF (exists) THEN
-  IF (PRESENT(overwrite)) THEN
-    IF (overwrite) THEN
-      read_only = .FALSE.
-    ELSE
-      read_only = .TRUE.
-    END IF
-  ELSE
-    read_only = .TRUE.
+! Assume file is opened as read only unless overwrite is specified and true
+read_only = .TRUE.
+IF (PRESENT(overwrite)) THEN
+  IF (overwrite) THEN
+    read_only = .FALSE.
   END IF
-ELSE
-  read_only = .FALSE.
+END IF
+! If read only and file does not exist, return with error code
+IF ((read_only) .AND. (.NOT. exists)) THEN
+  STATUS%icode = 1_int64
+  STATUS%message = "Missing input file ("//TRIM(fname)//")"
+  RETURN
 END IF
 
 IF (read_only) THEN
