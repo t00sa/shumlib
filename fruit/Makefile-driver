@@ -6,16 +6,22 @@
 # Store targets we intend to build
 ifeq (${SHUM_BUILD_STATIC}, true)
 STATIC_EXEC=${LIBDIR_OUT}/tests/fruit_tests_static.exe
-STATIC_EXEC_ONE=${LIBDIR_OUT}/tests/fruit_tests_static_one.exe
 else
 STATIC_EXEC=
+endif
+ifneq ("$(wildcard ${LIBDIR_OUT}/lib/libshum.a)", "")
+STATIC_EXEC_ONE=${LIBDIR_OUT}/tests/fruit_tests_static_one.exe
+else
 STATIC_EXEC_ONE=
 endif
 ifeq (${SHUM_BUILD_DYNAMIC}, true)
 DYNAMIC_EXEC=${LIBDIR_OUT}/tests/fruit_tests_dynamic.exe
-DYNAMIC_EXEC_ONE=${LIBDIR_OUT}/tests/fruit_tests_dynamic_one.exe
 else
 DYNAMIC_EXEC=
+endif
+ifneq ("$(wildcard ${LIBDIR_OUT}/lib/libshum.so)", "")
+DYNAMIC_EXEC_ONE=${LIBDIR_OUT}/tests/fruit_tests_dynamic_one.exe
+else
 DYNAMIC_EXEC_ONE=
 endif
 
@@ -40,7 +46,7 @@ FRUIT_AVAILABLE_TESTS=$(strip                                                  \
                                          ${FRUIT_BUILT_TESTS}),${libfile},)))
 
 .PHONY: test
-test: $(STATIC_EXEC) ${STATIC_EXEC_ONE} $(DYNAMIC_EXEC) ${DYNAMIC_EXEC_ONE}
+test: $(STATIC_EXEC) $(STATIC_EXEC_ONE) $(DYNAMIC_EXEC) $(DYNAMIC_EXEC_ONE)
 
 # Construct the paths to the test directories from the names
 TEST_DIR=$(patsubst %, $(DIR_ROOT)/%/test/, $(FRUIT_AVAILABLE_TESTS))

@@ -313,6 +313,7 @@ fi
 # GNU generic gfortran/gcc
 THIS="x86_gnu_generic"
 if [[ $PLATFORM == "x86" ]] || [[ $PLATFORM == $THIS ]] ; then
+  if [[ $(gcc -dumpversion) > 8 ]] ; then
     (
     CONFIG=meto-x86-gfortran-gcc
     LIBDIR=$BUILD_DESTINATION/x86-gfortran-$(gfortran -dumpversion)-gcc-$(gcc -dumpversion)
@@ -322,6 +323,9 @@ if [[ $PLATFORM == "x86" ]] || [[ $PLATFORM == $THIS ]] ; then
         >&2 echo "Error compiling for $THIS"
         exit 1
     fi
+  else
+    >&2 echo "SKIPPING $THIS as GCC version older than 8"
+  fi
 fi
 
 

@@ -291,11 +291,15 @@ run_tests: ${SHUM_TMPDIR}
 	${MAKE} -C ${DIR_ROOT}/${FRUIT} -f Makefile-driver
 ifeq (${SHUM_BUILD_STATIC}, true)
 	${LIBDIR_OUT}/tests/fruit_tests_static.exe
+ifneq ("$(wildcard ${LIBDIR_OUT}/tests/fruit_tests_static_one.exe)", "")
 	${LIBDIR_OUT}/tests/fruit_tests_static_one.exe
+endif
 endif
 ifeq (${SHUM_BUILD_DYNAMIC}, true)
 	${LIBDIR_OUT}/tests/fruit_tests_dynamic.exe
+ifneq ("$(wildcard ${LIBDIR_OUT}/tests/fruit_tests_dynamic_one.exe)", "")
 	${LIBDIR_OUT}/tests/fruit_tests_dynamic_one.exe
+endif
 endif
 
 # dummy target for fruit
