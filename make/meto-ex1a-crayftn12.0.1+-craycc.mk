@@ -48,7 +48,7 @@ FCFLAGS_PREC=
 # Flag used to set OpenMP (passed to all compilation commands)
 FCFLAGS_OPENMP=-h omp
 # Flag used to unset OpenMP (passed to all compilation commands)
-FCFLAGS_NOOPENMP=-h noomp
+FCFLAGS_NOOPENMP=-xomp -h noomp
 # Any other flags (to be passed to all compilation commands)
 FCFLAGS_EXTRA ?= -O2 -Ovector1 -hfp0 -hflex_mp=strict -hipa1 -hnopgas_runtime  \
                  -hnocaf -herror_on_warning -M E287,E5001
@@ -109,6 +109,11 @@ AR=ar -rc
 # Set the name of this platform; this will be included as the name of the
 # top-level directory in the build
 PLATFORM=meto-ex1a-crayftn-craycc
+
+# Platform specific overrides
+# Need to lower the optimisation when building the thread_utils library to avoid
+# an internal compiler error with cce 15
+F_SHUM_THREAD_UTILS_OVERRIDE ?= -O0
 
 # Proceed to include the rest of the common makefile
 include Makefile

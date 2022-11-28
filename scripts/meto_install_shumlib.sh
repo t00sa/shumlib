@@ -28,13 +28,13 @@
 #   scripts/meto_install_shumlib.sh [xc40|x86|ex1a]
 #
 # This script was used to install shumlib version 2022.07.1
-# and was intended for use with the UM at UM 13.0
+# and was intended for use with the UM at UM 13.1
 #
 
 set -eu
 
 # set up no IEEE list
-NO_IEEE_LIST=${NO_IEEE_LIST:-"xc40_haswell_gnu_4.9.1 xc40_ivybridge_gnu_4.9.1 ex1a_gnu_10.3.0"}
+NO_IEEE_LIST=${NO_IEEE_LIST:-"xc40_haswell_gnu_4.9.1 xc40_ivybridge_gnu_4.9.1 ex1a_gnu_12.1.0"}
 
 # Ensure directory is correct
 cd $(readlink -f $(dirname $0)/..)
@@ -673,20 +673,20 @@ if [ $PLATFORM == "xc40" ] || [ $PLATFORM == $THIS ] ; then
     fi
 fi
 
-# Crayftn/CrayCC 14.0.0
-THIS="ex1a_cray_14.0.0"
+# Crayftn/CrayCC 15.0.0
+THIS="ex1a_cray_15.0.0"
 if [ $PLATFORM == "ex1a" ] || [ $PLATFORM == $THIS ] ; then
 
     (
     module switch PrgEnv-cray PrgEnv-cray/8.3.3
-    module load cpe/22.05
+    module load cpe/22.11
     unset SHUM_TMPDIR
     CONFIG=meto-ex1a-crayftn12.0.1+-craycc
-    LIBDIR=$BUILD_DESTINATION/meto-ex1a-crayftn-14.0.0-craycc-14.0.0
+    LIBDIR=$BUILD_DESTINATION/meto-ex1a-crayftn-15.0.0-craycc-15.0.0
     # If it is not the case that $CYLC_TASK_WORK_PATH is unset, use it to
     # define $SHUM_TMPDIR
     if [ ! -z ${CYLC_TASK_WORK_PATH+x} ]; then
-      export SHUM_TMPDIR=$CYLC_TASK_WORK_PATH/meto-ex1a-crayftn-14.0.0-craycc-14.0.0
+      export SHUM_TMPDIR=$CYLC_TASK_WORK_PATH/meto-ex1a-crayftn-15.0.0-craycc-15.0.0
     fi
     build_openmp_onoff $CONFIG $LIBDIR $(sed -e "s/\bshum_fieldsfile_class\b//g" \
                                              -e "s/\bshum_fieldsfile\b//g" \
@@ -698,17 +698,16 @@ if [ $PLATFORM == "ex1a" ] || [ $PLATFORM == $THIS ] ; then
     fi
 fi
 
-# Gfortran 10.3.0
-THIS="ex1a_gnu_10.3.0"
+# Gfortran 12.1.0
+THIS="ex1a_gnu_12.1.0"
 if [ $PLATFORM == "ex1a" ] || [ $PLATFORM == $THIS ] ; then
 
     (
     module switch PrgEnv-cray PrgEnv-gnu/8.3.3
-    module load cpe/22.05
-    module switch gcc gcc/10.3.0
+    module load cpe/22.11
     unset SHUM_TMPDIR
     CONFIG=meto-ex1a-gfortran-gcc
-    LIBDIR=$BUILD_DESTINATION/meto-ex1a-gfortran-10.3.0-gcc-10.3.0
+    LIBDIR=$BUILD_DESTINATION/meto-ex1a-gfortran-12.1.0-gcc-12.1.0
     build_openmp_onoff $CONFIG $LIBDIR all_libs
     )
     if [ $? -ne 0 ] ; then
