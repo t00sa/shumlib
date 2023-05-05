@@ -51,7 +51,7 @@ FCFLAGS_EXTRA=-std=f2008ts -pedantic -pedantic-errors -fno-range-check         \
               -Wno-unused-dummy-argument -Wno-c-binding-type                   \
               -Wno-unused-function -fdiagnostics-show-option
 # Flags to set paths for the dynamic library builds
-LDFLAGS= -Wl,-rpath,/opt/cray/pe/gcc/10.3.0/snos/lib64
+LDFLAGS= -Wl,-rpath,/opt/cray/pe/gcc/10.3.0/snos/lib64 -Wl,--as-needed
 # Flag used to set PIC (Position-independent-code; required by dynamic lib
 # and so will only be passed to compile objects destined for the dynamic lib)
 FCFLAGS_PIC=-fPIC ${LDFLAGS}
