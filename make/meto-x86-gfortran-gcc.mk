@@ -45,7 +45,7 @@ FCFLAGS_OPENMP=-fopenmp
 FCFLAGS_NOOPENMP=
 # Any other flags (to be passed to all compilation commands)
 FCFLAGS_EXTRA=-std=f2008ts -pedantic -pedantic-errors -fno-range-check         \
-              -Wall -Wextra -Werror -Wno-compare-reals -Wno-conversion         \
+              -Wall -Wextra -Werror -Wno-compare-reals -Wconversion            \
               -Wno-unused-dummy-argument -Wno-c-binding-type                   \
               -fdiagnostics-show-option
 # Flag used to set PIC (Position-independent-code; required by dynamic lib

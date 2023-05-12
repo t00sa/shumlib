@@ -47,7 +47,7 @@ FCFLAGS_OPENMP=-fopenmp
 FCFLAGS_NOOPENMP=
 # Any other flags (to be passed to all compilation commands)
 FCFLAGS_EXTRA=-std=f2008ts -pedantic -pedantic-errors -fno-range-check         \
-              -Wall -Wextra -Werror -Wno-compare-reals -Wno-conversion         \
+              -Wall -Wextra -Werror -Wno-compare-reals -Wconversion            \
               -Wno-unused-dummy-argument -Wno-c-binding-type                   \
               -Wno-unused-function -fdiagnostics-show-option
 # Flags to set paths for the dynamic library builds
