@@ -83,6 +83,7 @@ endif
 # Any other flags (to be passed to all compilation commands)
 CCFLAGS_EXTRA=-std=c99 -Weverything -Werror -Wno-vla -Wno-padded  \
               -Wno-missing-noreturn -pedantic -pedantic-errors    \
+              -Wno-reserved-id-macro                              \
               -fdiagnostics-show-option
 # Flag used to set PIC (Position-independent-code; required by dynamic lib
 # and so will only be passed to compile objects destined for the dynamic lib)
