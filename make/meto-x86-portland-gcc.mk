@@ -37,7 +37,7 @@ else ifeq (${SHUM_EVAL_DENORMAL_BY_BITS}, false)
 FPPFLAGS_EDBB=
 endif
 # Combine the preprocessor flags
-FPPFLAGS=${FPPFLAGS_BASE} ${FPPFLAGS_IEEE} ${FPPFLAGS_ENBB} ${FPPFLAGS_EDBB} ${FPPFLAGS_EXTRA}
+FPPFLAGS=${FPPFLAGS_BASE} ${FPPFLAGS_IEEE} ${FPPFLAGS_ENBB} ${FPPFLAGS_EDBB} ${FPPFLAGS_EXTRA} -DFORCE_LOGICALS
 # Compiler command
 FC=pgfortran
 # Precision flags (passed to all compilation commands)
