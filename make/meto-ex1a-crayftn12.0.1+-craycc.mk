@@ -9,10 +9,6 @@ MAKE=make
 # Note that on the EX1A only Dynamic linking is supported
 SHUM_BUILD_STATIC=false
 
-# To prevent spiral search being compiled with a multithreaded
-# library it can't use, set openmp off for Cray EX1A builds
-SHUM_OPENMP=false
-
 # Fortran
 #--------
 FPP=cpp
