@@ -194,6 +194,47 @@ if [ "$PLATFORM" == "x86" ] || [ "$PLATFORM" == $THIS ] ; then
     RUN_SUCCESS=1
 fi
 
+# Intel/GCC (ifort 19)
+THIS="x86_ifort_19.0_gcc_11.2"
+if [ "$PLATFORM" == "x86" ] || [ "$PLATFORM" == $THIS ] ; then
+    (
+    source /etc/profile.d/metoffice.d/modules.sh || :
+    module purge
+    module use /project/extrasoftware/modulefiles.rhel7
+    module use /data/users/lfric/software/modulefiles.rhel7
+    module load ifort/19.0_64  # From METO_LINUX family in rose-stem
+    module load gcc/11.2.0
+    unset SHUM_TMPDIR
+    CONFIG=meto-x86-ifort15+-gcc
+    LIBDIR=$BUILD_DESTINATION/meto-x86-ifort-19.0.1-gcc-11.2.0
+    build_openmp_onoff $CONFIG "$LIBDIR" all_libs
+    )
+    if [ $? -ne 0 ] ; then
+        >&2 echo "Error compiling for $THIS"
+        exit 1
+    fi
+    RUN_SUCCESS=1
+fi
+
+THIS="x86_ifort_19.0_gcc_6.1"
+if [ "$PLATFORM" == "x86" ] || [ "$PLATFORM" == $THIS ] ; then
+    (
+    source /etc/profile.d/metoffice.d/modules.sh || :
+    module purge
+    module load ifort/19.0_64  # From METO_LINUX family in rose-stem
+    module load gcc/6.1.0
+    unset SHUM_TMPDIR
+    CONFIG=meto-x86-ifort15+-gcc
+    LIBDIR=$BUILD_DESTINATION/meto-x86-ifort-19.0.1-gcc-6.1.0
+    build_openmp_onoff $CONFIG "$LIBDIR" all_libs
+    )
+    if [ $? -ne 0 ] ; then
+        >&2 echo "Error compiling for $THIS"
+        exit 1
+    fi
+    RUN_SUCCESS=1
+fi
+
 THIS="x86_ifort_16.0_clang"
 if [ "$PLATFORM" == "x86" ] || [ "$PLATFORM" == $THIS ] ; then
     # Intel/Clang  (ifort 16 / clang 12.0.0)
