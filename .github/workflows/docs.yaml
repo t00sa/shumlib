@@ -19,7 +19,6 @@ permissions: read-all
 jobs:
 
   build-docs:
-    name: Build Documentation
     runs-on: ubuntu-latest
     timeout-minutes: 5
 
@@ -28,11 +27,8 @@ jobs:
         uses: actions/checkout@v4
       - name: Setup uv
         uses: astral-sh/setup-uv@v6
-        with:
-          python-version: "3.12.9"
       - name: Install dependencies
         run: uv sync
-        working-directory: ./doc
       - name: Build docs
         run: uv run make clean html
         working-directory: ./doc

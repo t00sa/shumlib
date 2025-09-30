@@ -26,7 +26,10 @@ classifiers = [
 
 requires-python = ">=3.11"
 dependencies = [
+    "fortitude-lint == 0.7.5",
+    "cpplint == 2.0.2",
     "sphinx == 8.2.3",
+    "sphinx-lint == 1.0.0",
     "pydata-sphinx-theme == 0.16.1",
     "sphinx-design == 0.6.1",
     "sphinx-copybutton == 0.5.2",
