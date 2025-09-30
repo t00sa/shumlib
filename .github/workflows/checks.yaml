@@ -36,20 +36,20 @@ jobs:
           uv run cpplint --recursive --extensions=c,h \
             --exclude=.git --exclude=.venv .
 
-      - name: Detect changes in doc
-        id: doc_changes
-        run: |
-          if git diff --name-only ${{ github.sha }} ${{ github.event.before }} | grep '^doc/'; then
-            echo "doc_changed=true" >> $GITHUB_OUTPUT
-          else
-            echo "doc_changed=false" >> $GITHUB_OUTPUT
-          fi
+      # - name: Detect changes in doc
+      #   id: doc_changes
+      #   run: |
+      #     if git diff --name-only ${{ github.sha }} ${{ github.event.before }} | grep '^doc/'; then
+      #       echo "doc_changed=true" >> $GITHUB_OUTPUT
+      #     else
+      #       echo "doc_changed=false" >> $GITHUB_OUTPUT
+      #     fi
       - name: RestructuredText
-        if: steps.doc_changes.outputs.doc_changed == 'true'
+        # if: steps.doc_changes.outputs.doc_changed == 'true'
         working-directory: ./doc
         run: uv run sphinx-lint .
       - name: Link Checks
-        if: steps.doc_changes.outputs.doc_changed == 'true'
+        # if: steps.doc_changes.outputs.doc_changed == 'true'
         working-directory: ./doc
         run: |
           uv run sphinx-build -q -b linkcheck \
