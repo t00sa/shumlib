@@ -1,0 +1,58 @@
+---
+name: Docs
+
+on: # yamllint disable-line rule:truthy
+  push:
+    branches:
+      - main
+      - 'releases/**'
+  pull_request:
+    types: [opened, synchronize, reopened]
+    paths:
+      - 'doc/**'
+      - '.github/workflows/docs.yaml'
+  workflow_dispatch:
+
+permissions: read-all
+
+jobs:
+
+  build:
+    runs-on: ubuntu-latest
+    timeout-minutes: 3
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+      - name: Setup uv
+        uses: astral-sh/setup-uv@v6
+      - name: Install dependencies
+        run: uv sync
+      - name: Build docs
+        run: uv run make clean html
+        working-directory: ./doc
+      - name: Upload artifacts
+        uses: actions/upload-artifact@v4
+        with:
+          name: github-pages
+          path: ./doc/_build/html
+      - name: Minimize uv cache
+        run: uv cache prune --ci
+
+  deploy:
+    if: github.ref == 'refs/heads/main' && github.event_name != 'pull_request'
+    needs: build
+    runs-on: ubuntu-latest
+    permissions:
+      contents: write
+      pages: write
+      id-token: write
+    environment:
+      name: github-pages
+      url: ${{ steps.deploy.outputs.page_url }}
+
+    steps:
+      - name: Deploy Documentation
+        id: deployment
+        uses: actions/deploy-pages@v4
+
