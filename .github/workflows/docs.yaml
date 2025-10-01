@@ -45,6 +45,7 @@ jobs:
 
   # Deploy job
   deploy:
+    if: github.ref == 'refs/heads/main' && github.event_name != 'pull_request'
     # Add a dependency to the build job
     needs: build
 
