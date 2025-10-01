@@ -56,6 +56,9 @@ jobs:
       url: ${{ steps.deploy.outputs.page_url }}
 
     steps:
+      - name: Configure GitHub Pages
+        id: configure
+        uses: actions/configure-pages@v4
       - name: Deploy Documentation
         id: deployment
         uses: actions/deploy-pages@v4
