@@ -1,0 +1,1 @@
+target_sources(fruit-tests PRIVATE fruit_test_shum_latlon_eq_grids.f90)

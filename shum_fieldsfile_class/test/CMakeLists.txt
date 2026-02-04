@@ -1,0 +1,1 @@
+target_sources(fruit-tests PRIVATE fruit_test_shum_fieldsfile_class.f90)

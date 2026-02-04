@@ -1,0 +1,1 @@
+target_sources(fruit-tests PRIVATE fruit_test_shum_horizontal_field_interp.f90)

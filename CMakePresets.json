@@ -1,0 +1,33 @@
+{
+    "version": 6,
+    "configurePresets": [
+        {
+            "name": "debug",
+            "displayName": "Debug",
+            "binaryDir": "build/debug",
+            "cacheVariables": {
+                "CMAKE_BUILD_TYPE": "Debug"
+            }
+        },
+        {
+            "name": "debug-gcc",
+            "displayName": "GCC Debug",
+            "inherits": "debug",
+            "cacheVariables": {
+                "CMAKE_BUILD_TYPE": "Debug",
+                "CMAKE_C_COMPILER": "gcc",
+                "CMAKE_Fortran_COMPILER": "gfortran",
+                "CMAKE_C_FLAGS_INIT": "-g -Wall -Wextra -Werror -Wformat=2 -Winit-self -Wfloat-equal -Wpointer-arith -Wbad-function-cast -Wcast-qual -Wcast-align -Wconversion -Wlogical-op -Wstrict-prototypes -Wmissing-declarations -Wredundant-decls -Wnested-externs -Woverlength-strings -Wshadow -Wall -Wextra -Wpedantic -fdiagnostics-show-option",
+                "CMAKE_Fortran_FLAGS_INIT": "-g -std=f2018 -pedantic -pedantic-errors -fno-range-check -Wall -Wextra -Werror -Wno-compare-reals -Wconversion -Wno-unused-dummy-argument -Wno-c-binding-type -fdiagnostics-show-option"
+            }
+        }
+    ],
+    "buildPresets": [
+        {
+            "name": "debug-gcc",
+            "displayName": "GCC Debug Build",
+            "configurePreset": "debug",
+            "configuration": "Debug"
+        }
+    ]
+}
