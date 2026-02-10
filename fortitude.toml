@@ -9,6 +9,5 @@ ignore = [
     'C121',    # use-all
     'C141',    # missing-exit-or-cycle-label
     'E001',    # syntax-error
-    'MOD011',  # old-style-array-literal
     'S061',    # unnamed-end-statement
 ]

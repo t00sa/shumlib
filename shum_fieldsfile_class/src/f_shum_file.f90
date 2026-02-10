@@ -929,7 +929,7 @@ ELSE
         RETURN
       END IF
       ALLOCATE(tmp_field_data_r64(cols, rows))
-      tmp_field_data_r64 = RESHAPE(field_data_r64, (/cols, rows/))
+      tmp_field_data_r64 = RESHAPE(field_data_r64, [cols, rows])
       STATUS = self%fields(field_number)%set_data(tmp_field_data_r64)
       IF (STATUS%icode /= shumlib_success) THEN
         WRITE(STATUS%message, '(A,I0)') 'Error setting data for field ',       &
@@ -948,7 +948,7 @@ ELSE
         RETURN
       END IF
       ALLOCATE(tmp_field_data_i64(cols, rows))
-      tmp_field_data_i64 = RESHAPE(field_data_i64, (/cols, rows/))
+      tmp_field_data_i64 = RESHAPE(field_data_i64, [cols, rows])
       STATUS = self%fields(field_number)%set_data(tmp_field_data_i64)
       IF (STATUS%icode /= shumlib_success) THEN
         WRITE(STATUS%message, '(A,I0)') 'Error setting data for field ',       &
@@ -1002,7 +1002,7 @@ ELSE
       ! Promote to 64-bit
       ALLOCATE(tmp_field_data_r64(cols, rows))
       ALLOCATE(tmp_field_data_r32(cols, rows))
-      tmp_field_data_r32 = RESHAPE(field_data_r32, (/cols, rows/))
+      tmp_field_data_r32 = RESHAPE(field_data_r32, [cols, rows])
       DO j_value = 1, rows
         DO i_value = 1, cols
           tmp_field_data_r64(i_value,j_value) = tmp_field_data_r32(            &
@@ -1030,7 +1030,7 @@ ELSE
       ! Promote to 64-bit
       ALLOCATE(tmp_field_data_i64(cols, rows))
       ALLOCATE(tmp_field_data_i32(cols, rows))
-      tmp_field_data_i32 = RESHAPE(field_data_i32, (/cols, rows/))
+      tmp_field_data_i32 = RESHAPE(field_data_i32, [cols, rows])
       DO j_value = 1, rows
         DO i_value = 1, cols
           tmp_field_data_i64(i_value, j_value) = tmp_field_data_i32(           &
@@ -1693,7 +1693,7 @@ ELSE !Not land/sea-compressed
         RETURN
       END IF
       ALLOCATE(field_data_r64(rows*cols))
-      field_data_r64 = RESHAPE(tmp_field_data_r64, (/cols * rows/))
+      field_data_r64 = RESHAPE(tmp_field_data_r64, [cols * rows])
 
       STATUS%icode = f_shum_write_field_data(self%file_identifier,             &
                                       lookup,                                  &
@@ -1713,7 +1713,7 @@ ELSE !Not land/sea-compressed
         RETURN
       END IF
       ALLOCATE(field_data_i64(rows*cols))
-      field_data_i64 = RESHAPE(tmp_field_data_i64, (/rows * cols/))
+      field_data_i64 = RESHAPE(tmp_field_data_i64, [rows * cols])
 
       STATUS%icode = f_shum_write_field_data(self%file_identifier,             &
                                       lookup,                                  &
@@ -1776,7 +1776,7 @@ ELSE !Not land/sea-compressed
         END DO
       END DO
 
-      field_data_r32 = RESHAPE(tmp_field_data_r32, (/rows*cols/))
+      field_data_r32 = RESHAPE(tmp_field_data_r32, [rows*cols])
       STATUS%icode = f_shum_write_field_data(self%file_identifier,             &
                                       lookup,                                  &
                                       field_data_r32,                          &
@@ -1803,7 +1803,7 @@ ELSE !Not land/sea-compressed
                                                  i_value,j_value), INT32)
         END DO
       END DO
-      field_data_i32 = RESHAPE(tmp_field_data_i32, (/rows*cols/))
+      field_data_i32 = RESHAPE(tmp_field_data_i32, [rows*cols])
       STATUS%icode = f_shum_write_field_data(self%file_identifier,             &
                                       lookup,                                  &
                                       field_data_i32,                          &

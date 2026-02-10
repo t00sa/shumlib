@@ -228,7 +228,7 @@ END DO
 END FUNCTION f_shum_has_nan32
 
 ! To use for multi-dimensional arrays you can call f_shum_has_nan with the array
-! reshaped, e.g. f_shum_has_nan(RESHAPE(x, (/SIZE(x)/)))
+! reshaped, e.g. f_shum_has_nan(RESHAPE(x, [SIZE(x)]))
 
 !***************************************************************************
 ! 2D Array 64-bit version
@@ -243,7 +243,7 @@ REAL (KIND=REAL64), INTENT(IN) :: x(:,:)
 ! End of header
 
 ! Reshape array and pass through 1d array version
-f_shum_has_nan64_2d = f_shum_has_nan64(RESHAPE(x, (/SIZE(x)/)))
+f_shum_has_nan64_2d = f_shum_has_nan64(RESHAPE(x, [SIZE(x)]))
 
 END FUNCTION f_shum_has_nan64_2d
 
@@ -260,7 +260,7 @@ REAL (KIND=REAL32), INTENT(IN) :: x(:,:)
 ! End of header
 
 ! Reshape array and pass through 1d array version
-f_shum_has_nan32_2d = f_shum_has_nan32(RESHAPE(x, (/SIZE(x)/)))
+f_shum_has_nan32_2d = f_shum_has_nan32(RESHAPE(x, [SIZE(x)]))
 
 END FUNCTION f_shum_has_nan32_2d
 
@@ -277,7 +277,7 @@ REAL (KIND=REAL64), INTENT(IN) :: x(:,:,:)
 ! End of header
 
 ! Reshape array and pass through 1d array version
-f_shum_has_nan64_3d = f_shum_has_nan64(RESHAPE(x, (/SIZE(x)/)))
+f_shum_has_nan64_3d = f_shum_has_nan64(RESHAPE(x, [SIZE(x)]))
 
 END FUNCTION f_shum_has_nan64_3d
 
@@ -294,7 +294,7 @@ REAL (KIND=REAL32), INTENT(IN) :: x(:,:,:)
 ! End of header
 
 ! Reshape array and pass through 1d array version
-f_shum_has_nan32_3d = f_shum_has_nan32(RESHAPE(x, (/SIZE(x)/)))
+f_shum_has_nan32_3d = f_shum_has_nan32(RESHAPE(x, [SIZE(x)]))
 
 END FUNCTION f_shum_has_nan32_3d
 
@@ -311,7 +311,7 @@ REAL (KIND=REAL64), INTENT(IN) :: x(:,:,:,:)
 ! End of header
 
 ! Reshape array and pass through 1d array version
-f_shum_has_nan64_4d = f_shum_has_nan64(RESHAPE(x, (/SIZE(x)/)))
+f_shum_has_nan64_4d = f_shum_has_nan64(RESHAPE(x, [SIZE(x)]))
 
 END FUNCTION f_shum_has_nan64_4d
 
@@ -328,7 +328,7 @@ REAL (KIND=REAL32), INTENT(IN) :: x(:,:,:,:)
 ! End of header
 
 ! Reshape array and pass through 1d array version
-f_shum_has_nan32_4d = f_shum_has_nan32(RESHAPE(x, (/SIZE(x)/)))
+f_shum_has_nan32_4d = f_shum_has_nan32(RESHAPE(x, [SIZE(x)]))
 
 END FUNCTION f_shum_has_nan32_4d
 
@@ -345,7 +345,7 @@ REAL (KIND=REAL64), INTENT(IN) :: x(:,:,:,:,:)
 ! End of header
 
 ! Reshape array and pass through 1d array version
-f_shum_has_nan64_5d = f_shum_has_nan64(RESHAPE(x, (/SIZE(x)/)))
+f_shum_has_nan64_5d = f_shum_has_nan64(RESHAPE(x, [SIZE(x)]))
 
 END FUNCTION f_shum_has_nan64_5d
 
@@ -362,7 +362,7 @@ REAL (KIND=REAL32), INTENT(IN) :: x(:,:,:,:,:)
 ! End of header
 
 ! Reshape array and pass through 1d array version
-f_shum_has_nan32_5d = f_shum_has_nan32(RESHAPE(x, (/SIZE(x)/)))
+f_shum_has_nan32_5d = f_shum_has_nan32(RESHAPE(x, [SIZE(x)]))
 
 END FUNCTION f_shum_has_nan32_5d
 
