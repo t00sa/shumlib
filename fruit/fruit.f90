@@ -971,6 +971,7 @@ contains
   subroutine run_test_case_named_( tc, tc_name )
     interface
        subroutine tc()
+         implicit none
        end subroutine
     end interface
     character(*), intent(in) :: tc_name
@@ -1015,6 +1016,7 @@ contains
   subroutine run_test_case_( tc )
     interface
        subroutine tc()
+         implicit none
        end subroutine
     end interface
 

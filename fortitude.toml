@@ -1,7 +1,6 @@
 [check]
 exclude = ['.venv']
 ignore = [
-    'C002',    # interface-implicit-typing
     'C003',    # implicit-external-procedures
     'C061',    # missing-intent
     'C071',    # assumed-size
